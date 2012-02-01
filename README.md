@@ -15,8 +15,8 @@ Getting Started
 3. Open the thing at the thing where you deployed it.
 4. Type this:
 
-    def angle_bracket
-      (1..10).each do |i|
-        i.downto(1) { puts "<<<" * rand(20) }
+      def angle_bracket
+        (1..10).each do |i|
+          i.downto(1) { puts "<<<" * rand(20) }
+        end
       end
-    end
