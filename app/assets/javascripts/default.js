@@ -1258,8 +1258,8 @@ function PatternView(pattern, options) {
   this.buildDom()
   
   // add source code
-  this.program = new MultiSlotView(this /* parent */, "Drag or type something here.", true /* showExtraSlot */)
-  this.program.dom.appendTo(this.sourceDom)
+  this.source = new MultiSlotView(this /* parent */, "Drag or type something here.", true /* showExtraSlot */)
+  this.source.dom.appendTo(this.sourceDom)
 
   // click to activate
   this.expressionDom.click(ifTarget(function(e) {
@@ -1423,7 +1423,7 @@ PatternView.prototype.becameInactive = function() {
 PatternView.prototype.meaning = function() {
   // XXX MAJOR HACK XXX
   if(this.drag == "free") {
-    return this.program.meaning().notifying(this.becameActive.bind(this), this.becameInactive.bind(this))
+    return this.source.meaning().notifying(this.becameActive.bind(this), this.becameInactive.bind(this))
   }
   
   var args = {}
