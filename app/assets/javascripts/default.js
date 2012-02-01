@@ -1242,7 +1242,6 @@ function PatternView(pattern, options) {
   
   this.pattern = pattern
   this.representationIndex = options.representationIndex || 0
-  this.inPalette = options.inPalette
   this.drag = options.drag
   this.convertComponents()
   this.activeCount = 0
@@ -1549,7 +1548,7 @@ PaletteView.prototype.add = function(pattern) {
   if(this.patternViews[pattern.id])
     return
   
-  var patternView = new PatternView(pattern, { parent: this, inPalette: true })
+  var patternView = new PatternView(pattern, { parent: this })
   this.patterns[pattern.id] = pattern
   this.patternViews[pattern.id] = patternView
   this._append(patternView)
@@ -1577,7 +1576,7 @@ PaletteView.prototype.release = function(patternView) {
   var patternId = patternView.pattern.id
   var pattern = this.patterns[patternId]
   if(pattern) {
-    var newPatternView = new PatternView(pattern, { parent: this, inPalette: true })
+    var newPatternView = new PatternView(pattern, { parent: this })
     this.patternViews[patternId] = newPatternView
     newPatternView.dom.insertAfter(patternView.dom)
   }
