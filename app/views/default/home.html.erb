@@ -1,22 +1,9 @@
-<html>
-
-<head>
-<!-- <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script> -->
-<!-- <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script> -->
-<script type="text/javascript" src="javascripts/jquery.min.js"></script>
-<script type="text/javascript" src="javascripts/jquery-ui.min.js"></script>
-<script type="text/javascript" src="javascripts/underscore-min.js"></script>
-<script type="text/javascript" src="javascripts/ui.achtung-min.js"></script>
-<script type="text/javascript" src="javascripts/jshashtable-2.1.js"></script>
-<script type="text/javascript" src="javascripts/audio.js"></script>
-<!-- <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/base/jquery-ui.css"/> -->
-<link href="stylesheets/ui.achtung-min.css" rel="stylesheet" type="text/css" />
 <style type="text/css">
 body {
   font-family: sans-serif;
   margin: 0;
   padding: 0;
-  background: url(images/grid.jpg);
+  background: url(/assets/grid.jpg);
 }
 #program-container {
   padding: 1em;
@@ -72,7 +59,7 @@ ul.multislot li {
   width: 40%;
   /*border: 2px solid #ccc;*/
   overflow: auto;
-  background: url(images/tex.jpg);
+  background: url(/assets/tex.jpg);
   -webkit-border-radius: 10px;
 }
 #palette-subcontainer {
@@ -1833,7 +1820,7 @@ function flash(elem, color) {
   color = color || "red"
   elem = $(elem)
   elem.stop(true /* clear animation queue */, true /* jump to end of animation */)
-  elem.css("background", "url(images/" + color + "-gradient.png) repeat-y")
+  elem.css("background", "url(/assets/" + color + "-gradient.png) repeat-y")
   elem.css("background-position", "-80px")
   elem.animate(
     { "background-position" : elem.width() },
@@ -2060,9 +2047,6 @@ $(function() {
   flash($("body"), "blue")
 })
 </script>
-<head>
-
-<body>
 
 <div id="container">
 
@@ -2083,6 +2067,3 @@ $(function() {
     <button id="theme-switcher">Switch Theme</button>
   </div>
 </div>
-
-</body>
-</html>
