@@ -1,0 +1,227 @@
+body {
+  font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+  background: url(/assets/grid.jpg);
+}
+#program-container {
+  padding: 1em;
+  position: fixed;
+  left: 42%;
+  top: 0;
+  bottom: 0;
+  right: 0;
+}
+.code-canvas {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: #fee;
+}
+.code-canvas.hover {
+  background: #eef;
+}
+ul.multislot {
+  display: inline-block;
+  vertical-align: middle;
+  margin-top: 0;
+  margin-bottom: 0;
+  padding: 0;
+}
+ul.multislot li {
+  position: relative;
+  list-style-type: none;
+  padding: 0;
+  margin: .1em 0;
+}
+.no-drag-in-progress ul.multislot li.inbetweener {
+  display: none;
+}
+.drag-in-progress ul.multislot li.inbetweener {
+  margin: 3px 0 3px 0;
+  line-height: 5px;
+  padding: 0;
+}
+.multislot li.inbetweener .slot {
+  display: inline-block;
+  vertical-align: middle;
+  height: 3px;
+  width: 90%;
+}
+#palette-container {
+  position: fixed;
+  left: 1em;
+  top: 1em;
+  bottom: 1em;
+  width: 40%;
+  /*border: 2px solid #ccc;*/
+  overflow: auto;
+  background: url(/assets/tex.jpg);
+  -webkit-border-radius: 10px;
+}
+#palette-subcontainer {
+  padding: 1em;
+}
+#palette-container h2 {
+  padding: 0;
+  margin: 0;
+}
+#palette-container #palette {
+  margin-top: 1em;
+}
+.expression-container {
+  display: inline-block;
+  position: relative;
+  z-index: 0;
+}
+.expression-container .title-expression {
+  display: inline-block;
+  background: white;
+  padding: 0 8px;
+  -webkit-border-radius: 10px;
+  border: 1px solid black;
+  z-index: -1;
+}
+.expression-container .source {
+  display: none;
+  margin: 0 5px;
+  background: white;
+  -webkit-border-radius: 10px;
+  border: 1px solid black;
+  padding: 23px 8px 8px;
+  position: relative;
+  top: -20px;
+  left: -8px;
+  z-index: -2;
+}
+.expression {
+  cursor: hand;
+}
+.colorful .expression, .minimal #palette .expression {
+  background: #fff;
+  line-height: 35px;
+  padding: 0 8px;
+  display: inline-block;
+  vertical-align: middle;
+  margin: 2px;
+  -webkit-border-radius: 10px;
+  border: 1px solid black;
+}
+.colorful .expression.active {
+  background-color: #efe;
+  border-color: #0f0;
+  border-style: dashed;
+}
+.colorful .source.active {
+  background-color: #efe;
+  border-color: #0f0;
+  border-style: dashed;
+}
+#palette .expression {
+  white-space: nowrap; /* inline-block overrides this? */
+}
+.minimal .expression {
+  /*padding-right: .5ex;*/
+  /*border: 1px solid white;*/
+}
+.minimal .expression:hover {
+  border: 1px solid black;
+}
+.expression-container.dragging .expression {
+  background: white;
+  opacity: 0.2;
+}
+.expression-drag-helper {
+  width: 20px;
+  height: 20px;
+  background: white;
+  -webkit-border-radius: 4px;
+  border: 1px solid black;
+}
+.colorful .slot.unfilled {
+  /*
+  background: #633;
+  color: white;
+  */
+  background: #eef;
+  color: #900;
+  -webkit-border-radius: 4px;
+  padding: 3px;
+  line-height: 28px;
+  border: 1px solid #dde;
+}
+.colorful .slot.filled {
+}
+.minimal .slot.unfilled {
+  background: #eef;
+  -webkit-border-radius: 4px;
+  padding: 3px;
+  line-height: 28px;
+  color: #900;
+  border: 1px solid #dde;
+}
+.slot.hover {
+  background: #fcc !important;
+}
+.minimal li {
+  line-height: 28px;
+}
+#bottom-toolbar {
+  display: none; /* yeah! */
+  position: fixed;
+  bottom: 1em;
+  right: 1em;
+}
+#bubble-adder {
+  padding: 0.5em;
+  font-size: 11pt;
+}
+
+/* AUTOCOMPLETE */
+.ui-autocomplete {
+  width: 137px;
+  -webkit-border-bottom-right-radius: 4px;
+  -khtml-border-bottom-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+  border: 1px solid #AAA;
+  background: white;
+  color: #222;
+  z-index: 1 !important;
+}
+.ui-menu {
+  list-style: none;
+  padding: 2px;
+  margin: 0;
+}
+.ui-menu .ui-menu {
+  margin-top: -3px;
+}
+.ui-menu .ui-menu-item {
+  margin: 0;
+  padding: 0;
+}
+.ui-menu .ui-menu-item a {
+  text-decoration: none;
+  display: block;
+  padding: .1em .2em;
+  line-height: 1.5;
+}
+.ui-menu .ui-menu-item a.ui-state-hover,
+.ui-menu .ui-menu-item a.ui-state-active {
+  font-weight: normal;
+  margin-left: -1px;
+  background: black;
+  color: white;
+}
+
+.vmenu { border: 1px solid #aaa; position: absolute; background: #fff; display: none; font-size: 0.75em; }
+.vsubmenu { border: 1px solid #aaa; position: absolute; background: #fff; display: none; }
+.vmenu .first_li span { display: block; cursor: pointer; white-space: nowrap; padding: 5px 10px; }
+.vmenu .inner_li { display: block; cursor: pointer; white-space: nowrap; }
+/*.vmenu .inner_li { display: none; margin-left: 120px; position: absolute; border: 1px solid #aaa; border-left: 1px solid #ccc; margin-top: -28px; background: #fff; }*/
+.vmenu .sep_li { border-top: 1px ridge #aaa; margin: 5px 0 }
+.vmenu .fill_title { font-size:11px; font-weight: bold; /height:15px; /overflow: hidden; word-wrap: break-word; }
+
+.ui-effects-transfer { border: 2px solid black; }
