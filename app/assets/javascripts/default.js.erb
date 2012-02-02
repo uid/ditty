@@ -274,7 +274,7 @@ NativeMeaning.prototype.replacingReferences = function(argsHash) {
 NativeMeaning.prototype.evaluate = function(c, e, os) {
   if(!this.f) {
     try {
-      this.f = eval(this.jsSource)
+      this.f = eval("(function(c, e, os, args) {" + this.jsSource + "})")
     } catch(exc) {
       e(new Error("failed to compile native implementation: " + exc.message))
       return

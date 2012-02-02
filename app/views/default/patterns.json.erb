@@ -9,7 +9,7 @@
     "representations" : [{ "template" : "debug" }],
     "meaning" : {
       "native_invocation" : {
-        "implementation" : "(function(c, e, os, args) { alert(\"debug!\"); c() })",
+        "implementation" : "alert(\"debug!\"); c()",
         "arguments" : {}
       }
     }
@@ -24,7 +24,7 @@
     "arguments" : [{ "name" : "message" }],
     "meaning" : {
       "native_invocation" : {
-        "implementation" : "(function(c, e, os, args) { evalArgs(function(eargs) { alert(eargs[\"message\"].stringValue()); c() }, e, os, args, [\"message\"]) })",
+        "implementation" : "evalArgs(function(eargs) { alert(eargs[\"message\"].stringValue()); c() }, e, os, args, [\"message\"])",
         "arguments" : { "message" : { "reference" : { "name" : "message" } } }
       }
     }
@@ -37,7 +37,7 @@
     "arguments" : [{ "name" : "note" }],
     "meaning" : {
       "native_invocation" : {
-        "implementation" : "(function(c, e, os, args) { evalArgs(function(eargs) { os.globals[\"xylo\"].strike(eargs[\"note\"].numberValue()); c() }, e, os, args, [\"note\"]) })",
+        "implementation" : "evalArgs(function(eargs) { os.globals[\"xylo\"].strike(eargs[\"note\"].numberValue()); c() }, e, os, args, [\"note\"])",
         "arguments" : { "note" : { "reference" : { "name" : "note" } } }
       }
     }
@@ -52,7 +52,7 @@
     "meaning" : {
       "native_invocation" : {
         "implementation" :
-          "(function(c, e, os, args) { args[\"seconds\"].evaluate(function(sec) { setTimeout(function() { args[\"action\"].evaluate(c, e, os) }, sec.numberValue() * 1000) }, e, os) })",
+          "args[\"seconds\"].evaluate(function(sec) { setTimeout(function() { args[\"action\"].evaluate(c, e, os) }, sec.numberValue() * 1000) }, e, os)",
         "arguments" : {
           "seconds" : { "reference" : { "name" : "seconds" } },
           "action" : { "reference" : { "name" : "action" } }
@@ -69,7 +69,7 @@
     "meaning" : {
       "native_invocation" : {
         "implementation" :
-          "(function(c, e, os, args) { args[\"seconds\"].evaluate(function(sec) { setTimeout(function() { c() }, sec.numberValue() * 1000) }, e, os) })",
+          "args[\"seconds\"].evaluate(function(sec) { setTimeout(function() { c() }, sec.numberValue() * 1000) }, e, os)",
         "arguments" : {
           "seconds" : { "reference" : { "name" : "seconds" } }
         }
@@ -85,7 +85,7 @@
     "meaning" : {
       "native_invocation" : {
         "implementation" :
-          "(function(c, e, os, args) { args[\"count\"].evaluate(function(count) { setTimeout(function() { args[\"action\"].evaluate(c, e, os) }, count.numberValue() * 500) }, e, os) })",
+          "args[\"count\"].evaluate(function(count) { setTimeout(function() { args[\"action\"].evaluate(c, e, os) }, count.numberValue() * 500) }, e, os)",
         "arguments" : {
           "count" : { "reference" : { "name" : "count" } },
           "action" : { "reference" : { "name" : "action" } }
@@ -104,7 +104,7 @@
     "arguments" : [{ "name" : "question" }],
     "meaning" : {
       "native_invocation" : {
-        "implementation" : "(function(os, args) { return new StringMeaning(prompt(args[\"question\"].evaluate(os).stringValue()) || \"\") })",
+        "implementation" : "(function(os, args) { return new StringMeaning(prompt(args[\"question\"].evaluate(os).stringValue()) || \"\")",
         "arguments" : { "question" : { "reference" : { "name" : "question" } } }
       }
     }
@@ -118,7 +118,7 @@
     "arguments" : [{ "name" : "actions", "type" : "instructions" }],
     "meaning" : {
       "native_invocation" : {
-        "implementation" : "(function(c, e, os, args) { var recur = function() { evalArgs(function() { setTimeout(recur, 1) }, function(ex) { if(ex instanceof InternalException && ex.type == \"loop-breaker\") { c() } else { e(ex) } }, os, args, [\"actions\"]) }; recur() })",
+        "implementation" : "var recur = function() { evalArgs(function() { setTimeout(recur, 1) }, function(ex) { if(ex instanceof InternalException && ex.type == \"loop-breaker\") { c() } else { e(ex) } }, os, args, [\"actions\"]) }; recur()",
         "arguments" : { "actions" : { "reference" : { "name" : "actions" } } }
       }
     }
@@ -135,7 +135,7 @@
         "arguments" : {
           "name" : {
             "native_invocation" : {
-              "implementation" : "(function(c, e, os, args) { c(new StringMeaning(\"loop-breaker\")) })",
+              "implementation" : "c(new StringMeaning(\"loop-breaker\"))",
               "arguments" : {}
             }
           }
@@ -151,7 +151,7 @@
     "arguments" : [{ "name" : "name" }],
     "meaning" : {
       "native_invocation" : {
-        "implementation" : "(function(c, e, os, args) { evalArgs(function(eargs) { c(new ExceptionMeaning(eargs[\"name\"].stringValue())) }, e, os, args, [\"name\"]) })",
+        "implementation" : "evalArgs(function(eargs) { c(new ExceptionMeaning(eargs[\"name\"].stringValue())) }, e, os, args, [\"name\"])",
         "arguments" : { "name" : { "reference" : { "name" : "name" } } }
       }
     }
@@ -188,7 +188,7 @@
     "arguments" : [{ "name" : "exception" }],
     "meaning" : {
       "native_invocation" : {
-        "implementation" : "(function(c, e, os, args) { evalArgs(function(eargs) { e(eargs[\"exception\"].exceptionValue()) }, e, os, args, [\"exception\"]) })",
+        "implementation" : "evalArgs(function(eargs) { e(eargs[\"exception\"].exceptionValue()) }, e, os, args, [\"exception\"])",
         "arguments" : {
           "exception" : { "reference" : { "name" : "exception" } }
         }
@@ -204,7 +204,7 @@
     "arguments" : [{ "name" : "exception" }, { "name" : "action" }],
     "meaning" : {
       "native_invocation" : {
-        "implementation" : "(function(os, args) { try { args[\"action\"].evaluate(os) } catch(e) { if(e instanceof InternalException && e.type == args[\"exception\"].evaluate(os).exceptionValue().type) { } else { throw e } } })",
+        "implementation" : "(function(os, args) { try { args[\"action\"].evaluate(os) } catch(e) { if(e instanceof InternalException && e.type == args[\"exception\"].evaluate(os).exceptionValue().type) { } else { throw e } }",
         "arguments" : {
           "exception" : { "reference" : { "name" : "exception" } },
           "action" : { "reference" : { "name" : "action" } }
@@ -221,7 +221,7 @@
     "arguments" : [{ "name" : "condition" }, { "name" : "actions", "type" : "instructions" }],
     "meaning" : {
       "native_invocation" : {
-        "implementation" : "(function(c, e, os, args) { evalArgs(function(eargs) { if(eargs[\"condition\"].boolValue()) evalArgs(c, e, os, args, [\"actions\"]); else c() }, e, os, args, [\"condition\"]) })",
+        "implementation" : "evalArgs(function(eargs) { if(eargs[\"condition\"].boolValue()) evalArgs(c, e, os, args, [\"actions\"]); else c() }, e, os, args, [\"condition\"])",
         "arguments" : {
           "condition" : { "reference" : { "name" : "condition" } },
           "actions" : { "reference" : { "name" : "actions" } }
@@ -239,7 +239,7 @@
     "arguments" : [{ "name" : "value 1" }, { "name" : "value 2" }],
     "meaning" : {
       "native_invocation" : {
-        "implementation" : "(function(os, args) { return new BoolMeaning(args[\"value 1\"].evaluate(os).boolValue() && args[\"value 2\"].evaluate().boolValue(os)) })",
+        "implementation" : "(function(os, args) { return new BoolMeaning(args[\"value 1\"].evaluate(os).boolValue() && args[\"value 2\"].evaluate().boolValue(os))",
         "arguments" : {
           "value 1" : { "reference" : { "name" : "value 1" } },
           "value 2" : { "reference" : { "name" : "value 2" } }
@@ -257,7 +257,7 @@
     "arguments" : [{ "name" : "value 1" }, { "name" : "value 2" }],
     "meaning" : {
       "native_invocation" : {
-        "implementation" : "(function(os, args) { return new BoolMeaning(args[\"value 1\"].evaluate(os).boolValue() || args[\"value 2\"].evaluate(os).boolValue()) })",
+        "implementation" : "(function(os, args) { return new BoolMeaning(args[\"value 1\"].evaluate(os).boolValue() || args[\"value 2\"].evaluate(os).boolValue())",
         "arguments" : {
           "value 1" : { "reference" : { "name" : "value 1" } },
           "value 2" : { "reference" : { "name" : "value 2" } }
@@ -274,7 +274,7 @@
     "arguments" : [{ "name" : "value" }],
     "meaning" : {
       "native_invocation" : {
-        "implementation" : "(function(os, args) { return new BoolMeaning(args[\"value\"].evaluate(os).boolValue()) })",
+        "implementation" : "(function(os, args) { return new BoolMeaning(args[\"value\"].evaluate(os).boolValue())",
         "arguments" : { "value" : { "reference" : { "name" : "value" } } }
       }
     }
@@ -289,14 +289,14 @@
     "arguments" : [{ "name" : "value" }],
     "meaning" : {
       "native_invocation" : {
-        "implementation" : "(function(c, e, os, args) { evalArgs(function(eargs) { c(new BoolMeaning(!eargs[\"value\"].boolValue())) }, e, os, args, [\"value\"]) })",
+        "implementation" : "evalArgs(function(eargs) { c(new BoolMeaning(!eargs[\"value\"].boolValue())) }, e, os, args, [\"value\"])",
         "arguments" : { "value" : { "reference" : { "name" : "value" } } }
       }
     }
   },
-  "note-do" : { "id" : "note-do", "representations" : [ { "template" : "Do" } ], "arguments" : [], "meaning" : { "native_invocation" : { "implementation" : "(function(c, e, os, args) { c(new NumberMeaning(mtof(65))) })", "arguments" : {} } } },
-  "note-re" : { "id" : "note-re", "representations" : [ { "template" : "Re" } ], "arguments" : [], "meaning" : { "native_invocation" : { "implementation" : "(function(c, e, os, args) { c(new NumberMeaning(mtof(67))) })", "arguments" : {} } } },
-  "note-mi" : { "id" : "note-mi", "representations" : [ { "template" : "Mi" } ], "arguments" : [], "meaning" : { "native_invocation" : { "implementation" : "(function(c, e, os, args) { c(new NumberMeaning(mtof(69))) })", "arguments" : {} } } },
+  "note-do" : { "id" : "note-do", "representations" : [ { "template" : "Do" } ], "arguments" : [], "meaning" : { "native_invocation" : { "implementation" : "c(new NumberMeaning(mtof(65)))", "arguments" : {} } } },
+  "note-re" : { "id" : "note-re", "representations" : [ { "template" : "Re" } ], "arguments" : [], "meaning" : { "native_invocation" : { "implementation" : "c(new NumberMeaning(mtof(67)))", "arguments" : {} } } },
+  "note-mi" : { "id" : "note-mi", "representations" : [ { "template" : "Mi" } ], "arguments" : [], "meaning" : { "native_invocation" : { "implementation" : "c(new NumberMeaning(mtof(69)))", "arguments" : {} } } },
   "true" : {
     "id" : "true",
     "representations" : [
@@ -305,7 +305,7 @@
     "arguments" : [],
     "meaning" : {
       "native_invocation" : {
-        "implementation" : "(function(c, e, os, args) { c(new BoolMeaning(true)) })",
+        "implementation" : "c(new BoolMeaning(true))",
         "arguments" : {}
       }
     }
@@ -318,7 +318,7 @@
     "arguments" : [],
     "meaning" : {
       "native_invocation" : {
-        "implementation" : "(function(c, e, os, args) { c(new BoolMeaning(false)) })",
+        "implementation" : "c(new BoolMeaning(false))",
         "arguments" : {}
       }
     }
@@ -331,7 +331,7 @@
     "arguments" : [],
     "meaning" : {
       "native_invocation" : {
-        "implementation" : "(function(c, e, os, args) { c(new BoolMeaning(Math.random() > 0.5)) })",
+        "implementation" : "c(new BoolMeaning(Math.random() > 0.5))",
         "arguments" : {}
       }
     }
@@ -346,7 +346,7 @@
     "arguments" : [{ "name" : "action" }, { "name" : "variable name" }],
     "meaning" : {
       "native_invocation" : {
-        "implementation" : "(function(c, e, os, args) { evalArgs(function(eargs) { os.globals[eargs[\"variable name\"].stringValue(e)] = eargs[\"action\"]; c() }, e, os, args, [\"variable name\", \"action\"]) })",
+        "implementation" : "evalArgs(function(eargs) { os.globals[eargs[\"variable name\"].stringValue(e)] = eargs[\"action\"]; c() }, e, os, args, [\"variable name\", \"action\"])",
         "arguments" : {
           "action" : { "reference" : { "name" : "action" } },
           "variable name" : { "reference" : { "name" : "variable name" } }
@@ -363,7 +363,7 @@
     "arguments" : [{ "name" : "variable name" }],
     "meaning" : {
       "native_invocation" : {
-        "implementation" : "(function(c, e, os, args) { evalArgs(function(eargs) { c(os.globals[eargs[\"variable name\"].stringValue(e)]) }, e, os, args, [\"variable name\"]) })",
+        "implementation" : "evalArgs(function(eargs) { c(os.globals[eargs[\"variable name\"].stringValue(e)]) }, e, os, args, [\"variable name\"])",
         "arguments" : {
           "variable name" : { "reference" : { "name" : "variable name" } }
         }
@@ -380,7 +380,7 @@
     "arguments" : [{ "name" : "text 1" }, { "name" : "text 2" }],
     "meaning" : {
       "native_invocation" : {
-        "implementation" : "(function(os, args) { return new StringMeaning(args[\"text 1\"].evaluate(os).stringValue() + args[\"text 2\"].evaluate(os).stringValue()) })",
+        "implementation" : "(function(os, args) { return new StringMeaning(args[\"text 1\"].evaluate(os).stringValue() + args[\"text 2\"].evaluate(os).stringValue())",
         "arguments" : {
           "text 1": { "reference" : { "name" : "text 1" } },
           "text 2": { "reference" : { "name" : "text 2" } }
