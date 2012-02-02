@@ -1119,10 +1119,25 @@ function require(v, name, type) {
   }
 }
 
-var audioContext = new webkitAudioContext()
-var upmixer = new UpMixer(audioContext)
-var clicker = new ModalStrike(audioContext)
-var bar = new ModalBar(audioContext)
+var audioContext, upmixer, clicker, bar
+
+function initAudio() {
+  audioContext = new webkitAudioContext()
+  upmixer = new UpMixer(audioContext)
+  clicker = new ModalStrike(audioContext)
+  bar = new ModalBar(audioContext)
+  
+  upmixer.connect()
+  
+  globalOS.globals['xylo'] = bar
+  bar.setPreset(4)
+  bar.connect(upmixer)
+  // bar.strike(440, 0.1)
+  
+  clicker.setGain(0.1)
+  
+  $(window).scroll(function() { clicker.play(upmixer) })
+}
 
 function finishLoading() {
   $("#loading").hide()
@@ -1242,15 +1257,7 @@ function finishLoading() {
   //   }.bind(this)
   // })
   
-  upmixer.connect()
-  
-  globalOS.globals['xylo'] = bar
-  bar.setPreset(4)
-  bar.connect(upmixer)
-  // bar.strike(440, 0.1)
-  
-  clicker.setGain(0.1)
-  $(window).scroll(function() { clicker.play(upmixer) })
+  initAudio()
   
   flash($("body"), "blue")
 }
