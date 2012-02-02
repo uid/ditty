@@ -4,6 +4,14 @@ body {
   padding: 0;
   background: url(/assets/grid.jpg);
 }
+#loading {
+  margin: 0;
+  padding: 1em;
+}
+#loading p {
+  margin: 0;
+  padding: 0;
+}
 #program-container {
   padding: 1em;
   position: fixed;
