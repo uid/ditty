@@ -2,24 +2,24 @@
 
 <table>
   <tr>
+    <th></th>
+    <th></th>
+    <th></th>
     <th>ID</th>
     <th>Representations</th>
     <th>Arguments</th>
     <th>Meaning</th>
-    <th></th>
-    <th></th>
-    <th></th>
   </tr>
 
 <% @patterns.each do |pattern| %>
   <tr>
-    <td><%= pattern.id %></td>
-    <td><%= pattern.representations %></td>
-    <td><%= pattern.arguments %></td>
-    <td><%= pattern.meaning %></td>
     <td><%= link_to 'Show', admin_pattern_path(pattern) %></td>
     <td><%= link_to 'Edit', edit_admin_pattern_path(pattern) %></td>
     <td><%= link_to 'Destroy', admin_pattern_path(pattern), confirm: 'Are you sure?', method: :delete %></td>
+    <td><%= pattern.id %></td>
+    <td><pre><%= pattern.representations %></pre></td>
+    <td><pre><%= pattern.arguments %></pre></td>
+    <td><pre><%= pattern.meaning %></pre></td>
   </tr>
 <% end %>
 </table>
