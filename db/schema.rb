@@ -11,14 +11,15 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120202221843) do
+ActiveRecord::Schema.define(:version => 20120203010505) do
 
   create_table "patterns", :force => true do |t|
     t.text     "representations"
     t.text     "arguments"
     t.text     "meaning"
-    t.datetime "created_at",      :null => false
-    t.datetime "updated_at",      :null => false
+    t.datetime "created_at",                        :null => false
+    t.datetime "updated_at",                        :null => false
+    t.boolean  "show",            :default => true
   end
 
 end
