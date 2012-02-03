@@ -55,5 +55,8 @@ module Ditty
 
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
+    
+    # set this to false so that Heroku can precompile assets without trying to connect to the database
+    config.assets.initialize_on_precompile = false
   end
 end
