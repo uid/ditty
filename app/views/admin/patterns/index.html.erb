@@ -1,11 +1,14 @@
 <h1>Listing admin_patterns</h1>
 
+<p><%= link_to 'New Pattern', new_admin_pattern_path %></p>
+
 <table>
   <tr>
     <th></th>
     <th></th>
     <th></th>
     <th>ID</th>
+    <th>Key</th>
     <th>Show?</th>
     <th>Representations</th>
     <th>Arguments</th>
@@ -18,6 +21,7 @@
     <td><%= link_to 'Edit', edit_admin_pattern_path(pattern) %></td>
     <td><%= link_to 'Destroy', admin_pattern_path(pattern), confirm: 'Are you sure?', method: :delete %></td>
     <td><%= pattern.id %></td>
+    <td><%= pattern.key %></td>
     <td><%= pattern.show %></td>
     <td><pre><%= pattern.representations %></pre></td>
     <td><pre><%= pattern.arguments %></pre></td>
@@ -25,7 +29,3 @@
   </tr>
 <% end %>
 </table>
-
-<br />
-
-<%= link_to 'New Pattern', new_admin_pattern_path %>

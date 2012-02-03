@@ -4,12 +4,13 @@ class Pattern < ActiveRecord::Base
   validate :must_have_meaning
   
   def as_json options={}
-    {
+    json = {
       id: id,
       representations: representations_object,
       arguments: arguments_object,
       meaning: meaning_object
     }
+    json[:key] = key unless key.blank?
   end
   
   def representations_object
