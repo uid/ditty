@@ -18,7 +18,7 @@ body {
 #program-container {
   padding: 1em;
   position: fixed;
-  left: 42%;
+  left: 35%;
   top: 0;
   bottom: 0;
   right: 0;
@@ -63,14 +63,16 @@ ul.multislot li {
 }
 #palette-container {
   position: fixed;
-  left: 1em;
-  top: 1em;
-  bottom: 1em;
-  width: 40%;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 35%;
+  /*min-width: 15em;*/
+  border-right: 1px solid #ccc;
   /*border: 2px solid #ccc;*/
   overflow: auto;
   background: url(/assets/tex.jpg);
-  -webkit-border-radius: 10px;
+  /*-webkit-border-radius: 10px;*/
 }
 #palette-subcontainer {
   padding: 1em;
