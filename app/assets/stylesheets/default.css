@@ -180,10 +180,12 @@ ul.multislot li {
   line-height: 28px;
 }
 #bottom-toolbar {
-  display: none; /* yeah! */
   position: fixed;
   bottom: 1em;
   right: 1em;
+}
+#theme-switcher {
+  display: none;
 }
 #bubble-adder {
   padding: 0.5em;
