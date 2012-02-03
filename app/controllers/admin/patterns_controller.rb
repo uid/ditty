@@ -1,4 +1,6 @@
 class Admin::PatternsController < ApplicationController
+  layout "admin"
+  
   def index
     @patterns = Pattern.all
   end

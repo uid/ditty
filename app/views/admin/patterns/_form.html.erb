@@ -1,22 +1,52 @@
-<%= form_for(@pattern, :url => admin_pattern_path) do |f| %>
-  <% if @pattern.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@pattern.errors.count, "error") %> prohibited this pattern from being saved:</h2>
-
-      <ul>
-      <% @pattern.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
-      <% end %>
-      </ul>
-    </div>
-  <% end %>
-  
-  <p>Key: <%= f.text_field :key %></p>
-  <p>Representations: <%= f.text_area :representations %></p>
-  <p>Arguments: <%= f.text_area :arguments %></p>
-  <p>Meaning: <%= f.text_area :meaning %></p>
-
-  <div class="actions">
-    <%= f.submit %>
+<% if @pattern.errors.any? %>
+  <div class="well" style="display: inline-block">
+    <h2><%= pluralize(@pattern.errors.count, "error") %> prohibited this pattern from being saved:</h2>
+    <ul>
+    <% @pattern.errors.full_messages.each do |msg| %>
+      <li><%= msg %></li>
+    <% end %>
+    </ul>
   </div>
+<% end %>
+
+<%= form_for(@pattern, :url => admin_pattern_path, html: { class: "form-horizontal" }) do |f| %>
+  <fieldset>
+    <!-- <legend>Here's a form!</legend> -->
+    <div class="control-group">
+      <%= f.label :key, class: "control-label" %>
+      <div class="controls">
+        <%= f.text_field :key, class: "input-xlarge" %>
+        <p class="help-block">Optional. This is here for backward compatibility with Ditty prototypes and is being phased out.</p>
+      </div>
+    </div>
+    
+    <div class="control-group">
+      <%= f.label :representations, class: "control-label" %>
+      <div class="controls">
+        <%= f.text_area :representations, class: "input-xlarge span10", rows: text_area_rows_for(@pattern.representations), cols: nil %>
+        <p class="help-block">Example: <tt>[{ "template" : "Maybe [actions].", "style" : "block" }]</tt> Only 'template' is required.</p>
+      </div>
+    </div>
+    
+    <div class="control-group">
+      <%= f.label :arguments, class: "control-label" %>
+      <div class="controls">
+        <%= f.text_area :arguments, class: "input-xlarge span10", rows: text_area_rows_for(@pattern.arguments), cols: nil %>
+        <p class="help-block">Example: <tt>[{ "name" : "actions", "type" : "instructions" }]</tt> Only 'name' is required.</p>
+      </div>
+    </div>
+    
+    <div class="control-group">
+      <%= f.label :meaning, class: "control-label" %>
+      <div class="controls">
+        <%= f.text_area :meaning, class: "input-xlarge span10", rows: text_area_rows_for(@pattern.meaning), cols: nil %>
+        <p class="help-block">No way am I describing this one.</p>
+      </div>
+    </div>
+    
+    <div class="form-actions">
+      <%= f.submit class: "btn btn-primary" %>
+      <%= link_to "Cancel", :back, class: "btn" %>
+    </div>
+  </fieldset>
 <% end %>

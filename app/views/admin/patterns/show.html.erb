@@ -1,23 +1,28 @@
-<p id="notice"><%= notice %></p>
+<h1>Pattern</h1>
 
-<dl>
+<% if notice %><p id="notice"><%= notice %></p><% end %>
 
-<dt>ID</dt>
-<dd><%= @pattern.id %></dd>
+<p><%= link_to 'Edit', edit_admin_pattern_path(@pattern), class: "btn" %></p>
 
-<dt>Key</dt>
-<dd><%= @pattern.key %></dd>
-
-<dt>Representations</dt>
-<dd><pre><%= @pattern.representations %></pre></dd>
-
-<dt>Arguments</dt>
-<dd><pre><%= @pattern.arguments %></pre></dd>
-
-<dt>Meaning</dt>
-<dd><pre><%= @pattern.meaning %></pre></dd>
-
-</dl>
-
-<%= link_to 'Edit', edit_admin_pattern_path(@pattern) %> |
-<%= link_to 'Back', admin_patterns_path %>
+<table class="table th-top">
+  <tr>
+    <th>ID</th>
+    <td><%= @pattern.id %></td>
+  </tr>
+  <tr>
+		<th>Key</th>
+		<td><%= @pattern.key %></td>
+  </tr>
+  <tr>
+		<th>Representations</th>
+		<td><pre><%= @pattern.representations %></pre></td>
+  </tr>
+  <tr>
+		<th>Arguments</th>
+		<td><pre><%= @pattern.arguments %></pre></td>
+  </tr>
+  <tr>
+		<th>Meaning</th>
+		<td><pre><%= @pattern.meaning %></pre></td>
+  </tr>
+</table>

@@ -1,0 +1,9 @@
+/*
+ *= require twitter/bootstrap
+ */
+body {
+  padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+}
+table.th-top th {
+	vertical-align: top;
+}

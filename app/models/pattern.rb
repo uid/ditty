@@ -3,6 +3,8 @@ class Pattern < ActiveRecord::Base
   validate :must_have_arguments
   validate :must_have_meaning
   
+  after_initialize :set_default_values
+  
   def as_json options={}
     json = {
       id: id,
@@ -34,6 +36,12 @@ class Pattern < ActiveRecord::Base
   end
   
   protected
+    
+    def set_default_values
+      self.representations ||= "[\n\n]"
+      self.arguments ||= "[\n\n]"
+      self.meaning ||= "[\n\n]"
+    end
     
     def must_have_representations
       unless obj = valid_json?(representations)
