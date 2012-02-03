@@ -745,7 +745,7 @@ function PatternView(pattern, options) {
     clearSelection() // right-clicking usually selects the word under the cursor
     
     var menu = new MenuBuilder()
-    menu.add("Show Source", this.toggleSourceView.bind(this))
+    menu.add(this.sourceDom.is(":hidden") ? "Show Source" : "Hide Source", this.toggleSourceView.bind(this))
     var viewsMenu = menu.addSubmenu("Change View &rarr;")
     for(var i in this.pattern.representations) {
       var template = this.pattern.representations[i]
