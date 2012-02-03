@@ -12,11 +12,19 @@
 <%= form_for(@pattern, :url => admin_pattern_path, html: { class: "form-horizontal" }) do |f| %>
   <fieldset>
     <!-- <legend>Here's a form!</legend> -->
+    
     <div class="control-group">
       <%= f.label :key, class: "control-label" %>
       <div class="controls">
         <%= f.text_field :key, class: "input-xlarge" %>
         <p class="help-block">Optional. This is here for backward compatibility with Ditty prototypes and is being phased out.</p>
+      </div>
+    </div>
+    
+    <div class="control-group">
+      <%= f.label :show, class: "control-label" %>
+      <div class="controls">
+        <%= f.label :show, "#{f.check_box :show} Display in the palette by default?".html_safe, class: "checkbox" %>
       </div>
     </div>
     

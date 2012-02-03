@@ -1,17 +1,21 @@
 <h1>Pattern</h1>
 
-<% if notice %><p id="notice"><%= notice %></p><% end %>
+<% if notice %><p><%= notice %></p><% end %>
 
 <p><%= link_to 'Edit', edit_admin_pattern_path(@pattern), class: "btn" %></p>
 
 <table class="table th-top">
   <tr>
-    <th>ID</th>
+    <th class="span2">ID</th>
     <td><%= @pattern.id %></td>
   </tr>
   <tr>
 		<th>Key</th>
 		<td><%= @pattern.key %></td>
+  </tr>
+  <tr>
+		<th>Show?</th>
+		<td><% if @pattern.show %><i class="icon-ok"></i><% else %><i class="icon-remove"></i><% end %></td>
   </tr>
   <tr>
 		<th>Representations</th>
