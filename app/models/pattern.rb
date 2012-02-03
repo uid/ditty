@@ -3,6 +3,33 @@ class Pattern < ActiveRecord::Base
   validate :must_have_arguments
   validate :must_have_meaning
   
+  def as_json options={}
+    {
+      id: id,
+      representations: representations_object,
+      arguments: arguments_object,
+      meaning: meaning_object
+    }
+  end
+  
+  def representations_object
+    ActiveSupport::JSON.decode(representations)
+  rescue MultiJson::DecodeError
+    nil
+  end
+  
+  def arguments_object
+    ActiveSupport::JSON.decode(arguments)
+  rescue MultiJson::DecodeError
+    nil
+  end
+  
+  def meaning_object
+    ActiveSupport::JSON.decode(meaning)
+  rescue MultiJson::DecodeError
+    nil
+  end
+  
   protected
     
     def must_have_representations
