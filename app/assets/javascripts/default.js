@@ -499,17 +499,18 @@ function SlotView(parent, fillerText) {
       source: function(request, callback) {
         var matches = []
         if(/^[0-9.]+$/i.exec(request.term)) {
-          matches.push({ value: "number: " + request.term, result: new NumberPattern(parseFloat(request.term)) })
+          matches.push({ value: "number: " + request.term, result: function() { return new PatternView(new NumberPattern(parseFloat(request.term))) } })
         }
         if("true".indexOf(request.term) == 0 || "false".indexOf(request.term) == 0) {
           var value = (request.term.indexOf("t") != -1)
-          matches.push({ value: "boolean: " + value, result: new BoolPattern(value) })
+          matches.push({ value: "boolean: " + value, result: function() { return new PatternView(new BoolPattern(value)) } })
         }
         if(true) {
-          matches.push({ value: "text: \"" + request.term + "\"", result: new StringPattern(request.term) })
+          matches.push({ value: "text: \"" + request.term + "\"", result: function() { return new PatternView(new StringPattern(request.term)) } })
         }
         var keywords = request.term.toLowerCase().split(" ")
         for(var pattern in patterns) {
+          if(!isNaN(parseFloat(pattern))) continue // skip non-numeric keys (they're backward-compatibility dupes)
           for(var i in patterns[pattern].representations) {
             var template = patterns[pattern].representations[i].text.toLowerCase()
             var found = true
@@ -520,14 +521,19 @@ function SlotView(parent, fillerText) {
               }
             }
             if(found) {
-              matches.push({ value: patterns[pattern].representations[i].text, result: patterns[pattern] })
+              (function(pattern, i) {
+                matches.push({
+                  value: patterns[pattern].representations[i].text,
+                  result: function() { return new PatternView(patterns[pattern], { representationIndex: i }) }
+                })
+              })(pattern, i)
             }
           }
         }
         callback(matches);
       }.bind(this),
       select: function(event, ui) {
-        this.accept(new PatternView(ui.item["result"]))
+        this.accept(ui.item["result"]())
       }.bind(this),
       open: function() {
         input.data("menuOpen", true);
