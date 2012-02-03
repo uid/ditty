@@ -328,8 +328,18 @@ function ArgumentReference(name, type) {
 ArgumentReference.prototype.replacingReferences = function(argsHash) {
   return argsHash.get(this) || this
 }
+ArgumentReference.prototype.notifying = function(beginf, endf) {
+  this.notifyBeginF = beginf
+  this.notifyEndF = endf
+  return this
+}
 ArgumentReference.prototype.evaluate = function(c, e) {
+  if(this.notifyBeginF) this.notifyBeginF()
+  if(this.notifyEndF) this.notifyEndF()
   e(new Error("'" + this.name + "' is required"))
+}
+ArgumentReference.prototype.pattern = function() {
+  return new StringPattern("argument " + this.name)
 }
 
 function NativeMeaning(jsSource, args) {
@@ -414,13 +424,17 @@ function InvocationMeaning(patternId, args, options) {
 }
 InvocationMeaning.prototype._meaning = function() {
   if(!this.meaning) {
-    var pattern = patterns[this.patternId] // XXX
-    if(!pattern) {
-      throw new Error("couldn't find pattern '" + this.patternId + "'")
-    }
-    this.meaning = pattern.apply(this.args || {})
+    this.meaning = this.pattern().apply(this.args || {})
   }
   return this.meaning
+}
+InvocationMeaning.prototype.pattern = function() {
+  var pattern = patterns[this.patternId] // XXX
+  if(!pattern) {
+    throw new Error("couldn't find pattern '" + this.patternId + "'")
+  }
+  
+  return pattern
 }
 InvocationMeaning.prototype.replacingReferences = function(argsHash) {
   return this._meaning().replacingReferences(argsHash)
@@ -678,6 +692,96 @@ SlotView.prototype.meaning = function() {
 }
 
 
+// MULTI-SLOT VIEW
+
+function MultiSlotView(parent, fillerText, showExtraSlot) {
+  this.parent = parent
+  this.fillerText = fillerText
+  this.showExtraSlot = showExtraSlot
+  this.slotViews = []
+
+  // create dom
+  this.dom = $("<ul class='multislot'></ul>")
+  setObjFor(this.dom, this)
+  
+  this.refresh()
+}
+MultiSlotView.prototype.accept = function(views) {
+  this.massAccepting = true
+  
+  try {
+    if(!(views instanceof Array)) {
+      views = [views]
+    }
+    if(views.length > 0) {
+      this.dom.text("")
+      $("<li class='inbetweener'></li>").append(new SlotView(this, "").dom).appendTo(this.dom)
+      for(var i in views) {
+        var slotView = new SlotView(this, this.fillerText)
+        slotView.accept(views[i])
+        $("<li></li>").append(slotView.dom).appendTo(this.dom)
+        $("<li class='inbetweener'></li>").append(new SlotView(this, "").dom).appendTo(this.dom)
+      }
+    }
+  } finally {
+    this.massAccepting = false
+  }
+}
+MultiSlotView.prototype.refresh = function() {
+  var lis = this.dom.children("li").toArray()
+  if(lis.length == 0) {
+    $("<li></li>").append(new SlotView(this, this.fillerText).dom).appendTo(this.dom)
+    return
+  }
+  var prevHadChild = true
+  for(var i in lis) {
+    var slotView = objFor($(lis[i]).children(".slot").first())
+    if(slotView.isEmpty()) {
+      if(!prevHadChild) {
+        $(lis[i]).remove()
+      } else {
+        $(lis[i]).addClass("inbetweener")
+      }
+    } else {
+      if(prevHadChild) {
+        $("<li class='inbetweener'></li>").append(new SlotView(this, "").dom).insertBefore($(lis[i]))
+      }
+      $(lis[i]).removeClass("inbetweener")
+    }
+    prevHadChild = !slotView.isEmpty()
+  }
+  if(prevHadChild) {
+    $("<li class='inbetweener'></li>").append(new SlotView(this, "").dom).appendTo(this.dom)
+  }
+  lis = this.dom.children("li").toArray()
+  if(lis.length == 1) {
+    $(lis[lis.length - 1]).replaceWith($("<li></li>").append(new SlotView(this, this.fillerText).dom))
+  } else if (this.showExtraSlot) {
+    var li = $("<li></li>")
+    $(lis[lis.length - 1]).replaceWith(li.append(new SlotView(this, "").dom))
+    li.addClass("inbetweener")
+  }
+}
+MultiSlotView.prototype.beenDraggedUpon = function() {
+  if(!this.massAccepting)
+    this.refresh()
+}
+MultiSlotView.prototype.beenDraggedOutOf = function() {
+  this.refresh()
+}
+MultiSlotView.prototype.meaning = function() {
+  var lis = this.dom.children("li").toArray()
+  var meanings = []
+  for(var i in lis) {
+    var slotView = objFor($(lis[i]).children(".slot").first())
+    if(!slotView.isEmpty()) {
+      meanings.push(slotView.meaning())
+    }
+  }
+  return new Meaning(meanings)
+}
+
+
 // PATTERN VIEW
 
 function PatternView(pattern, options) {
@@ -876,7 +980,13 @@ PatternView.prototype.meaning = function() {
   }
   return this.pattern.apply(args).notifying(this.becameActive.bind(this), this.becameInactive.bind(this))
 }
+PatternView.prototype.acceptArgument = function(argumentName, view) {
+  this.slotViewsByParam[argumentName].accept(view)
+}
 PatternView.prototype.toggleSourceView = function(instant) {
+  if(this.sourceDom.is(":hidden")) {
+    this.source.accept(_.map(this.pattern.meaning.components, createView))
+  }
   this.sourceDom.animate(
     { height: 'toggle' },
     { duration: instant ? 0 : 300 }
@@ -910,71 +1020,109 @@ PatternView.prototype.rootEval = function(os) {
 }
 
 
-// MULTI-SLOT VIEW
+// ARGUMENT REFERENCE VIEW VIEW
 
-function MultiSlotView(parent, fillerText, showExtraSlot) {
-  this.parent = parent
-  this.fillerText = fillerText
-  this.showExtraSlot = showExtraSlot
-  this.slotViews = []
+function ArgumentReferenceView(argumentReference, options) {
+  options = options || {}
+  
+  this.argumentReference = argumentReference
+  if(options.parent)
+    this.setParent(options.parent)
+  
+  this.activeCount = 0
 
   // create dom
-  this.dom = $("<ul class='multislot'></ul>")
+  this.dom = $("<div class='expression'></div>")
   setObjFor(this.dom, this)
   
-  this.refresh()
+  // set title
+  this.dom.text(this.argumentReference.name)
+  
+  // draggable
+  this.dom.draggable({
+    cursor: "move",
+    helper: function() {
+      return $("<div class='expression-drag-helper'></div>")
+    },
+    appendTo: "body",
+    cursorAt: { left: 8, top: 8 },
+    revert: "invalid",
+    revertDuration: 300,
+    stack: "#palette",
+    start: function(event, ui) { 
+      this.dom.addClass("dragging")
+      this.noclick = true
+    }.bind(this),
+    stop: function(event, ui) {
+      this.dom.removeClass("dragging")
+      setTimeout(function() { delete this.noclick }.bind(this), 100)
+    }.bind(this),
+  })
+  
+  // right-clickable
+  this.dom.bind('contextmenu', function(e) {
+    clearSelection() // right-clicking usually selects the word under the cursor
+    
+    var menu = new MenuBuilder()
+    menu.add("Delete", function() { this.parent.release(this) }.bind(this))
+    menu.open(e)
+    
+    return false
+ }.bind(this));
 }
-MultiSlotView.prototype.refresh = function() {
-  var lis = this.dom.children("li").toArray()
-  if(lis.length == 0) {
-    $("<li></li>").append(new SlotView(this, this.fillerText).dom).appendTo(this.dom)
+ArgumentReferenceView.prototype.toString = function() {
+  return "ArgumentReferenceView(" + this.argumentReference + ")"
+}
+ArgumentReferenceView.prototype.setParent = function(parent) {
+  if(this.parent == parent)
     return
+  if(this.parent)
+    this.parent.release(this)
+  if(parent)
+    this.parent = parent
+  else
+    delete this.parent
+}
+ArgumentReferenceView.prototype.becameActive = function() {
+  flash(this.expressionDom, "green")
+  if(this.activeCount == 0) {
+    this.dom.addClass("active")
   }
-  var prevHadChild = true
-  for(var i in lis) {
-    var slotView = objFor($(lis[i]).children(".slot").first())
-    if(slotView.isEmpty()) {
-      if(!prevHadChild) {
-        $(lis[i]).remove()
+  this.activeCount++
+}
+ArgumentReferenceView.prototype.becameInactive = function() {
+  this.activeCount--
+  if(this.activeCount == 0) {
+    this.dom.removeClass("active")
+  }
+}
+ArgumentReferenceView.prototype.meaning = function() {
+  return this.argumentReference.notifying(this.becameActive.bind(this), this.becameInactive.bind(this))
+}
+
+
+// CREATE VIEW
+// takes an invocation or argument refrence or what-have-you and creates the proper view
+
+function createView(unit) {
+  if(unit instanceof InvocationMeaning) {
+    var patternView = new PatternView(unit.pattern())
+    
+    for(var argName in unit.args) {
+      var arg = unit.args[argName]
+      var argViews = _.map(arg.components, createView)
+      if(argViews.length == 1) {
+        patternView.acceptArgument(argName, argViews[0])
       } else {
-        $(lis[i]).addClass("inbetweener")
+        patternView.acceptArgument(argName, argViews)
       }
-    } else {
-      if(prevHadChild) {
-        $("<li class='inbetweener'></li>").append(new SlotView(this, "").dom).insertBefore($(lis[i]))
-      }
-      $(lis[i]).removeClass("inbetweener")
     }
-    prevHadChild = !slotView.isEmpty()
+    return patternView
+  } else if(unit instanceof ArgumentReference) {
+    return new ArgumentReferenceView(unit)
+  } else {
+    throw new Error("what kind of unit is this?")
   }
-  if(prevHadChild) {
-    $("<li class='inbetweener'></li>").append(new SlotView(this, "").dom).appendTo(this.dom)
-  }
-  lis = this.dom.children("li").toArray()
-  if(lis.length == 1) {
-    $(lis[lis.length - 1]).replaceWith($("<li></li>").append(new SlotView(this, this.fillerText).dom))
-  } else if (this.showExtraSlot) {
-    var li = $("<li></li>")
-    $(lis[lis.length - 1]).replaceWith(li.append(new SlotView(this, "").dom))
-    li.addClass("inbetweener")
-  }
-}
-MultiSlotView.prototype.beenDraggedUpon = function() {
-  this.refresh()
-}
-MultiSlotView.prototype.beenDraggedOutOf = function() {
-  this.refresh()
-}
-MultiSlotView.prototype.meaning = function() {
-  var lis = this.dom.children("li").toArray()
-  var meanings = []
-  for(var i in lis) {
-    var slotView = objFor($(lis[i]).children(".slot").first())
-    if(!slotView.isEmpty()) {
-      meanings.push(slotView.meaning())
-    }
-  }
-  return new Meaning(meanings)
 }
 
 
@@ -1206,11 +1354,14 @@ function environmentLoaded() {
     myCode.toggleSourceView(true /* instant */)
     return myCode
   }
-  newBubble()
   $("#bubble-adder").click(function() {
     var bubble = newBubble()
     $(this).effect("transfer", { to: bubble.dom }, 200)
   })
+  
+  // create a default bubble
+  
+  newBubble()
   
   // set up styles/behavior for right-click menus
   
