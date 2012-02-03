@@ -106,38 +106,39 @@ ul.multislot li {
   left: -8px;
   z-index: -2;
 }
-.expression {
+.argument-reference {
+  background: #dfd;
+  display: inline-block;
+  line-height: 27px;
+  white-space: nowrap;
+  padding: 0 4px;
+  vertical-align: middle;
+  margin: 2px;
+  -webkit-border-radius: 4px;
+  border: 1px solid black;
   cursor: hand;
 }
-.colorful .expression, .minimal #palette .expression {
+.expression {
   background: #fff;
-  line-height: 35px;
-  padding: 0 8px;
   display: inline-block;
+  line-height: 35px;
+  white-space: nowrap;
+  padding: 0 8px;
   vertical-align: middle;
   margin: 2px;
   -webkit-border-radius: 10px;
   border: 1px solid black;
+  cursor: hand;
 }
-.colorful .expression.active {
+.expression.active {
   background-color: #efe;
   border-color: #0f0;
   border-style: dashed;
 }
-.colorful .source.active {
+.source.active {
   background-color: #efe;
   border-color: #0f0;
   border-style: dashed;
-}
-#palette .expression {
-  white-space: nowrap; /* inline-block overrides this? */
-}
-.minimal .expression {
-  /*padding-right: .5ex;*/
-  /*border: 1px solid white;*/
-}
-.minimal .expression:hover {
-  border: 1px solid black;
 }
 .expression-container.dragging .expression {
   background: white;
@@ -150,7 +151,7 @@ ul.multislot li {
   -webkit-border-radius: 4px;
   border: 1px solid black;
 }
-.colorful .slot.unfilled {
+.slot.unfilled {
   /*
   background: #633;
   color: white;
@@ -162,21 +163,10 @@ ul.multislot li {
   line-height: 28px;
   border: 1px solid #dde;
 }
-.colorful .slot.filled {
-}
-.minimal .slot.unfilled {
-  background: #eef;
-  -webkit-border-radius: 4px;
-  padding: 3px;
-  line-height: 28px;
-  color: #900;
-  border: 1px solid #dde;
+.slot.filled {
 }
 .slot.hover {
   background: #fcc !important;
-}
-.minimal li {
-  line-height: 28px;
 }
 #bottom-toolbar {
   position: fixed;

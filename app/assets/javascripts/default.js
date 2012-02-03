@@ -1032,7 +1032,7 @@ function ArgumentReferenceView(argumentReference, options) {
   this.activeCount = 0
 
   // create dom
-  this.dom = $("<div class='expression'></div>")
+  this.dom = $("<div class='argument-reference'></div>")
   setObjFor(this.dom, this)
   
   // set title
