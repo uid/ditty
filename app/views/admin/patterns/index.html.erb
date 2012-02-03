@@ -1,0 +1,29 @@
+<h1>Listing admin_patterns</h1>
+
+<table>
+  <tr>
+    <th>ID</th>
+    <th>Representations</th>
+    <th>Arguments</th>
+    <th>Meaning</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @patterns.each do |pattern| %>
+  <tr>
+    <td><%= pattern.id %></td>
+    <td><%= pattern.representations %></td>
+    <td><%= pattern.arguments %></td>
+    <td><%= pattern.meaning %></td>
+    <td><%= link_to 'Show', admin_pattern_path(pattern) %></td>
+    <td><%= link_to 'Edit', edit_admin_pattern_path(pattern) %></td>
+    <td><%= link_to 'Destroy', admin_pattern_path(pattern), confirm: 'Are you sure?', method: :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Pattern', new_admin_pattern_path %>

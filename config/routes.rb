@@ -1,6 +1,10 @@
 Ditty::Application.routes.draw do
   root :to => "default#home"
   get "default/patterns"
+  
+  namespace :admin do
+    resources :patterns
+  end
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
