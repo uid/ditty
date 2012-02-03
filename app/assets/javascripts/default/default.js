@@ -1267,7 +1267,7 @@ function finishLoading() {
 
 $(function() {
   $.ajax({
-    url: "<%= Ditty::Application.routes.url_helpers.default_patterns_path :format => "json" %>",
+    url: "/default/patterns.json",
     dataType: "json",
     success: function(data) {
       compilePatterns(data)
