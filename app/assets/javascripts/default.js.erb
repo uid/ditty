@@ -36,7 +36,8 @@ function compilePatterns(json) {
   for(var i in json) {
     if("show" in json[i] && !json[i]["show"]) continue
     try {
-      patterns[i] = new JsonPatternUnarchiver().unarchive(json[i])
+      // XXX for now, index patterns by both ID and key
+      patterns[json[i]["id"]] = patterns[json[i]["key"]] = new JsonPatternUnarchiver().unarchive(json[i])
     } catch(e) {
       $.achtung({ message: "Couldn't load pattern '" + i + "': " + e.message, timeout: 5 })
     }
@@ -48,10 +49,11 @@ function JsonPatternUnarchiver() {
 JsonPatternUnarchiver.prototype.unarchive = function(json) {
   this.references = {}
   this.id = json["id"]
+  this.key = json["key"]
   var representations = _.map(json["representations"], this._representation.bind(this))
   var args = _.inject(_.map(json["arguments"], this._arg.bind(this)), function(obj, ref) { obj[ref.name] = ref; return obj }, {})
   var meaning = this._meaning(json["meaning"])
-  return new Pattern(this.id, representations, args, meaning)
+  return new Pattern(this.id, this.key, representations, args, meaning)
 }
 JsonPatternUnarchiver.prototype._representation = function(json) {
   if(json["template"]) {
@@ -192,8 +194,9 @@ _BasicPattern.prototype.addRepresentation = function(repr) {
   return this.representations.length - 1
 }
 
-function Pattern(id, representations, references, meaning) {
+function Pattern(id, key, representations, references, meaning) {
   this.id = id
+  this.key = key
   this.representations = representations
   this.meaning = meaning
   this.references = references
@@ -201,7 +204,7 @@ function Pattern(id, representations, references, meaning) {
 }
 extend(Pattern, _BasicPattern)
 Pattern.prototype.toString = function() {
-  return "Pattern(" + this.id + ")"
+  return "Pattern(" + this.id + "/" + this.key + ")"
 }
 Pattern.prototype.apply = function(args) {
   // args is a map from argument name to value
@@ -209,7 +212,7 @@ Pattern.prototype.apply = function(args) {
   var argsHash = new Hashtable()
   for(var i in args) {
     if(!(i in this.references)) {
-      throw new Error("argument '" + i + "' doesn't exist in pattern '" + this.id + "'")
+      throw new Error("argument '" + i + "' doesn't exist in pattern '" + this.id + "/" + this.key + "'")
     }
     argsHash.put(this.references[i], args[i])
   }

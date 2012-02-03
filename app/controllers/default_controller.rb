@@ -3,8 +3,9 @@ class DefaultController < ApplicationController
   end
   
   def patterns
+    @patterns = Pattern.all
     respond_to do |format|
-      format.json
+      format.json { render json: @patterns }
     end
   end
 end
