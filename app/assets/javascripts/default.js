@@ -1020,7 +1020,7 @@ PatternView.prototype.rootEval = function(os) {
 }
 
 
-// ARGUMENT REFERENCE VIEW VIEW
+// ARGUMENT REFERENCE VIEW
 
 function ArgumentReferenceView(argumentReference, options) {
   options = options || {}
@@ -1101,6 +1101,67 @@ ArgumentReferenceView.prototype.meaning = function() {
 }
 
 
+// NATIVE MEANING (JavaScript) VIEW
+
+function NativeCodeView(nativeMeaning, options) {
+  options = options || {}
+  
+  this.nativeMeaning = nativeMeaning
+  if(options.parent)
+    this.setParent(options.parent)
+  
+  this.activeCount = 0
+
+  // create dom
+  this.dom = $("<div class='expression'></div>")
+  setObjFor(this.dom, this)
+  
+  // set title
+  this.dom.text("[built-in]")
+  
+  // right-clickable
+  this.dom.bind('contextmenu', function(e) {
+    clearSelection() // right-clicking usually selects the word under the cursor
+    
+    var menu = new MenuBuilder()
+    menu.add("Delete", function() { this.parent.release(this) }.bind(this))
+    menu.add("Show Source", function() { alert(this.nativeMeaning.jsSource) }.bind(this))
+    menu.open(e)
+    
+    return false
+ }.bind(this));
+}
+NativeCodeView.prototype.toString = function() {
+  return "NativeCodeView(" + this.argumentReference + ")"
+}
+NativeCodeView.prototype.setParent = function(parent) {
+  if(this.parent == parent)
+    return
+  if(this.parent)
+    this.parent.release(this)
+  if(parent)
+    this.parent = parent
+  else
+    delete this.parent
+}
+NativeCodeView.prototype.becameActive = function() {
+  flash(this.expressionDom, "green")
+  if(this.activeCount == 0) {
+    this.dom.addClass("active")
+  }
+  this.activeCount++
+}
+NativeCodeView.prototype.becameInactive = function() {
+  this.activeCount--
+  if(this.activeCount == 0) {
+    this.dom.removeClass("active")
+  }
+}
+NativeCodeView.prototype.meaning = function() {
+  return this.nativeMeaning.notifying(this.becameActive.bind(this), this.becameInactive.bind(this))
+}
+
+
 // CREATE VIEW
 // takes an invocation or argument refrence or what-have-you and creates the proper view
 
@@ -1120,6 +1181,8 @@ function createView(unit) {
     return patternView
   } else if(unit instanceof ArgumentReference) {
     return new ArgumentReferenceView(unit)
+  } else if(unit instanceof NativeMeaning) {
+    return new NativeCodeView(unit)
   } else {
     throw new Error("what kind of unit is this?")
   }
