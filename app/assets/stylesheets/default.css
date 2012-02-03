@@ -85,6 +85,7 @@ ul.multislot li {
 .expression-container {
   display: inline-block;
   position: relative;
+  vertical-align: middle;
   z-index: 0;
 }
 .expression-container .title-expression {
