@@ -4,34 +4,11 @@ var patterns = {}
 
 var globalOS = { globals: {} }
 
-// performs map (only for Arrays!) in CPS style
-// calls f(c, e, arrayIndex, arrayValue) for each item
-// calls c(resultingArray)
-function cpsMap(f, c, e, arr) {
-  var results = []
-  var loop = function(i) {
-    if(i >= arr.length) {
-      c(results)
-    } else {
-      f(function(result) {
-        results.push(result)
-        loop(i + 1)
-      }, e, i, arr[i])
-    }
-  }
-  loop(0)
-}
 
-// helper function for evaluating several arguments in CPS style
-function evalArgs(c, e, os, args, which) {
-  var evaledArgs = {}
-  cpsMap(function(cc, e, i, argName) {
-    args[argName].evaluate(function(result) { evaledArgs[argName] = result; cc() }, e, os)
-  },
-  function(results) {
-    c(evaledArgs)
-  }, e, which)
-}
+///////////////////////////////////////////////
+///// BEGIN SERIALIZATION /////////////////////
+///////////////////////////////////////////////
+
 
 function compilePatterns(json) {
   for(var i in json) {
@@ -111,6 +88,11 @@ JsonPatternUnarchiver.prototype._reference = function(json) {
 }
 
 
+///////////////////////////////////////////////
+///// BEGIN UTILITIES /////////////////////////
+///////////////////////////////////////////////
+
+
 // copied from: http://www.kevlindev.com/tutorials/javascript/inheritance/index.htm#Anchor-Creatin-49778
 function extend(subClass, baseClass) {
    function inheritance() {}
@@ -122,17 +104,20 @@ function extend(subClass, baseClass) {
    subClass.superClass = baseClass.prototype;
 }
 
+// extremely basic HTML escape
 function escapeHTML(str) {
   return (str || "").replace(/&/g,'&amp;').replace(/>/g,'&gt;').replace(/</g,'&lt;')
 }
 
-function objFor(html) {
-  return $(html).data("obj")
+// set and get objects associated with dom elements
+function objFor(dom) {
+  return $(dom).data("obj")
 }
-function setObjFor(html, obj) {
-  $(html).data("obj", obj)
+function setObjFor(dom, obj) {
+  $(dom).data("obj", obj)
 }
 
+// clears any selected text in the window
 function clearSelection() {
   if(window.getSelection) {
     if(window.getSelection().empty) {  // Chrome
@@ -145,7 +130,7 @@ function clearSelection() {
   }
 }
 
-// returns true if all the items are == to one in b, in any order, and the reverse
+// set equality: returns true if all the items in a are == to one in b, in any order, and the reverse
 function setEq(a, b) {
   if(a.length != b.length) return false
   for(var i in a) {
@@ -171,10 +156,64 @@ function setEq(a, b) {
   return true
 }
 
+// CPS-style map for arrays
+// calls f(c, e, arrayIndex, arrayValue) for each item
+// calls c(resultingArray) when finished
+function cpsMap(f, c, e, arr) {
+  var results = []
+  var loop = function(i) {
+    if(i >= arr.length) {
+      c(results)
+    } else {
+      f(function(result) {
+        results.push(result)
+        loop(i + 1)
+      }, e, i, arr[i])
+    }
+  }
+  loop(0)
+}
 
-// GLOBALS
-var paletteView;
 
+///////////////////////////////////////////////
+///// BEGIN LANGUAGE //////////////////////////
+///////////////////////////////////////////////
+
+
+// TEMPLATES
+
+function Template(text, options) {
+  options = options || {}
+  
+  this.text = text
+  this.style = options["style"] || "inline"
+  this.components = []
+  this.params = [] // TODO: rename to args
+  this.args = this.params
+  var result
+  var i = 0
+  
+  var paramRegexp = /\[([^\]]+)\]/gi
+  while((result = paramRegexp.exec(text)) != null) {
+    var nonParamText = text.slice(i, paramRegexp.lastIndex - result[1].length - 2)
+    if(nonParamText != "")
+      this.components.push(nonParamText)
+    this.components.push("[" + result[1] + "]")
+    this.params.push(result[1])
+    i = paramRegexp.lastIndex
+  }
+  var nonParamText = text.slice(i)
+  if(nonParamText != "")
+    this.components.push(nonParamText)
+}
+function ExplicitTemplate(text) {
+  this.text = text
+  this.components = [text]
+  this.params = []
+}
+
+
+// PATTERNS
 
 function _BasicPattern() {
 }
@@ -260,12 +299,37 @@ StringPattern.prototype.apply = function(args) {
   return this.meaning
 }
 
+
+// MEANINGS
+
+// helper function for evaluating several arguments in CPS style
+function evalArgs(c, e, os, args, which) {
+  var evaledArgs = {}
+  cpsMap(function(cc, e, i, argName) {
+    args[argName].evaluate(function(result) { evaledArgs[argName] = result; cc() }, e, os)
+  },
+  function(results) {
+    c(evaledArgs)
+  }, e, which)
+}
+
 function argsReplacingReferences(oldArgs, argsHash) {
   var newArgs = {}
   for(var argName in oldArgs) {
     newArgs[argName] = oldArgs[argName].replacingReferences(argsHash)
   }
   return newArgs
+}
+
+function ArgumentReference(name, type) {
+  this.name = name
+  this.type = type
+}
+ArgumentReference.prototype.replacingReferences = function(argsHash) {
+  return argsHash.get(this) || this
+}
+ArgumentReference.prototype.evaluate = function(c, e) {
+  e(new Error("'" + this.name + "' is required"))
 }
 
 function NativeMeaning(jsSource, args) {
@@ -285,17 +349,6 @@ NativeMeaning.prototype.evaluate = function(c, e, os) {
     }
   }
   this.f(c, e, os, this.args)
-}
-
-function ArgumentReference(name, type) {
-  this.name = name
-  this.type = type
-}
-ArgumentReference.prototype.replacingReferences = function(argsHash) {
-  return argsHash.get(this) || this
-}
-ArgumentReference.prototype.evaluate = function(c, e) {
-  e(new Error("'" + this.name + "' is required"))
 }
 
 function Meaning(components) {
@@ -459,12 +512,23 @@ ExceptionMeaning.prototype.toString = function() {
 ///////////////////////////////////////////////
 
 
+// GLOBALS
+var paletteView
+
+
+// wraps a jQuery event handler function
+// only propagates the event if e.target == e.currentTarget
+// (this is false when a click lands on multiple elements and one is on top)
 function ifTarget(f) {
   return function(e) {
     if(e.target != e.currentTarget) return
     f.apply(null /* this */, arguments)
   }
 }
+
+
+// SLOT VIEW
+
 function SlotView(parent, fillerText) {
   this.parent = parent
   this.fillerText = fillerText
@@ -613,80 +677,8 @@ SlotView.prototype.meaning = function() {
   }
 }
 
-function CodeCanvasView() {
-  this.patternViews = []
-  
-  // create dom
-  this.dom = $("<div class='code-canvas'></div>")
-  setObjFor(this.dom, this)
 
-  // this.dom.droppable({
-  //   // accept: "#palette .expression",
-  //   hoverClass: 'hover',
-  //   drop: function(event, ui) {
-  //     var patternView = objFor(ui.draggable)
-  //     this.accept(patternView)
-  //   }.bind(this)
-  // });
-  // this.dom.droppable("disable")
-}
-CodeCanvasView.prototype.toString = function() {
-  return "CodeCanvasView()"
-}
-CodeCanvasView.prototype.accept = function(patternView) {
-  // change linkage
-  this.patternViews.push(patternView)
-  patternView.setParent(this)
-
-  // move patternView into the canvas
-  patternView.dom.appendTo(this.dom)
-}
-CodeCanvasView.prototype.release = function(child) {
-  // if(this.patternView == child) {
-  //   delete this.patternView
-
-  //   // change appearance to filled
-  //   this.dom.removeClass("filled")
-  //   this.dom.addClass("unfilled")
-
-  //   child.dom.detach()
-  //   this.setFiller()
-  //   this.makeActive()
-    
-  //   if(this.parent.beenDraggedOutOf)
-  //     this.parent.beenDraggedOutOf()
-  // }
-}
-
-function Template(text, options) {
-  options = options || {}
-  
-  this.text = text
-  this.style = options["style"] || "inline"
-  this.components = []
-  this.params = [] // TODO: rename to args
-  this.args = this.params
-  var result
-  var i = 0
-  
-  var paramRegexp = /\[([^\]]+)\]/gi
-  while((result = paramRegexp.exec(text)) != null) {
-    var nonParamText = text.slice(i, paramRegexp.lastIndex - result[1].length - 2)
-    if(nonParamText != "")
-      this.components.push(nonParamText)
-    this.components.push("[" + result[1] + "]")
-    this.params.push(result[1])
-    i = paramRegexp.lastIndex
-  }
-  var nonParamText = text.slice(i)
-  if(nonParamText != "")
-    this.components.push(nonParamText)
-}
-function ExplicitTemplate(text) {
-  this.text = text
-  this.components = [text]
-  this.params = []
-}
+// PATTERN VIEW
 
 function PatternView(pattern, options) {
   options = options || {}
@@ -843,8 +835,6 @@ PatternView.prototype.buildDom = function() {
     else
       this.expressionDom.append(this.convertedComponents[i].dom)
   }
-  // var template = this.pattern.representations[this.representationIndex]
-  // this.expressionDom.css("display", template.style == "block" ? "inline-block" : "inline")
 }
 PatternView.prototype.setParent = function(parent) {
   if(this.parent == parent)
@@ -919,6 +909,9 @@ PatternView.prototype.rootEval = function(os) {
   }
 }
 
+
+// MULTI-SLOT VIEW
+
 function MultiSlotView(parent, fillerText, showExtraSlot) {
   this.parent = parent
   this.fillerText = fillerText
@@ -984,6 +977,9 @@ MultiSlotView.prototype.meaning = function() {
   return new Meaning(meanings)
 }
 
+
+// PALETTE
+
 function PaletteView() {
   this.patternViews = {}
   this.patterns = {}
@@ -1011,18 +1007,6 @@ PaletteView.prototype._append = function(patternView) {
   this.dom.append(" ") // keep white-space in-between, helps with wrapping and spacing
   this.dom.append(patternView.dom)
 }
-// PaletteView.prototype.accept = function(patternView) {
-//   // don't add twice
-//   if(patternView.pattern.id in this.patternViews) {
-//     patternView.setParent(null)
-//     patternView.dom.detach()
-//   } else {
-//     // change linkage
-//     this.items[patternView.pattern.id] = patternView
-//     patternView.setParent(this)
-//     this._append(patternView)
-//   }
-// }
 PaletteView.prototype.release = function(patternView) {
   var patternId = patternView.pattern.id
   var pattern = this.patterns[patternId]
@@ -1033,6 +1017,9 @@ PaletteView.prototype.release = function(patternView) {
   }
   patternView.dom.detach()
 }
+
+
+// FLASH
 
 // sends a gradient through the background of the given HTML element
 // (if color is unspecified, it will be red)
@@ -1047,6 +1034,9 @@ function flash(elem, color) {
     { duration: 300, complete: function() { elem.css("background", "") } }
   )
 }
+
+
+// RIGHT-CLICK MENU BUILDER
 
 function MenuBuilder() {
   this.items = []
@@ -1116,6 +1106,9 @@ MenuBuilder.prototype._appendTo = function(parentDom) {
   }
 }
 
+
+// THEME
+
 var themes = ["colorful", "minimal"]
 var themeIndex = 0
 function changeTheme() {
@@ -1124,13 +1117,8 @@ function changeTheme() {
   $("body").addClass(themes[themeIndex])
 }
 
-function require(v, name, type) {
-  if(typeof v === "undefined") {
-    throw new Error(name + " is required")
-  } else if(type && (typeof v !== type)) {
-    throw new Error(name + " must be a " + type + ", but it's a " + (typeof v))
-  }
-}
+
+// AUDIO
 
 var audioContext, upmixer, clicker, bar
 
@@ -1152,15 +1140,41 @@ function initAudio() {
   $(window).scroll(function() { clicker.play(upmixer) })
 }
 
-function finishLoading() {
+
+// INITIALIZATION
+
+function loadEnvironment() {
+  $.ajax({
+    url: "/default/patterns.json",
+    dataType: "json",
+    success: function(data) {
+      compilePatterns(data)
+      environmentLoaded()
+    },
+    error: function() {
+      $("#loading").text("I'm sorry, for some reason the ditty environment could not be loaded.")
+    }
+  })
+}
+
+function environmentLoaded() {
+  // hide the loading screen
+  
   $("#loading").hide()
   $("#container").show()
   
+  // set up theme
+  
   $("body").addClass(themes[themeIndex])
+  $("#theme-switcher").click(changeTheme)
+  
+  // set up global dragging styles
   
   $("body").addClass("no-drag-in-progress")
   $("body").bind("dragstart", function() { $("body").removeClass("no-drag-in-progress"); $("body").addClass("drag-in-progress") })
   $("body").bind("dragstop", function() { $("body").addClass("no-drag-in-progress"); $("body").removeClass("drag-in-progress") })
+  
+  // set up palette
   
   paletteView = new PaletteView()
   $("#palette").append(paletteView.dom)
@@ -1172,54 +1186,20 @@ function finishLoading() {
   paletteView.add(patterns["note-mi"])
   
   paletteView.addSection("Timing")
-  paletteView.add(patterns["wait-seconds"])
-  paletteView.add(patterns["after-seconds"])
   paletteView.add(patterns["after-beats"])
   
-  // paletteView.addSection("User Interaction")
-  // paletteView.add(patterns["prompt"])
-  // paletteView.add(patterns["alert"])
-  // paletteView.add(patterns["after"])
-  
   paletteView.addSection("Program Flow")
-  // paletteView.add(patterns["if"])
   paletteView.add(patterns["while"])
   paletteView.add(patterns["loop"])
   paletteView.add(patterns["break"])
   paletteView.add(patterns["maybe-block"])
   
-  // paletteView.addSection("Logic")
-  // paletteView.add(patterns["true"])
-  // paletteView.add(patterns["false"])
-  // paletteView.add(patterns["logical-and"])
-  // paletteView.add(patterns["logical-or"])
-  // paletteView.add(patterns["is-false"])
-  // paletteView.add(patterns["is-true"])
-  
-  // paletteView.addSection("Variables")
-  // paletteView.add(patterns["save-var"])
-  // paletteView.add(patterns["get-var"])
-  
-  // paletteView.addSection("Exceptions")
-  // paletteView.add(patterns["throw"])
-  // paletteView.add(patterns["catch"])
-  // paletteView.add(patterns["exception"])
-  
-  // paletteView.addSection("Text")
-  // paletteView.add(patterns["concat"])
-  // paletteView.add(patterns["concat-3"])
-  
-  // paletteView.addSection("Debugging")
-  // paletteView.add(patterns["debug"])
-  
   paletteView.addSection("Miscellaneous")
   for(var i in patterns)
     paletteView.add(patterns[i])
-
-  $("#theme-switcher").click(changeTheme)
   
-  // new CodeCanvasView().dom.appendTo($("#program"))
-  // new MultiSlotView(null /* parent */, "Drag or type something here.", true /* showExtraSlot */).dom.appendTo($("#program"))
+  // set up 'new bubble' button
+  
   var newBubble = function() {
     var myCode = new PatternView(patterns["my-code"], { drag: "free" })
     myCode.dom.appendTo($("#program"))
@@ -1232,17 +1212,8 @@ function finishLoading() {
     $(this).effect("transfer", { to: bubble.dom }, 200)
   })
   
-  ///////
-  // new MultiSlotView(null /* parent */, "Drag or type something here.", true /* showExtraSlot */).dom.appendTo($("#container-test .source"))
-  // $("#container-test").draggable()
-  // $("#container-test").click(function() {
-  //   $("#container-test .source").animate(
-  //     { height: 0 },
-  //     { duration: 300, complete: function() { $("#container-test .source").hide() } }
-  //   )
-  // });
-  ///////
-
+  // set up styles/behavior for right-click menus
+  
   $(".first_li , .sec_li, .inner_li span").live({
     mouseenter: function () {
       $(this).css({backgroundColor : '#E0EDFE' , cursor : 'pointer'});
@@ -1260,31 +1231,13 @@ function finishLoading() {
     }
   });
   
-  // $("body").droppable({
-  //   drop: function(event, ui) {
-  //     var patternView = objFor(ui.draggable)
-  //     if(patternView.parent instanceof SlotView) {
-  //       patternView.setParent(null)
-  //     }
-  //     $("body").css("cursor", "auto") // some kinda jQuery bug necessitates this
-  //   }.bind(this)
-  // })
+  // initialize audio
   
   initAudio()
+  
+  // done!
   
   flash($("body"), "blue")
 }
 
-$(function() {
-  $.ajax({
-    url: "/default/patterns.json",
-    dataType: "json",
-    success: function(data) {
-      compilePatterns(data)
-      finishLoading()
-    },
-    error: function() {
-      $("#loading").text("I'm sorry, for some reason the ditty environment could not be loaded.")
-    }
-  })
-})
+$(loadEnvironment)
