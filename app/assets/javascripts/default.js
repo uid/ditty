@@ -100,7 +100,7 @@ JsonPatternUnarchiver.prototype._invocation = function(json) {
   for(var argName in json["arguments"]) {
     args[argName] = this._meaning(json["arguments"][argName])
   }
-  return new NamedInvocationMeaning(patternId, args)
+  return new InvocationMeaning(patternId, args)
 }
 JsonPatternUnarchiver.prototype._reference = function(json) {
   var name = json["name"]
@@ -352,11 +352,14 @@ _BasicMeaning.prototype.exceptionValue = function() {
   throw new Error("cannot convert to an exception")
 }
 
-function NamedInvocationMeaning(patternId, args) {
+function InvocationMeaning(patternId, args, options) {
+  options = options || {}
+  
   this.patternId = patternId
+  this.representationIndex = options.representationIndex || 0
   this.args = args
 }
-NamedInvocationMeaning.prototype._meaning = function() {
+InvocationMeaning.prototype._meaning = function() {
   if(!this.meaning) {
     var pattern = patterns[this.patternId] // XXX
     if(!pattern) {
@@ -366,10 +369,10 @@ NamedInvocationMeaning.prototype._meaning = function() {
   }
   return this.meaning
 }
-NamedInvocationMeaning.prototype.replacingReferences = function(argsHash) {
+InvocationMeaning.prototype.replacingReferences = function(argsHash) {
   return this._meaning().replacingReferences(argsHash)
 }
-NamedInvocationMeaning.prototype.evaluate = function(c, e, os) {
+InvocationMeaning.prototype.evaluate = function(c, e, os) {
   this._meaning().evaluate(c, e, os)
 }
 
