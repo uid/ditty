@@ -17,11 +17,7 @@ body {
 }
 #program-container {
   padding: 1em;
-  position: fixed;
-  left: 35%;
-  top: 0;
-  bottom: 0;
-  right: 0;
+  margin-left: 35%;
 }
 .code-canvas {
   position: fixed;
