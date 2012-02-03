@@ -1,6 +1,6 @@
 require File.join(".", File.dirname(__FILE__), "..", "config", "environment.rb")
 
-json_patterns = ActiveSupport::JSON.decode(File.read(File.join(Rails.root, "app", "views", "default", "patterns.json.erb")))
+json_patterns = ActiveSupport::JSON.decode($stdin.read)
 
 Pattern.transaction do
   json_patterns.values.each do |json_pattern|
