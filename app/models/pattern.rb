@@ -11,6 +11,7 @@ class Pattern < ActiveRecord::Base
       meaning: meaning_object
     }
     json[:key] = key unless key.blank?
+    json
   end
   
   def representations_object
