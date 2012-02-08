@@ -558,6 +558,7 @@ function SlotView(parent, fillerText) {
   this.dom.droppable({
     hoverClass: "hover",
     drop: function(event, ui) {
+      ui.helper.dropped_on_droppable = true
       var patternView = objFor(ui.draggable)
       this.accept(patternView)
     }.bind(this)
@@ -830,7 +831,7 @@ function PatternView(pattern, options) {
       },
       appendTo: "body",
       cursorAt: { left: 8, top: 8 },
-      revert: "invalid",
+      // revert: "invalid",
       revertDuration: 300,
       stack: "#palette",
       start: function(event, ui) { 
@@ -840,6 +841,12 @@ function PatternView(pattern, options) {
       stop: function(event, ui) {
         this.dom.removeClass("dragging")
         setTimeout(function() { delete this.noclick }.bind(this), 100)
+        if(!ui.helper.dropped_on_droppable && ui.helper.position().left > $("#palette-container").width()) {
+          var pos = ui.helper.position()
+          this.setParent(null)
+          this.dom.appendTo($("#program"))
+          this.dom.css({ position: "absolute", top: pos.top + "px", left: pos.left + "px" })
+        }
       }.bind(this),
     });
   }
@@ -1382,8 +1389,14 @@ function environmentLoaded() {
   // set up global dragging styles
   
   $("body").addClass("no-drag-in-progress")
-  $("body").bind("dragstart", function() { $("body").removeClass("no-drag-in-progress"); $("body").addClass("drag-in-progress") })
-  $("body").bind("dragstop", function() { $("body").addClass("no-drag-in-progress"); $("body").removeClass("drag-in-progress") })
+  $("body").bind("dragstart", function() {
+    $("body").removeClass("no-drag-in-progress");
+    $("body").addClass("drag-in-progress")
+  })
+  $("body").bind("dragstop", function() {
+    $("body").addClass("no-drag-in-progress");
+    $("body").removeClass("drag-in-progress")
+  })
   
   // set up palette
   
