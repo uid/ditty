@@ -1009,7 +1009,7 @@ PatternView.prototype.rootEval = function(os) {
         $.achtung({ message: "Uncaught exception: " + escapeHTML(ex.type), timeout: 5 })
       }
     } else {
-      $.achtung({ message: "Runtime error: " + escapeHTML(ex.message), timeout: 5 })
+      $.achtung({ message: "error: " + escapeHTML(ex.message), timeout: 5 })
     }
   }
   try {
