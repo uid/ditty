@@ -1,6 +1,9 @@
 <h1>Patterns</h1>
 
-<p><%= link_to "New Pattern &raquo;".html_safe, new_admin_pattern_path, class: "btn" %></p>
+<p>
+  <%= link_to "New Pattern &raquo;".html_safe, new_admin_pattern_path, class: "btn" %>
+  <%= link_to "Hide All &raquo;".html_safe, hide_all_admin_patterns_path, method: :post, class: "btn btn-danger" %>
+</p>
 
 <table class="table">
   <thead>

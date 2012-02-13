@@ -4,7 +4,11 @@ Ditty::Application.routes.draw do
   
   match "admin" => "admin/patterns#index"
   namespace :admin do
-    resources :patterns
+    resources :patterns do
+      collection do
+        post "hide_all"
+      end
+    end
   end
 
   # The priority is based upon order of creation:

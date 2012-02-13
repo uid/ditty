@@ -41,4 +41,11 @@ class Admin::PatternsController < Admin::AdminController
 
     redirect_to admin_patterns_url
   end
+  
+  def hide_all
+    Pattern.transaction do
+      Pattern.all.each { |pattern| pattern.update_attributes! show: false }
+    end
+    redirect_to admin_patterns_url, notice: "All patterns have been hidden."
+  end
 end
