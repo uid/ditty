@@ -9,13 +9,20 @@ var globalOS = { globals: {} }
 ///// BEGIN SERIALIZATION /////////////////////
 ///////////////////////////////////////////////
 
+/*
+ * main functions: jsonSerialize(obj) and jsonUnserialize(json)
+ * 
+ * Both work with parsed JSON objects, like what JSON.stringify
+ * accepts and JSON.parse emits.
+*/
+
 
 function compilePatterns(json) {
   for(var i in json) {
     if("show" in json[i] && !json[i]["show"]) continue
     try {
       // XXX for now, index patterns by both ID and key
-      patterns[json[i]["id"]] = new JsonPatternUnarchiver().unarchive(json[i])
+      patterns[json[i]["id"]] = new jsonUnserialize(json[i])
       if(json[i]["key"]) {
         patterns[json[i]["key"]] = patterns[json[i]["id"]]
       }
@@ -25,6 +32,9 @@ function compilePatterns(json) {
   }
 }
 
+function jsonUnserialize(jsonObj) {
+  return new JsonPatternUnarchiver().unarchive(jsonObj)
+}
 function JsonPatternUnarchiver() {
 }
 JsonPatternUnarchiver.prototype.unarchive = function(json) {
@@ -93,6 +103,54 @@ JsonPatternUnarchiver.prototype._reference = function(json) {
     throw new Error("reference to non-existent argument '" + name + "' when parsing pattern '" + this.id + "'")
   }
   return this.references[name]
+}
+
+function jsonSerialize(unit) {
+  if(unit instanceof Pattern) {
+    var json = {
+      id: unit.id,
+      representations: _.map(unit.representations, jsonSerialize),
+      arguments: _.map(unit.references, function(r) {
+        // inline because ArgumentReferences are interpreted as references in the top-level if-statement
+        var json = { name: r.name }
+        if(r.type) {
+          json["type"] = r.type
+        }
+        return json
+      }),
+    }
+    if("components" in unit.meaning) {
+      json.meaning = { native_meaning: _.map(unit.meaning.components, jsonSerialize) }
+    } else {
+      json.meaning = { javascript_meaning: unit.meaning.jsSource }
+    }
+    if(unit.key) {
+      json.key = unit.key
+    }
+    return json
+  } else if(unit instanceof InvocationMeaning) {
+    var argsJSON = {}
+    for(var argName in unit.args) {
+      argsJSON[argName] = jsonSerialize(unit.args[argName])
+    }
+    return { invocation: { pattern: unit.patternId, arguments: argsJSON } }
+  } else if(unit instanceof NativeMeaning) {
+    return _.map(unit.components, jsonSerialize)
+  } else if(unit instanceof ArgumentReference) {
+    return { reference: { name: unit.name } }
+  } else if(unit instanceof Template) {
+    var json = { template: unit.text }
+    if(unit.style) { json.style = unit.style }
+    return json
+  } else if(unit instanceof NumberMeaning) {
+    return { number: unit.value }
+  } else if(unit instanceof BoolMeaning) {
+    return { boolean: unit.value }
+  } else if(unit instanceof StringMeaning) {
+    return { string: unit.value }
+  } else {
+    throw new Error("what kind of unit is this?")
+  }
 }
 
 
@@ -214,9 +272,6 @@ function Template(text, options) {
   if(nonParamText != "")
     this.components.push(nonParamText)
 }
-Template.prototype.asJSON = function() {
-  return { template: this.text }
-}
 function ExplicitTemplate(text) {
   this.text = text
   this.components = [text]
@@ -256,14 +311,6 @@ function Pattern(id, key, representations, references, meaning) {
 extend(Pattern, _BasicPattern)
 Pattern.prototype.toString = function() {
   return "Pattern(" + this.id + "/" + this.key + ")"
-}
-Pattern.prototype.asJSON = function() {
-  return {
-    id: this.id,
-    representations: _.map(this.representations, function(r) { return r.asJSON() }),
-    arguments: _.map(this.references, function(r) { return r.asJSON(true) }),
-    meaning: this.meaning.asJSON(true)
-  }
 }
 Pattern.prototype.setMeaning = function(newMeaning) {
   this.meaning = newMeaning
@@ -347,17 +394,6 @@ function ArgumentReference(name, type) {
   this.name = name
   this.type = type
 }
-ArgumentReference.prototype.asJSON = function(omitPrefix) {
-  var json = { name: this.name }
-  if(this.type) {
-    json["type"] = this.type
-  }
-  if(omitPrefix) {
-    return json
-  } else {
-    return { reference: json }
-  }
-}
 ArgumentReference.prototype.replacingReferences = function(argsHash) {
   return argsHash.get(this) || this
 }
@@ -378,9 +414,6 @@ ArgumentReference.prototype.evaluate = function(c, e) {
 function JavascriptMeaning(jsSource, args) {
   this.jsSource = jsSource
   this.args = args
-}
-JavascriptMeaning.prototype.asJSON = function() {
-  return { javascript_meaning: this.jsSource }
 }
 JavascriptMeaning.prototype.notifying = function(beginf, endf) {
   this.notifyBeginF = beginf
@@ -420,14 +453,6 @@ NativeMeaning.prototype.notifying = function(beginf, endf) {
   this.notifyBeginF = beginf
   this.notifyEndF = endf
   return this
-}
-NativeMeaning.prototype.asJSON = function(includePrefix) {
-  var json = _.map(this.components, function(c) { return c.asJSON() })
-  if(includePrefix) {
-    return { native_meaning: json }
-  } else {
-    return json
-  }
 }
 NativeMeaning.prototype.replacingReferences = function(argsHash) {
   return new NativeMeaning(_.map(this.components, function(component) { return component.replacingReferences(argsHash) }))
@@ -482,17 +507,6 @@ function InvocationMeaning(patternId, args, options) {
   this.representationIndex = options.representationIndex || 0
   this.args = args
 }
-InvocationMeaning.prototype.asJSON = function() {
-  var convertedArgs = {}
-  for(var i in this.args) { convertedArgs[i] = this.args[i].asJSON() }
-  return {
-    invocation: {
-      pattern: this.patternId,
-      representation_index: this.representationIndex,
-      arguments: convertedArgs
-    }
-  }
-}
 InvocationMeaning.prototype._meaning = function() {
   if(!this.meaning) {
     this.meaning = this.pattern().apply(this.args || {})
@@ -521,9 +535,6 @@ extend(NumberMeaning, _BasicMeaning)
 NumberMeaning.prototype.toString = function() {
   return this.value.toString()
 }
-NumberMeaning.prototype.asJSON = function() {
-  return { number: this.value }
-}
 NumberMeaning.prototype.jsValue = function() {
   return this.value
 }
@@ -547,9 +558,6 @@ extend(BoolMeaning, _BasicMeaning)
 BoolMeaning.prototype.toString = function() {
   return this.value.toString()
 }
-BoolMeaning.prototype.asJSON = function() {
-  return { boolean: this.value }
-}
 BoolMeaning.prototype.jsValue = function() {
   return this.value
 }
@@ -569,9 +577,6 @@ function StringMeaning(value) {
 extend(StringMeaning, _BasicMeaning)
 StringMeaning.prototype.toString = function() {
   return "\"" + this.value.toString() + "\""
-}
-StringMeaning.prototype.asJSON = function() {
-  return { string: this.value }
 }
 StringMeaning.prototype.numberValue = function() {
   return parseFloat(this.value)
@@ -602,9 +607,6 @@ function ExceptionMeaning(value) {
 extend(ExceptionMeaning, _BasicMeaning)
 ExceptionMeaning.prototype.toString = function() {
   return "exception<" + this.value.type + ">"
-}
-ExceptionMeaning.prototype.asJSON = function() {
-  return { exception: this.value.type }
 }
 ExceptionMeaning.prototype.jsValue = function() {
   return this.value
