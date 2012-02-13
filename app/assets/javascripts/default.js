@@ -667,7 +667,7 @@ function SlotView(parent, fillerText) {
       // appendTo: this.dom.parents(".expression-container").last(),
       source: function(request, callback) {
         var matches = []
-        if(/^[0-9.]+$/i.exec(request.term)) {
+        if(/^-?[0-9.]+$/i.exec(request.term)) {
           matches.push({ value: "number: " + request.term, result: function() { return new PatternView(new NumberPattern(parseFloat(request.term))) } })
         }
         if("true".indexOf(request.term) == 0 || "false".indexOf(request.term) == 0) {
