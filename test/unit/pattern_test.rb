@@ -169,4 +169,14 @@ class PatternTest < ActiveSupport::TestCase
     @pattern.valid?
     assert @pattern.errors[:meaning].blank?
   end
+  
+  test "requires a creator" do
+    @pattern = Pattern.new
+    assert !@pattern.valid?
+    assert !@pattern.errors[:creator].blank?
+    
+    @user = User.create! :email => "tom@alltom.com", :password => "poopsies"
+    @pattern = Pattern.new :creator => @user
+    assert @pattern.errors[:creator].blank?
+  end
 end

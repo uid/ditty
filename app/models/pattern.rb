@@ -1,7 +1,10 @@
 class Pattern < ActiveRecord::Base
+  belongs_to :creator, :class_name => "User"
+  
   validate :must_have_representations
   validate :must_have_arguments
   validate :must_have_meaning
+  validates :creator, :presence => true
   
   after_initialize :set_default_values
   
