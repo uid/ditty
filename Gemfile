@@ -3,6 +3,7 @@ source 'https://rubygems.org'
 gem 'rails', '3.2.0.rc2'
 gem "twitter-bootstrap-rails", ">= 2.0rc0", :group => :assets
 gem 'jquery-rails'
+gem "aws-ses", :require => "aws/ses"
 gem 'devise'
 
 group :development do
