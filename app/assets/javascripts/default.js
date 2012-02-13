@@ -15,7 +15,10 @@ function compilePatterns(json) {
     if("show" in json[i] && !json[i]["show"]) continue
     try {
       // XXX for now, index patterns by both ID and key
-      patterns[json[i]["id"]] = patterns[json[i]["key"]] = new JsonPatternUnarchiver().unarchive(json[i])
+      patterns[json[i]["id"]] = new JsonPatternUnarchiver().unarchive(json[i])
+      if(json[i]["key"]) {
+        patterns[json[i]["key"]] = patterns[json[i]["id"]]
+      }
     } catch(e) {
       $.achtung({ message: "Couldn't load pattern '" + i + "': " + e.message, timeout: 5 })
     }
