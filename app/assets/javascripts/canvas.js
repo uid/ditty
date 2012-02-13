@@ -1,4 +1,4 @@
-//= require_tree ./default
+//= require_tree ./canvas
 
 var patterns = {}
 
@@ -36,7 +36,7 @@ function initAudio() {
 
 function loadEnvironment() {
   $.ajax({
-    url: "/default/patterns.json",
+    url: "/canvas/patterns.json",
     dataType: "json",
     success: function(data) {
       compilePatterns(data)

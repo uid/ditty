@@ -1,4 +1,4 @@
-class DefaultController < ApplicationController
+class CanvasController < ApplicationController
   def home
   end
   

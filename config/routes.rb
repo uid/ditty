@@ -1,6 +1,6 @@
 Ditty::Application.routes.draw do
-  root :to => "default#home"
-  get "default/patterns"
+  root :to => "canvas#home"
+  get "canvas/patterns"
   
   devise_for :users
   
