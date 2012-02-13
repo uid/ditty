@@ -50,6 +50,8 @@ Ditty::Application.configure do
   
   # Deliver mail with Amazon SES
   config.action_mailer.delivery_method = :ses
+  
+  config.action_mailer.default_url_options = { :host => "ditty.herokuapp.com" }
 
   # Disable delivery errors, bad email addresses will be ignored
   # config.action_mailer.raise_delivery_errors = false
