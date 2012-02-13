@@ -22,13 +22,6 @@
     </div>
     
     <div class="control-group">
-      <%= f.label :show, class: "control-label" %>
-      <div class="controls">
-        <%= f.label :show, "#{f.check_box :show} Display in the palette by default?".html_safe, class: "checkbox" %>
-      </div>
-    </div>
-    
-    <div class="control-group">
       <%= f.label :representations, class: "control-label" %>
       <div class="controls">
         <%= f.text_area :representations, class: "input-xlarge span10", rows: text_area_rows_for(@pattern.representations), cols: nil %>
@@ -49,6 +42,13 @@
       <div class="controls">
         <%= f.text_area :meaning, class: "input-xlarge span10", rows: text_area_rows_for(@pattern.meaning), cols: nil %>
         <p class="help-block">No way am I describing this one.</p>
+      </div>
+    </div>
+    
+    <div class="control-group">
+      <%= f.label :show, class: "control-label" %>
+      <div class="controls">
+        <%= f.label :show, "#{f.check_box :show} Display in the palette by default?".html_safe, class: "checkbox" %>
       </div>
     </div>
     
