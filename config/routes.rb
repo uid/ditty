@@ -2,6 +2,8 @@ Ditty::Application.routes.draw do
   root :to => "default#home"
   get "default/patterns"
   
+  devise_for :users
+  
   match "admin" => "admin/patterns#index"
   namespace :admin do
     resources :patterns do
