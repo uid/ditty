@@ -40,7 +40,7 @@ class Pattern < ActiveRecord::Base
     def set_default_values
       self.representations ||= "[\n\n]"
       self.arguments ||= "[\n\n]"
-      self.meaning ||= "[\n\n]"
+      self.meaning ||= "{\n  \"native_meaning\" : [\n    \n  ]\n}"
     end
     
     def must_have_representations
@@ -83,10 +83,16 @@ class Pattern < ActiveRecord::Base
         return
       end
       
-      errors.add(:meaning, "must be an array") unless Array === obj
-      unless obj.all? { |o| Hash === o }
-        errors.add(:meaning, "must contain only objects")
+      unless Hash === obj
+        errors.add(:meaning, "must be an object")
         return
+      end
+      if obj.include? "native_meaning"
+        errors.add(:meaning, "must have an array as a native_meaning") unless Array === obj["native_meaning"]
+      elsif obj.include? "javascript_meaning"
+        errors.add(:meaning, "must have a string as a javascript_meaning") unless String === obj["javascript_meaning"]
+      else
+        errors.add(:meaning, "must contain either 'native_meaning' or 'javascript_meaning' key")
       end
     end
     

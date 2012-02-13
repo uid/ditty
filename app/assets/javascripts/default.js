@@ -30,7 +30,7 @@ JsonPatternUnarchiver.prototype.unarchive = function(json) {
   this.key = json["key"]
   var representations = _.map(json["representations"], this._representation.bind(this))
   var args = _.inject(_.map(json["arguments"], this._arg.bind(this)), function(obj, ref) { obj[ref.name] = ref; return obj }, {})
-  var meaning = this._meaning(json["meaning"])
+  var meaning = this._patternMeaning(json["meaning"])
   return new Pattern(this.id, this.key, representations, args, meaning)
 }
 JsonPatternUnarchiver.prototype._representation = function(json) {
@@ -46,30 +46,35 @@ JsonPatternUnarchiver.prototype._arg = function(json) {
   this.references[json["name"]] = new ArgumentReference(json["name"], json["type"])
   return this.references[json["name"]]
 }
-JsonPatternUnarchiver.prototype._meaning = function(json) {
-  if(!(json instanceof Array)) {
-    json = [json]
-  }
-  return new Meaning(_.map(json, function(item) {
-    if(item["native_invocation"]) {
-      return this._nativeInvocation(item["native_invocation"])
-    }
-    if(item["invocation"]) {
-      return this._invocation(item["invocation"])
-    }
-    if(item["reference"]) {
-      return this._reference(item["reference"])
-    }
+JsonPatternUnarchiver.prototype._patternMeaning = function(json) {
+  if(json["native_meaning"]) {
+    return new NativeMeaning(_.map(json["native_meaning"], this._meaning.bind(this)))
+  } else if(json["javascript_meaning"]) {
+    return new JavascriptMeaning(json["javascript_meaning"], this.references)
+  } else {
     throw new Error("invalid meaning: unrecognized type")
-  }.bind(this)))
-}
-JsonPatternUnarchiver.prototype._nativeInvocation = function(json) {
-  var implementation = json["implementation"]
-  var args = {}
-  for(var argName in json["arguments"]) {
-    args[argName] = this._meaning(json["arguments"][argName])
   }
-  return new NativeMeaning(implementation, args)
+}
+JsonPatternUnarchiver.prototype._meaning = function(json) {
+  if(json instanceof Array) {
+    return new NativeMeaning(_.map(json, this._meaning.bind(this)))
+  }
+  if("invocation" in json) {
+    return this._invocation(json["invocation"])
+  }
+  if("reference" in json) {
+    return this._reference(json["reference"])
+  }
+  if("number" in json) {
+    return new NumberMeaning(json["number"])
+  }
+  if("boolean" in json) {
+    return new BoolMeaning(json["boolean"])
+  }
+  if("string" in json) {
+    return new StringMeaning(json["string"])
+  }
+  throw new Error("invalid meaning: unrecognized type")
 }
 JsonPatternUnarchiver.prototype._invocation = function(json) {
   var patternId = json["pattern"]
@@ -206,6 +211,9 @@ function Template(text, options) {
   if(nonParamText != "")
     this.components.push(nonParamText)
 }
+Template.prototype.asJSON = function() {
+  return { template: this.text }
+}
 function ExplicitTemplate(text) {
   this.text = text
   this.components = [text]
@@ -245,6 +253,17 @@ function Pattern(id, key, representations, references, meaning) {
 extend(Pattern, _BasicPattern)
 Pattern.prototype.toString = function() {
   return "Pattern(" + this.id + "/" + this.key + ")"
+}
+Pattern.prototype.asJSON = function() {
+  return {
+    id: this.id,
+    representations: _.map(this.representations, function(r) { return r.asJSON() }),
+    arguments: _.map(this.references, function(r) { return r.asJSON(true) }),
+    meaning: this.meaning.asJSON(true)
+  }
+}
+Pattern.prototype.setMeaning = function(newMeaning) {
+  this.meaning = newMeaning
 }
 Pattern.prototype.apply = function(args) {
   // args is a map from argument name to value
@@ -325,6 +344,17 @@ function ArgumentReference(name, type) {
   this.name = name
   this.type = type
 }
+ArgumentReference.prototype.asJSON = function(omitPrefix) {
+  var json = { name: this.name }
+  if(this.type) {
+    json["type"] = this.type
+  }
+  if(omitPrefix) {
+    return json
+  } else {
+    return { reference: json }
+  }
+}
 ArgumentReference.prototype.replacingReferences = function(argsHash) {
   return argsHash.get(this) || this
 }
@@ -338,18 +368,26 @@ ArgumentReference.prototype.evaluate = function(c, e) {
   if(this.notifyEndF) this.notifyEndF()
   e(new Error("'" + this.name + "' is required"))
 }
-ArgumentReference.prototype.pattern = function() {
-  return new StringPattern("argument " + this.name)
-}
+// ArgumentReference.prototype.pattern = function() {
+//   return new StringPattern("argument " + this.name)
+// }
 
-function NativeMeaning(jsSource, args) {
+function JavascriptMeaning(jsSource, args) {
   this.jsSource = jsSource
   this.args = args
 }
-NativeMeaning.prototype.replacingReferences = function(argsHash) {
-  return new NativeMeaning(this.jsSource, argsReplacingReferences(this.args, argsHash))
+JavascriptMeaning.prototype.asJSON = function() {
+  return { javascript_meaning: this.jsSource }
 }
-NativeMeaning.prototype.evaluate = function(c, e, os) {
+JavascriptMeaning.prototype.notifying = function(beginf, endf) {
+  this.notifyBeginF = beginf
+  this.notifyEndF = endf
+  return this
+}
+JavascriptMeaning.prototype.replacingReferences = function(argsHash) {
+  return new JavascriptMeaning(this.jsSource, argsReplacingReferences(this.args, argsHash))
+}
+JavascriptMeaning.prototype.evaluate = function(c, e, os) {
   if(!this.f) {
     try {
       this.f = eval("(function(c, e, os, args) {" + this.jsSource + "})")
@@ -358,25 +396,40 @@ NativeMeaning.prototype.evaluate = function(c, e, os) {
       return
     }
   }
-  this.f(c, e, os, this.args)
+  if(this.notifyBeginF) this.notifyBeginF()
+  this.f(function() {
+    if(this.notifyEndF) this.notifyEndF()
+    c.apply(null, arguments)
+  }.bind(this), function() {
+    if(this.notifyEndF) this.notifyEndF()
+    e.apply(null, arguments)
+  }.bind(this), os, this.args)
 }
 
-function Meaning(components) {
+function NativeMeaning(components) {
   if(components instanceof Array) {
     this.components = components
   } else {
     this.components = [components]
   }
 }
-Meaning.prototype.notifying = function(beginf, endf) {
+NativeMeaning.prototype.notifying = function(beginf, endf) {
   this.notifyBeginF = beginf
   this.notifyEndF = endf
   return this
 }
-Meaning.prototype.replacingReferences = function(argsHash) {
-  return new Meaning(_.map(this.components, function(component) { return component.replacingReferences(argsHash) }))
+NativeMeaning.prototype.asJSON = function(includePrefix) {
+  var json = _.map(this.components, function(c) { return c.asJSON() })
+  if(includePrefix) {
+    return { native_meaning: json }
+  } else {
+    return json
+  }
 }
-Meaning.prototype.evaluate = function(c, e, os) {
+NativeMeaning.prototype.replacingReferences = function(argsHash) {
+  return new NativeMeaning(_.map(this.components, function(component) { return component.replacingReferences(argsHash) }))
+}
+NativeMeaning.prototype.evaluate = function(c, e, os) {
   if(this.notifyBeginF) this.notifyBeginF()
   cpsMap(function(cc, ee, i, component) {
     component.evaluate(cc, function(ex) {
@@ -390,7 +443,11 @@ Meaning.prototype.evaluate = function(c, e, os) {
   }.bind(this), e, this.components)
 }
 
+// basic data types, like numbers and strings
 function _BasicMeaning() {
+}
+_BasicMeaning.prototype.replacingReferences = function() {
+  return this
 }
 _BasicMeaning.prototype.notifying = function(beginf, endf) {
   this.notifyBeginF = beginf
@@ -422,6 +479,17 @@ function InvocationMeaning(patternId, args, options) {
   this.representationIndex = options.representationIndex || 0
   this.args = args
 }
+InvocationMeaning.prototype.asJSON = function() {
+  var convertedArgs = {}
+  for(var i in this.args) { convertedArgs[i] = this.args[i].asJSON() }
+  return {
+    invocation: {
+      pattern: this.patternId,
+      representation_index: this.representationIndex,
+      arguments: convertedArgs
+    }
+  }
+}
 InvocationMeaning.prototype._meaning = function() {
   if(!this.meaning) {
     this.meaning = this.pattern().apply(this.args || {})
@@ -447,6 +515,12 @@ function NumberMeaning(value) {
   this.value = value
 }
 extend(NumberMeaning, _BasicMeaning)
+NumberMeaning.prototype.toString = function() {
+  return this.value.toString()
+}
+NumberMeaning.prototype.asJSON = function() {
+  return { number: this.value }
+}
 NumberMeaning.prototype.jsValue = function() {
   return this.value
 }
@@ -459,14 +533,20 @@ NumberMeaning.prototype.boolValue = function() {
 NumberMeaning.prototype.stringValue = function() {
   return this.value.toString()
 }
-NumberMeaning.prototype.toString = function() {
-  return this.value.toString()
+NumberMeaning.prototype.pattern = function() {
+  return new NumberPattern(this.value)
 }
 
 function BoolMeaning(value) {
   this.value = value
 }
 extend(BoolMeaning, _BasicMeaning)
+BoolMeaning.prototype.toString = function() {
+  return this.value.toString()
+}
+BoolMeaning.prototype.asJSON = function() {
+  return { boolean: this.value }
+}
 BoolMeaning.prototype.jsValue = function() {
   return this.value
 }
@@ -476,14 +556,20 @@ BoolMeaning.prototype.boolValue = function() {
 BoolMeaning.prototype.stringValue = function() {
   return this.value.toString()
 }
-BoolMeaning.prototype.toString = function() {
-  return this.value.toString()
+BoolMeaning.prototype.pattern = function() {
+  return new BoolPattern(this.value)
 }
 
 function StringMeaning(value) {
   this.value = value
 }
 extend(StringMeaning, _BasicMeaning)
+StringMeaning.prototype.toString = function() {
+  return "\"" + this.value.toString() + "\""
+}
+StringMeaning.prototype.asJSON = function() {
+  return { string: this.value }
+}
 StringMeaning.prototype.numberValue = function() {
   return parseFloat(this.value)
 }
@@ -499,25 +585,29 @@ StringMeaning.prototype.boolValue = function() {
 StringMeaning.prototype.stringValue = function() {
   return this.value
 }
-StringMeaning.prototype.toString = function() {
-  return "\"" + this.value.toString() + "\""
+StringMeaning.prototype.pattern = function() {
+  return new StringPattern(this.value)
 }
 
 function InternalException(type) {
   this.type = this.message = type
 }
+
 function ExceptionMeaning(value) {
   this.value = new InternalException(value)
 }
 extend(ExceptionMeaning, _BasicMeaning)
+ExceptionMeaning.prototype.toString = function() {
+  return "exception<" + this.value.type + ">"
+}
+ExceptionMeaning.prototype.asJSON = function() {
+  return { exception: this.value.type }
+}
 ExceptionMeaning.prototype.jsValue = function() {
   return this.value
 }
 ExceptionMeaning.prototype.exceptionValue = function() {
   return this.value
-}
-ExceptionMeaning.prototype.toString = function() {
-  return "exception<" + this.value.type + ">"
 }
 
 
@@ -779,7 +869,7 @@ MultiSlotView.prototype.meaning = function() {
       meanings.push(slotView.meaning())
     }
   }
-  return new Meaning(meanings)
+  return new NativeMeaning(meanings)
 }
 
 
@@ -992,7 +1082,11 @@ PatternView.prototype.acceptArgument = function(argumentName, view) {
 }
 PatternView.prototype.toggleSourceView = function(instant) {
   if(this.sourceDom.is(":hidden")) {
-    this.source.accept(_.map(this.pattern.meaning.components, createView))
+    if(this.pattern.meaning.components) {
+      this.source.accept(_.map(this.pattern.meaning.components, createView))
+    } else {
+      this.sourceDom.html($("<pre style='word-break: break-all'></pre>").text(this.pattern.meaning.jsSource))
+    }
   }
   this.sourceDom.animate(
     { height: 'toggle' },
@@ -1108,12 +1202,12 @@ ArgumentReferenceView.prototype.meaning = function() {
 }
 
 
-// NATIVE MEANING (JavaScript) VIEW
+// JAVASCRIPT MEANING VIEW
 
-function NativeCodeView(nativeMeaning, options) {
+function JavascriptCodeView(javascriptMeaning, options) {
   options = options || {}
   
-  this.nativeMeaning = nativeMeaning
+  this.javascriptMeaning = javascriptMeaning
   if(options.parent)
     this.setParent(options.parent)
   
@@ -1132,16 +1226,16 @@ function NativeCodeView(nativeMeaning, options) {
     
     var menu = new MenuBuilder()
     menu.add("Delete", function() { this.parent.release(this) }.bind(this))
-    menu.add("Show Source", function() { alert(this.nativeMeaning.jsSource) }.bind(this))
+    menu.add("Show Source", function() { alert(this.javascriptMeaning.jsSource) }.bind(this))
     menu.open(e)
     
     return false
  }.bind(this));
 }
-NativeCodeView.prototype.toString = function() {
-  return "NativeCodeView(" + this.argumentReference + ")"
+JavascriptCodeView.prototype.toString = function() {
+  return "JavascriptCodeView(" + this.argumentReference + ")"
 }
-NativeCodeView.prototype.setParent = function(parent) {
+JavascriptCodeView.prototype.setParent = function(parent) {
   if(this.parent == parent)
     return
   if(this.parent)
@@ -1151,21 +1245,21 @@ NativeCodeView.prototype.setParent = function(parent) {
   else
     delete this.parent
 }
-NativeCodeView.prototype.becameActive = function() {
+JavascriptCodeView.prototype.becameActive = function() {
   flash(this.expressionDom, "green")
   if(this.activeCount == 0) {
     this.dom.addClass("active")
   }
   this.activeCount++
 }
-NativeCodeView.prototype.becameInactive = function() {
+JavascriptCodeView.prototype.becameInactive = function() {
   this.activeCount--
   if(this.activeCount == 0) {
     this.dom.removeClass("active")
   }
 }
-NativeCodeView.prototype.meaning = function() {
-  return this.nativeMeaning.notifying(this.becameActive.bind(this), this.becameInactive.bind(this))
+JavascriptCodeView.prototype.meaning = function() {
+  return this.javascriptMeaning.notifying(this.becameActive.bind(this), this.becameInactive.bind(this))
 }
 
 
@@ -1178,18 +1272,25 @@ function createView(unit) {
     
     for(var argName in unit.args) {
       var arg = unit.args[argName]
-      var argViews = _.map(arg.components, createView)
-      if(argViews.length == 1) {
-        patternView.acceptArgument(argName, argViews[0])
+      
+      if("components" in arg) {
+        var argViews = _.map(arg.components, createView)
+        if(argViews.length == 1) {
+          patternView.acceptArgument(argName, argViews[0])
+        } else {
+          patternView.acceptArgument(argName, argViews)
+        }
       } else {
-        patternView.acceptArgument(argName, argViews)
+        patternView.acceptArgument(argName, createView(arg))
       }
     }
     return patternView
   } else if(unit instanceof ArgumentReference) {
     return new ArgumentReferenceView(unit)
-  } else if(unit instanceof NativeMeaning) {
-    return new NativeCodeView(unit)
+  } else if(unit instanceof JavascriptMeaning) {
+    return new JavascriptCodeView(unit)
+  } else if(unit instanceof _BasicMeaning) {
+    return new PatternView(unit.pattern())
   } else {
     throw new Error("what kind of unit is this?")
   }

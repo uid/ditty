@@ -132,8 +132,10 @@ class PatternTest < ActiveSupport::TestCase
     
     all_errors = {
       :valid_json => "must be valid JSON",
-      :array => "must be an array",
-      :objects => "must contain only objects"
+      :object => "must be an object",
+      :typed => "must contain either 'native_meaning' or 'javascript_meaning' key",
+      :native_array => "must have an array as a native_meaning",
+      :javascript_string => "must have a string as a javascript_meaning"
     }
     
     @pattern.meaning = ""
@@ -142,22 +144,28 @@ class PatternTest < ActiveSupport::TestCase
     @pattern.meaning = "{"
     assert_has_exactly_errors @pattern, :meaning, [:valid_json], all_errors
     
+    @pattern.meaning = "[]"
+    assert_has_exactly_errors @pattern, :meaning, [:object], all_errors
+    
     @pattern.meaning = "{}"
-    assert_has_exactly_errors @pattern, :meaning, [:array], all_errors
+    assert_has_exactly_errors @pattern, :meaning, [:typed], all_errors
     
     @pattern.meaning = {}
-    assert_has_exactly_errors @pattern, :meaning, [:array], all_errors
+    assert_has_exactly_errors @pattern, :meaning, [:typed], all_errors
     
-    @pattern.meaning = [42]
-    assert_has_exactly_errors @pattern, :meaning, [:objects], all_errors
+    @pattern.meaning = { "native_meaning" => 42 }
+    assert_has_exactly_errors @pattern, :meaning, [:native_array], all_errors
+    
+    @pattern.meaning = { "javascript_meaning" => 42 }
+    assert_has_exactly_errors @pattern, :meaning, [:javascript_string], all_errors
     
     # no problems
     
-    @pattern.meaning = []
+    @pattern.meaning = { "native_meaning" => [] }
     @pattern.valid?
     assert @pattern.errors[:meaning].blank?
     
-    @pattern.meaning = [{ "boop" => "beep" }]
+    @pattern.meaning = { "javascript_meaning" => "howdy" }
     @pattern.valid?
     assert @pattern.errors[:meaning].blank?
   end
