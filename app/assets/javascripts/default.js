@@ -194,7 +194,7 @@ function Template(text, options) {
   options = options || {}
   
   this.text = text
-  this.style = options["style"] || "inline"
+  if(options["style"]) { this.style = options["style"] }
   this.components = []
   this.params = [] // TODO: rename to args
   this.args = this.params
