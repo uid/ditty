@@ -1,4 +1,4 @@
 class CanvasController < ApplicationController
-  def home
+  def index
   end
 end

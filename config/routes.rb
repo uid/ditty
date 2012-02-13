@@ -1,5 +1,5 @@
 Ditty::Application.routes.draw do
-  root :to => "canvas#home"
+  root :to => "canvas#index"
   
   resources :patterns
   
