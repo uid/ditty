@@ -36,7 +36,7 @@ function initAudio() {
 
 function loadEnvironment() {
   $.ajax({
-    url: "/canvas/patterns.json",
+    url: "/patterns.json",
     dataType: "json",
     success: function(data) {
       compilePatterns(data)

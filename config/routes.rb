@@ -1,6 +1,7 @@
 Ditty::Application.routes.draw do
   root :to => "canvas#home"
-  get "canvas/patterns"
+  
+  resources :patterns
   
   devise_for :users
   
