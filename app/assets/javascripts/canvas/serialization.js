@@ -6,21 +6,6 @@
 */
 
 
-function compilePatterns(json) {
-  for(var i in json) {
-    if("show" in json[i] && !json[i]["show"]) continue
-    try {
-      // XXX for now, index patterns by both ID and key
-      patterns[json[i]["id"]] = new jsonUnserialize(json[i])
-      if(json[i]["key"]) {
-        patterns[json[i]["key"]] = patterns[json[i]["id"]]
-      }
-    } catch(e) {
-      $.achtung({ message: "Couldn't load pattern '" + i + "': " + e.message, timeout: 5 })
-    }
-  }
-}
-
 function jsonUnserialize(jsonObj) {
   return new JsonPatternUnarchiver().unarchive(jsonObj)
 }
