@@ -5,6 +5,17 @@ var patterns = {}
 var globalOS = { globals: {} }
 
 
+function myPatterns() {
+  var mine = []
+  for(var i in patterns) {
+    if(patterns[i].creator.id == currentUser.id) {
+      mine.push(patterns[i])
+    }
+  }
+  return mine
+}
+
+
 var themes = ["colorful", "minimal"]
 var themeIndex = 0
 function changeTheme() {
@@ -77,6 +88,14 @@ function environmentLoaded() {
   paletteView = new PaletteView()
   $("#palette").append(paletteView.dom)
   
+  var mine = myPatterns()
+  if(mine.length > 0) {
+    paletteView.addSection("Mine")
+    for(var i in mine) {
+      paletteView.add(mine[i])
+    }
+  }
+  
   // paletteView.addSection("Music")
   // paletteView.add(patterns["play"])
   // paletteView.add(patterns["note-do"])
@@ -103,11 +122,13 @@ function environmentLoaded() {
   
   // set up 'new bubble' button
   
-  var newBubble = function() {
-    var myCode = new PatternView(new Pattern({ representations: [new Template("My Code")] }), { drag: "free" })
+  var newBubble = function(pattern) {
+    var saveAfter = !pattern
+    pattern = pattern || new Pattern({ representations: [new Template("My Code")] })
+    var myCode = new PatternView(pattern, { drag: "free" })
     myCode.dom.appendTo($("#program"))
     myCode.toggleSourceView(true /* instant */)
-    myCode.save()
+    if(saveAfter) myCode.save()
     return myCode
   }
   $("#bubble-adder").click(function() {
@@ -116,8 +137,11 @@ function environmentLoaded() {
   })
   
   // create a default bubble
-  
-  newBubble()
+  if(myPatterns().length) {
+    _.each(myPatterns(), newBubble)
+  } else {
+    newBubble()
+  }
   
   // set up styles/behavior for right-click menus
   
