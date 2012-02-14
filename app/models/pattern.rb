@@ -8,6 +8,8 @@ class Pattern < ActiveRecord::Base
   
   after_initialize :set_default_values
   
+  attr_accessible :representations, :arguments, :meaning, :show, :key
+  
   def as_json options={}
     json = {
       id: id,
