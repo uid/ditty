@@ -1,0 +1,36 @@
+<h1>Users</h1>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>E-mail</th>
+      <th>Username</th>
+      <th>Created</th>
+      <th>Sign-ins</th>
+      <th>Current Sign-in</th>
+      <th>Last Sign-in</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<% @users.each do |user| %>
+    <tr>
+      <td><%= user.id %></td>
+<% if user.anonymous? %>
+      <td colspan="2">[anonymous]</td>
+<% else %>
+      <td><%= user.email %></td>
+      <td><%= user.username %></td>
+<% end %>
+      <td><%= user.created_at %></td>
+      <td><%= user.sign_in_count %></td>
+      <td><%= user.current_sign_in_at %></td>
+      <td><%= user.last_sign_in_at %></td>
+      <td><%= link_to 'Destroy', admin_user_path(user), confirm: 'Are you sure?', method: :delete, class: "btn btn-small btn-danger" %></td>
+    </tr>
+<% end %>
+  </tbody>
+</table>

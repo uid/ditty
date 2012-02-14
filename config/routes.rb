@@ -12,6 +12,7 @@ Ditty::Application.routes.draw do
         post "hide_all"
       end
     end
+    resources :users
   end
 
   # The priority is based upon order of creation:

@@ -21,7 +21,8 @@
       <%= link_to "Ditty Admin", admin_path, class: "brand" %>
       <div class="nav-collapse">
         <ul class="nav">
-          <li class="active"><%= link_to "Patterns", admin_patterns_path %></li>
+          <li<%= " class=\"active\"".html_safe if controller.controller_name == "patterns" %>><%= link_to "Patterns", admin_patterns_path %></li>
+          <li<%= " class=\"active\"".html_safe if controller.controller_name == "users" %>><%= link_to "Users", admin_users_path %></li>
         </ul>
         <p class="navbar-text pull-right"><%= link_to "Back to Ditty &raquo;".html_safe, root_path %></p>
       </div><!--/.nav-collapse -->
