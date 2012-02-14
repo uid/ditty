@@ -51,19 +51,14 @@ var audioContext, upmixer, clicker, bar
 function initAudio() {
   audioContext = new webkitAudioContext()
   upmixer = new UpMixer(audioContext)
-  clicker = new ModalStrike(audioContext)
   bar = new ModalBar(audioContext)
   
   upmixer.connect()
   
   globalOS.globals['xylo'] = bar
-  bar.setPreset(4)
+  bar.setPreset(1)
   bar.connect(upmixer)
   // bar.strike(440, 0.1)
-  
-  clicker.setGain(0.1)
-  
-  $(window).scroll(function() { clicker.play(upmixer) })
 }
 
 
