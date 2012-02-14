@@ -27,6 +27,7 @@ class Admin::PatternsController < Admin::AdminController
 
   def update
     @pattern = Pattern.find(params[:id])
+    @pattern.no_creator_is_fine = true
 
     if @pattern.update_attributes(params[:pattern])
       redirect_to admin_pattern_url(@pattern), notice: "Pattern was successfully updated."

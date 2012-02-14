@@ -4,11 +4,13 @@ class Pattern < ActiveRecord::Base
   validate :must_have_representations
   validate :must_have_arguments
   validate :must_have_meaning
-  validates :creator, :presence => true
+  validates :creator, :presence => true, :unless => :no_creator_is_fine
   
   after_initialize :set_default_values
   
   attr_accessible :representations, :arguments, :meaning, :show, :key
+  
+  attr_accessor :no_creator_is_fine
   
   def as_json options={}
     json = {
