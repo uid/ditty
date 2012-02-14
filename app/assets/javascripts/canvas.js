@@ -104,9 +104,10 @@ function environmentLoaded() {
   // set up 'new bubble' button
   
   var newBubble = function() {
-    var myCode = new PatternView(patterns["my-code"], { drag: "free" })
+    var myCode = new PatternView(new Pattern({ representations: [new Template("My Code")] }), { drag: "free" })
     myCode.dom.appendTo($("#program"))
     myCode.toggleSourceView(true /* instant */)
+    myCode.save()
     return myCode
   }
   $("#bubble-adder").click(function() {

@@ -30,10 +30,13 @@ JsonPatternUnarchiver.prototype.unarchive = function(json) {
   this.references = {}
   this.id = json["id"]
   this.key = json["key"]
-  var representations = _.map(json["representations"], this._representation.bind(this))
-  var args = _.inject(_.map(json["arguments"], this._arg.bind(this)), function(obj, ref) { obj[ref.name] = ref; return obj }, {})
-  var meaning = this._patternMeaning(json["meaning"])
-  return new Pattern(this.id, this.key, representations, args, meaning)
+  return new Pattern({
+    id: json["id"],
+    key: json["key"],
+    representations: _.map(json["representations"], this._representation.bind(this)),
+    references: _.inject(_.map(json["arguments"], this._arg.bind(this)), function(obj, ref) { obj[ref.name] = ref; return obj }, {}),
+    meaning: this._patternMeaning(json["meaning"])
+  })
 }
 JsonPatternUnarchiver.prototype._representation = function(json) {
   if(json["template"]) {

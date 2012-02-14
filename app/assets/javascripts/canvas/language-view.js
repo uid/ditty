@@ -268,6 +268,7 @@ function PatternView(pattern, options) {
   // create dom
   this.dom = $("<div class='expression-container'></div>")
   this.expressionDom = $("<div class='expression title-expression'></div>").appendTo(this.dom)
+  this.loadingDom = $("<span class='loading'>Saving&#8230;</span>").appendTo(this.expressionDom)
   this.sourceDom = $("<div class='source'></div>").appendTo(this.dom)
   setObjFor(this.dom, this)
   
@@ -358,6 +359,7 @@ function PatternView(pattern, options) {
     var debug = menu.addSubmenu("Debug &rarr;")
     debug.add("Display", function() { alert(this) }.bind(this))
     menu.add("Delete", function() { this.parent.release(this) }.bind(this))
+    menu.add("Upload", this.save.bind(this))
     menu.open(e)
     
     return false
@@ -415,6 +417,9 @@ PatternView.prototype.buildDom = function() {
     else
       this.expressionDom.append(this.convertedComponents[i].dom)
   }
+  
+  // add loading indicator
+  this.expressionDom.append(this.loadingDom)
 }
 PatternView.prototype.setParent = function(parent) {
   if(this.parent == parent)
@@ -439,6 +444,50 @@ PatternView.prototype.becameInactive = function() {
   if(this.activeCount == 0) {
     this.expressionDom.removeClass("active")
     this.sourceDom.removeClass("active")
+  }
+}
+PatternView.prototype.save = function() {
+  this.loadingDom.show()
+  
+  var json = jsonSerialize(this.pattern)
+  var request = {}
+  for(var i in json) {
+    request["pattern[" + i + "]"] = JSON.stringify(json[i])
+  }
+  
+  var handleError = function(jqXHR, textStatus, errorThrown) {
+    this.loadingDom.hide()
+    var responseJSON = JSON.parse(jqXHR.responseText)
+    if(responseJSON.error) {
+      alert(responseJSON.error)
+    } else {
+      alert("Error saving: the server is down.")
+    }
+  }.bind(this)
+  
+  if(this.pattern.id) {
+    $.ajax({
+      type: "PUT",
+      url: "/patterns/" + this.pattern.id,
+      data: request,
+      success: function(data) {
+        this.loadingDom.hide()
+      }.bind(this),
+      error: handleError,
+      dataType: "json"
+    })
+  } else {
+    $.ajax({
+      type: "POST",
+      url: "/patterns",
+      data: request,
+      success: function(data) {
+        this.loadingDom.hide()
+        this.pattern.id = data["pattern"]["id"]
+      }.bind(this),
+      error: handleError,
+      dataType: "json"
+    })
   }
 }
 PatternView.prototype.meaning = function() {

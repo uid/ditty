@@ -53,12 +53,18 @@ _BasicPattern.prototype.addRepresentation = function(repr) {
   return this.representations.length - 1
 }
 
-function Pattern(id, key, representations, references, meaning) {
-  this.id = id
-  this.key = key
-  this.representations = representations
-  this.meaning = meaning
-  this.references = references
+// attributes (all optional):
+//   id: number
+//   key: string (deprecated)
+//   representations: array of templates
+//   references: object whose keys are string and values are ArgumentReferences
+//   meaning: NativeMeaning or JavascriptMeaning
+function Pattern(attributes) {
+  if(attributes["id"]) this.id = attributes["id"]
+  if(attributes["key"]) this.key = attributes["key"]
+  this.representations = attributes["representations"] || [new Template("New Template")]
+  this.references = attributes["references"] || []
+  this.meaning = attributes["meaning"] || new NativeMeaning()
   this._checkRepresentations()
 }
 extend(Pattern, _BasicPattern)
@@ -193,7 +199,9 @@ JavascriptMeaning.prototype.evaluate = function(c, e, os) {
 }
 
 function NativeMeaning(components) {
-  if(components instanceof Array) {
+  if(!components) {
+    this.components = []
+  } else if(components instanceof Array) {
     this.components = components
   } else {
     this.components = [components]
