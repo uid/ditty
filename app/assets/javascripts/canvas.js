@@ -9,8 +9,16 @@ function compilePatterns(json) {
   for(var i in json) {
     if("show" in json[i] && !json[i]["show"]) continue
     try {
+      var pattern = new jsonUnserialize(json[i])
+      
+      // for now, don't load other users' patterns
+      if(pattern.creator.id && pattern.creator.id != currentUser.id) {
+        continue
+      }
+      
+      // store in the global pattern index
       // XXX for now, index patterns by both ID and key
-      patterns[json[i]["id"]] = new jsonUnserialize(json[i])
+      patterns[json[i]["id"]] = pattern
       if(json[i]["key"]) {
         patterns[json[i]["key"]] = patterns[json[i]["id"]]
       }
