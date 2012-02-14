@@ -13,4 +13,12 @@ class User < ActiveRecord::Base
     user.save!(validate: false)
     user
   end
+  
+  def as_json(options = {})
+    if anonymous?
+      { id: id }
+    else
+      { id: id, username: username }
+    end
+  end
 end
