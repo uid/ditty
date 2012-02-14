@@ -447,7 +447,6 @@ PatternView.prototype.becameInactive = function() {
 }
 PatternView.prototype.childChanged = function(child) {
   if(this.source == child) {
-    this.pattern.meaning = this.meaning()
     this.save()
   }
   if(this.parent && this.parent.childChanged) {
@@ -461,6 +460,8 @@ PatternView.prototype.save = function() {
   }
   
   this.saving = true
+  
+  this.pattern.meaning = this.meaning()
   
   this.loadingDom.show()
   
