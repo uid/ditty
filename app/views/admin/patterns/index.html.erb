@@ -9,6 +9,7 @@
   <thead>
     <tr>
       <th>ID</th>
+      <th>Creator</th>
       <th>Key</th>
       <th>Show?</th>
       <th>Representations</th>
@@ -23,6 +24,7 @@
 <% @patterns.each do |pattern| %>
     <tr>
       <td><%= pattern.id %></td>
+      <td><%= pattern.creator.try(:id) %></td>
       <td><%= pattern.key %></td>
       <td><% if pattern.show %><i class="icon-ok"></i><% else %><i class="icon-remove"></i><% end %></td>
       <td><pre><%= pattern.representations %></pre></td>
