@@ -21,3 +21,14 @@
     <button id="bubble-adder">Create New Code Bubble</button>
   </div>
 </div>
+
+<% if @new_user %>
+<div id="welcome">
+  <div id="welcome-background" style="background-color: black; opacity: 0.9; position: fixed; top: 0; right: 0; bottom: 0; left: 0"></div>
+  <div id="welcome-message" style="position: fixed; left: 20%; right: 20%; top: 10%">
+    <div style="border: 40px solid black; padding: 2em; background: white; text-align: center; font-size: 40px">
+      Welcome new user!
+    </div>
+  </div>
+</div>
+<% end %>

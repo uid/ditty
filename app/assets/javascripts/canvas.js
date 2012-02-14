@@ -143,6 +143,8 @@ function environmentLoaded() {
   
   // done!
   
+  $("#welcome").click(function() { $(this).hide("puff") })
+  
   flash($("body"), "blue")
 }
 
