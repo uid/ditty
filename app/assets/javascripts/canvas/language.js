@@ -65,6 +65,7 @@ function Pattern(attributes) {
   this.representations = attributes["representations"] || [new Template("New Template")]
   this.references = attributes["references"] || []
   this.meaning = attributes["meaning"] || new NativeMeaning()
+  this.creator = attributes["creator"] || {}
   this._checkRepresentations()
 }
 extend(Pattern, _PatternBase)

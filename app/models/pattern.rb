@@ -17,6 +17,7 @@ class Pattern < ActiveRecord::Base
       arguments: arguments_object,
       meaning: meaning_object
     }
+    json[:creator] = creator.as_json(options) unless creator.blank?
     json[:key] = key unless key.blank?
     json[:show] = false if false === show
     json
