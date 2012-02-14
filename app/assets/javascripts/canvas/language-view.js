@@ -731,7 +731,7 @@ JavascriptCodeView.prototype.meaning = function() {
 
 function createView(unit) {
   if(unit instanceof InvocationMeaning) {
-    var patternView = new PatternView(unit.pattern())
+    var patternView = new PatternView(unit.pattern(), { representationIndex: unit.representationIndex })
     
     for(var argName in unit.args) {
       var arg = unit.args[argName]

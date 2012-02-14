@@ -69,12 +69,15 @@ JsonPatternUnarchiver.prototype._meaning = function(json) {
   throw new Error("invalid meaning: unrecognized type")
 }
 JsonPatternUnarchiver.prototype._invocation = function(json) {
-  var patternId = json["pattern"]
-  var args = {}
-  for(var argName in json["arguments"]) {
-    args[argName] = this._meaning(json["arguments"][argName])
+  var attrs = {
+    patternId: json["pattern"],
+    args: {}
   }
-  return new InvocationMeaning({ patternId: patternId, args: args })
+  for(var argName in json["arguments"]) {
+    attrs.args[argName] = this._meaning(json["arguments"][argName])
+  }
+  if(json["representationIndex"]) attrs.representationIndex = json["representationIndex"]
+  return new InvocationMeaning(attrs)
 }
 JsonPatternUnarchiver.prototype._reference = function(json) {
   var name = json["name"]
@@ -123,7 +126,7 @@ function jsonSerialize(unit) {
       for(var argName in unit.args) {
         argsJSON[argName] = jsonSerialize(unit.args[argName])
       }
-      return { invocation: { pattern: pattern.id, arguments: argsJSON } }
+      return { invocation: { pattern: pattern.id, arguments: argsJSON, representationIndex: unit.representationIndex } }
     }
   } else if(unit instanceof NativeMeaning) {
     return _.map(unit.components, jsonSerialize)
