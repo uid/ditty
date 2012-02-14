@@ -29,7 +29,7 @@ function SlotView(parent, fillerText) {
     drop: function(event, ui) {
       ui.helper.dropped_on_droppable = true
       var patternView = objFor(ui.draggable)
-      this.accept(patternView)
+      this.accept(patternView, true)
     }.bind(this)
   });
   
@@ -81,7 +81,7 @@ function SlotView(parent, fillerText) {
         callback(matches);
       }.bind(this),
       select: function(event, ui) {
-        this.accept(ui.item["result"]())
+        this.accept(ui.item["result"](), true)
       }.bind(this),
       open: function() {
         input.data("menuOpen", true);
@@ -121,7 +121,12 @@ SlotView.prototype.setFiller = function() {
 SlotView.prototype.isEmpty = function() {
   return !this.patternView
 }
-SlotView.prototype.accept = function(patternView) {
+SlotView.prototype.childChanged = function(child) {
+  if(this.parent && this.parent.childChanged) {
+    this.parent.childChanged(this)
+  }
+}
+SlotView.prototype.accept = function(patternView, propagate) {
   // change linkage
   this.patternView = patternView
   patternView.setParent(this)
@@ -135,11 +140,11 @@ SlotView.prototype.accept = function(patternView) {
   this.dom.removeClass("unfilled")
   this.dom.addClass("filled")
   
-  if(this.parent.beenDraggedUpon) {
-    this.parent.beenDraggedUpon()
+  if(propagate && this.parent.childChanged) {
+    this.parent.childChanged(this)
   }
 }
-SlotView.prototype.release = function(child) {
+SlotView.prototype.release = function(child, propagate) {
   if(this.patternView == child) {
     delete this.patternView
 
@@ -151,8 +156,9 @@ SlotView.prototype.release = function(child) {
     this.setFiller()
     this.makeActive()
     
-    if(this.parent.beenDraggedOutOf)
-      this.parent.beenDraggedOutOf()
+    if(propagate && this.parent.childChanged) {
+      this.parent.childChanged(this)
+    }
   }
 }
 SlotView.prototype.meaning = function() {
@@ -176,25 +182,19 @@ function MultiSlotView(parent, fillerText, showExtraSlot) {
   
   this.refresh()
 }
-MultiSlotView.prototype.accept = function(views) {
-  this.massAccepting = true
-  
-  try {
-    if(!(views instanceof Array)) {
-      views = [views]
-    }
-    if(views.length > 0) {
-      this.dom.text("")
+MultiSlotView.prototype.accept = function(views, propagate) {
+  if(!(views instanceof Array)) {
+    views = [views]
+  }
+  if(views.length > 0) {
+    this.dom.text("")
+    $("<li class='inbetweener'></li>").append(new SlotView(this, "").dom).appendTo(this.dom)
+    for(var i in views) {
+      var slotView = new SlotView(this, this.fillerText)
+      slotView.accept(views[i])
+      $("<li></li>").append(slotView.dom).appendTo(this.dom)
       $("<li class='inbetweener'></li>").append(new SlotView(this, "").dom).appendTo(this.dom)
-      for(var i in views) {
-        var slotView = new SlotView(this, this.fillerText)
-        slotView.accept(views[i])
-        $("<li></li>").append(slotView.dom).appendTo(this.dom)
-        $("<li class='inbetweener'></li>").append(new SlotView(this, "").dom).appendTo(this.dom)
-      }
     }
-  } finally {
-    this.massAccepting = false
   }
 }
 MultiSlotView.prototype.refresh = function() {
@@ -232,12 +232,11 @@ MultiSlotView.prototype.refresh = function() {
     li.addClass("inbetweener")
   }
 }
-MultiSlotView.prototype.beenDraggedUpon = function() {
-  if(!this.massAccepting)
-    this.refresh()
-}
-MultiSlotView.prototype.beenDraggedOutOf = function() {
+MultiSlotView.prototype.childChanged = function() {
   this.refresh()
+  if(this.parent && this.parent.childChanged) {
+    this.parent.childChanged(this)
+  }
 }
 MultiSlotView.prototype.meaning = function() {
   var lis = this.dom.children("li").toArray()
@@ -358,7 +357,7 @@ function PatternView(pattern, options) {
     // menu.addSeparator()
     var debug = menu.addSubmenu("Debug &rarr;")
     debug.add("Display", function() { alert(this) }.bind(this))
-    menu.add("Delete", function() { this.parent.release(this) }.bind(this))
+    menu.add("Delete", function() { this.parent.release(this, true) }.bind(this))
     menu.add("Upload", this.save.bind(this))
     menu.open(e)
     
@@ -421,11 +420,11 @@ PatternView.prototype.buildDom = function() {
   // add loading indicator
   this.expressionDom.append(this.loadingDom)
 }
-PatternView.prototype.setParent = function(parent) {
+PatternView.prototype.setParent = function(parent, propagate) {
   if(this.parent == parent)
     return
   if(this.parent)
-    this.parent.release(this)
+    this.parent.release(this, propagate)
   if(parent)
     this.parent = parent
   else
@@ -446,49 +445,83 @@ PatternView.prototype.becameInactive = function() {
     this.sourceDom.removeClass("active")
   }
 }
+PatternView.prototype.childChanged = function(child) {
+  if(this.source == child) {
+    this.pattern.meaning = this.meaning()
+    this.save()
+  }
+  if(this.parent && this.parent.childChanged) {
+    this.parent.childChanged(this)
+  }
+}
 PatternView.prototype.save = function() {
+  if(this.saving) {
+    this.needsAnotherSave = true
+    return
+  }
+  
+  this.saving = true
+  
   this.loadingDom.show()
   
-  var json = jsonSerialize(this.pattern)
-  var request = {}
-  for(var i in json) {
-    request["pattern[" + i + "]"] = JSON.stringify(json[i])
+  if(!this._save) {
+    PatternView.prototype._save = _.debounce(function() {
+      var json = jsonSerialize(this.pattern)
+      var request = {}
+      for(var i in json) {
+        request["pattern[" + i + "]"] = JSON.stringify(json[i])
+      }
+      
+      var finish = function() {
+        var again = this.needsAnotherSave
+        this.saving = false
+        this.needsAnotherSave = false
+        if(again) {
+          this.save()
+        }
+      }.bind(this)
+      
+      var handleError = function(jqXHR, textStatus, errorThrown) {
+        this.loadingDom.hide()
+        var responseJSON = JSON.parse(jqXHR.responseText)
+        if(responseJSON.error) {
+          alert(responseJSON.error)
+        } else {
+          alert("Error saving: the server is down.")
+        }
+        finish()
+      }.bind(this)
+      
+      if(this.pattern.id) {
+        $.ajax({
+          type: "PUT",
+          url: "/patterns/" + this.pattern.id,
+          data: request,
+          success: function(data) {
+            this.loadingDom.hide()
+            finish()
+          }.bind(this),
+          error: handleError,
+          dataType: "json"
+        })
+      } else {
+        $.ajax({
+          type: "POST",
+          url: "/patterns",
+          data: request,
+          success: function(data) {
+            this.loadingDom.hide()
+            this.pattern.id = data["pattern"]["id"]
+            finish()
+          }.bind(this),
+          error: handleError,
+          dataType: "json"
+        })
+      }
+    }, 300)
   }
   
-  var handleError = function(jqXHR, textStatus, errorThrown) {
-    this.loadingDom.hide()
-    var responseJSON = JSON.parse(jqXHR.responseText)
-    if(responseJSON.error) {
-      alert(responseJSON.error)
-    } else {
-      alert("Error saving: the server is down.")
-    }
-  }.bind(this)
-  
-  if(this.pattern.id) {
-    $.ajax({
-      type: "PUT",
-      url: "/patterns/" + this.pattern.id,
-      data: request,
-      success: function(data) {
-        this.loadingDom.hide()
-      }.bind(this),
-      error: handleError,
-      dataType: "json"
-    })
-  } else {
-    $.ajax({
-      type: "POST",
-      url: "/patterns",
-      data: request,
-      success: function(data) {
-        this.loadingDom.hide()
-        this.pattern.id = data["pattern"]["id"]
-      }.bind(this),
-      error: handleError,
-      dataType: "json"
-    })
-  }
+  setTimeout(function() { this._save() }.bind(this), 300)
 }
 PatternView.prototype.meaning = function() {
   // XXX MAJOR HACK XXX
@@ -503,7 +536,8 @@ PatternView.prototype.meaning = function() {
       args[param] = slotMeaning
     }
   }
-  return this.pattern.apply(args).notifying(this.becameActive.bind(this), this.becameInactive.bind(this))
+  return new InvocationMeaning({ pattern: this.pattern, args: args, representationIndex: this.representationIndex }).notifying(this.becameActive.bind(this), this.becameInactive.bind(this))
+  // return this.pattern.apply(args).notifying(this.becameActive.bind(this), this.becameInactive.bind(this))
 }
 PatternView.prototype.acceptArgument = function(argumentName, view) {
   this.slotViewsByParam[argumentName].accept(view)
@@ -593,7 +627,7 @@ function ArgumentReferenceView(argumentReference, options) {
     clearSelection() // right-clicking usually selects the word under the cursor
     
     var menu = new MenuBuilder()
-    menu.add("Delete", function() { this.parent.release(this) }.bind(this))
+    menu.add("Delete", function() { this.parent.release(this, true) }.bind(this))
     menu.open(e)
     
     return false
@@ -602,11 +636,11 @@ function ArgumentReferenceView(argumentReference, options) {
 ArgumentReferenceView.prototype.toString = function() {
   return "ArgumentReferenceView(" + this.argumentReference + ")"
 }
-ArgumentReferenceView.prototype.setParent = function(parent) {
+ArgumentReferenceView.prototype.setParent = function(parent, propagate) {
   if(this.parent == parent)
     return
   if(this.parent)
-    this.parent.release(this)
+    this.parent.release(this, propagate)
   if(parent)
     this.parent = parent
   else
@@ -653,7 +687,7 @@ function JavascriptCodeView(javascriptMeaning, options) {
     clearSelection() // right-clicking usually selects the word under the cursor
     
     var menu = new MenuBuilder()
-    menu.add("Delete", function() { this.parent.release(this) }.bind(this))
+    menu.add("Delete", function() { this.parent.release(this, true) }.bind(this))
     menu.add("Show Source", function() { alert(this.javascriptMeaning.jsSource) }.bind(this))
     menu.open(e)
     
@@ -663,11 +697,11 @@ function JavascriptCodeView(javascriptMeaning, options) {
 JavascriptCodeView.prototype.toString = function() {
   return "JavascriptCodeView(" + this.argumentReference + ")"
 }
-JavascriptCodeView.prototype.setParent = function(parent) {
+JavascriptCodeView.prototype.setParent = function(parent, propagate) {
   if(this.parent == parent)
     return
   if(this.parent)
-    this.parent.release(this)
+    this.parent.release(this, propagate)
   if(parent)
     this.parent = parent
   else
@@ -754,7 +788,7 @@ PaletteView.prototype._append = function(patternView) {
   this.dom.append(" ") // keep white-space in-between, helps with wrapping and spacing
   this.dom.append(patternView.dom)
 }
-PaletteView.prototype.release = function(patternView) {
+PaletteView.prototype.release = function(patternView, propagate) {
   var patternId = patternView.pattern.id
   var pattern = this.patterns[patternId]
   if(pattern) {
@@ -763,6 +797,10 @@ PaletteView.prototype.release = function(patternView) {
     newPatternView.dom.insertAfter(patternView.dom)
   }
   patternView.dom.detach()
+  
+  if(propagate && this.parent.childChanged) {
+    this.parent.childChanged(this)
+  }
 }
 
 

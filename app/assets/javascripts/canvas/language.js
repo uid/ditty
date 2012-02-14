@@ -34,20 +34,20 @@ function ExplicitTemplate(text) {
 
 // PATTERNS
 
-function _BasicPattern() {
+function _PatternBase() {
 }
-_BasicPattern.prototype._checkRepresentations = function() {
+_PatternBase.prototype._checkRepresentations = function() {
   for(var i in this.representations) {
     this._checkRepresentation(this.representations[i])
   }
 }
-_BasicPattern.prototype._checkRepresentation = function(repr) {
+_PatternBase.prototype._checkRepresentation = function(repr) {
   var argNames = _.keys(this.references)
   if(!setEq(argNames, repr.args)) {
     throw new Error("representation has mismatched arguments (" + argNames + ") and (" + repr.args + ")")
   }
 }
-_BasicPattern.prototype.addRepresentation = function(repr) {
+_PatternBase.prototype.addRepresentation = function(repr) {
   this._checkRepresentation(repr)
   this.representations.push(repr)
   return this.representations.length - 1
@@ -67,7 +67,7 @@ function Pattern(attributes) {
   this.meaning = attributes["meaning"] || new NativeMeaning()
   this._checkRepresentations()
 }
-extend(Pattern, _BasicPattern)
+extend(Pattern, _PatternBase)
 Pattern.prototype.toString = function() {
   return "Pattern(" + this.id + "/" + this.key + ")"
 }
@@ -87,6 +87,16 @@ Pattern.prototype.apply = function(args) {
   return this.meaning.replacingReferences(argsHash)
 }
 
+// corresponds to a basic meaning
+// (don't want to store these in DB as separate patterns unless they've been modified)
+function _BasicPattern() {
+}
+extend(_BasicPattern, _PatternBase)
+_BasicPattern.prototype.isBasic = true
+_BasicPattern.prototype.apply = function(args) {
+  return this.meaning
+}
+
 function NumberPattern(value) {
   this.meaning = new NumberMeaning(value)
   this.representations = [new ExplicitTemplate(value.toString())]
@@ -95,9 +105,6 @@ function NumberPattern(value) {
 extend(NumberPattern, _BasicPattern)
 NumberPattern.prototype.toString = function() {
   return "NumberPattern(" + this.id + ")"
-}
-NumberPattern.prototype.apply = function(args) {
-  return this.meaning
 }
 
 function BoolPattern(value) {
@@ -109,9 +116,6 @@ extend(BoolPattern, _BasicPattern)
 BoolPattern.prototype.toString = function() {
   return "BoolPattern(" + this.id + ")"
 }
-BoolPattern.prototype.apply = function(args) {
-  return this.meaning
-}
 
 function StringPattern(value) {
   this.value = value
@@ -122,9 +126,6 @@ function StringPattern(value) {
 extend(StringPattern, _BasicPattern)
 StringPattern.prototype.toString = function() {
   return "StringPattern(" + this.value + ")"
-}
-StringPattern.prototype.apply = function(args) {
-  return this.meaning
 }
 
 
@@ -258,32 +259,52 @@ _BasicMeaning.prototype.exceptionValue = function() {
   throw new Error("cannot convert to an exception")
 }
 
-function InvocationMeaning(patternId, args, options) {
+// options:
+//   patternId
+//   pattern
+//   representationIndex
+//   args (object)
+function InvocationMeaning(options) {
   options = options || {}
   
-  this.patternId = patternId
+  if(options.patternId) this.patternId = options.patternId
+  if(options.pattern) this._pattern = options.pattern
   this.representationIndex = options.representationIndex || 0
-  this.args = args
+  this.args = options.args || {}
 }
 InvocationMeaning.prototype._meaning = function() {
   if(!this.meaning) {
-    this.meaning = this.pattern().apply(this.args || {})
+    this.meaning = this.pattern().apply(this.args)
   }
   return this.meaning
 }
 InvocationMeaning.prototype.pattern = function() {
-  var pattern = patterns[this.patternId] // XXX
-  if(!pattern) {
-    throw new Error("couldn't find pattern '" + this.patternId + "'")
+  if(!this._pattern) {
+    this._pattern = patterns[this.patternId] // XXX
+    if(!this._pattern) {
+      throw new Error("couldn't find pattern '" + this.patternId + "'")
+    }
   }
   
-  return pattern
+  return this._pattern
 }
 InvocationMeaning.prototype.replacingReferences = function(argsHash) {
   return this._meaning().replacingReferences(argsHash)
 }
+InvocationMeaning.prototype.notifying = function(beginf, endf) {
+  this.notifyBeginF = beginf
+  this.notifyEndF = endf
+  return this
+}
 InvocationMeaning.prototype.evaluate = function(c, e, os) {
-  this._meaning().evaluate(c, e, os)
+  if(this.notifyBeginF) this.notifyBeginF()
+  this._meaning().evaluate(function() {
+    if(this.notifyEndF) this.notifyEndF()
+    c.apply(null, arguments)
+  }.bind(this), function() {
+    if(this.notifyEndF) this.notifyEndF()
+    e.apply(null, arguments)
+  }.bind(this), os)
 }
 
 function NumberMeaning(value) {

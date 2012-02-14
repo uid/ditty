@@ -87,7 +87,7 @@ JsonPatternUnarchiver.prototype._invocation = function(json) {
   for(var argName in json["arguments"]) {
     args[argName] = this._meaning(json["arguments"][argName])
   }
-  return new InvocationMeaning(patternId, args)
+  return new InvocationMeaning({ patternId: patternId, args: args })
 }
 JsonPatternUnarchiver.prototype._reference = function(json) {
   var name = json["name"]
@@ -121,11 +121,23 @@ function jsonSerialize(unit) {
     }
     return json
   } else if(unit instanceof InvocationMeaning) {
-    var argsJSON = {}
-    for(var argName in unit.args) {
-      argsJSON[argName] = jsonSerialize(unit.args[argName])
+    var pattern = unit.pattern()
+    if(pattern.isBasic) {
+      if(pattern instanceof NumberPattern) {
+        return { number: pattern.meaning.value }
+      } else if(pattern instanceof BoolPattern) {
+        return { boolean: pattern.meaning.value }
+      } else if(pattern instanceof StringPattern) {
+        return { string: pattern.meaning.value }
+      }
+      return pattern
+    } else {
+      var argsJSON = {}
+      for(var argName in unit.args) {
+        argsJSON[argName] = jsonSerialize(unit.args[argName])
+      }
+      return { invocation: { pattern: pattern.id, arguments: argsJSON } }
     }
-    return { invocation: { pattern: unit.patternId, arguments: argsJSON } }
   } else if(unit instanceof NativeMeaning) {
     return _.map(unit.components, jsonSerialize)
   } else if(unit instanceof ArgumentReference) {
