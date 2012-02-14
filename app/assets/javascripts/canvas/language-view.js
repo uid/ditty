@@ -465,7 +465,7 @@ PatternView.prototype.save = function() {
   this.loadingDom.show()
   
   if(!this._save) {
-    PatternView.prototype._save = _.debounce(function() {
+    this._save = _.debounce(function() {
       var json = jsonSerialize(this.pattern)
       var request = {}
       for(var i in json) {
@@ -518,7 +518,7 @@ PatternView.prototype.save = function() {
           dataType: "json"
         })
       }
-    }, 300)
+    }, 100)
   }
   
   setTimeout(function() { this._save() }.bind(this), 300)
