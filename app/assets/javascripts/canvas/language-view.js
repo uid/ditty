@@ -721,40 +721,6 @@ JavascriptCodeView.prototype.meaning = function() {
 }
 
 
-// CREATE VIEW
-// takes an invocation or argument refrence or what-have-you and creates the proper view
-
-function createView(unit) {
-  if(unit instanceof InvocationMeaning) {
-    var patternView = new PatternView(unit.pattern(), { representationIndex: unit.representationIndex })
-    
-    for(var argName in unit.args) {
-      var arg = unit.args[argName]
-      
-      if("components" in arg) {
-        var argViews = _.map(arg.components, createView)
-        if(argViews.length == 1) {
-          patternView.acceptArgument(argName, argViews[0])
-        } else {
-          patternView.acceptArgument(argName, argViews)
-        }
-      } else {
-        patternView.acceptArgument(argName, createView(arg))
-      }
-    }
-    return patternView
-  } else if(unit instanceof ArgumentReference) {
-    return new ArgumentReferenceView(unit)
-  } else if(unit instanceof JavascriptMeaning) {
-    return new JavascriptCodeView(unit)
-  } else if(unit instanceof _BasicMeaning) {
-    return new PatternView(unit.pattern())
-  } else {
-    throw new Error("what kind of unit is this?")
-  }
-}
-
-
 // PALETTE
 
 function PaletteView() {
@@ -796,6 +762,40 @@ PaletteView.prototype.release = function(patternView, propagate) {
   
   if(propagate && this.parent.childChanged) {
     this.parent.childChanged(this)
+  }
+}
+
+
+// CREATE VIEW
+// takes an invocation or argument refrence or what-have-you and creates the proper view
+
+function createView(unit) {
+  if(unit instanceof InvocationMeaning) {
+    var patternView = new PatternView(unit.pattern(), { representationIndex: unit.representationIndex })
+    
+    for(var argName in unit.args) {
+      var arg = unit.args[argName]
+      
+      if("components" in arg) {
+        var argViews = _.map(arg.components, createView)
+        if(argViews.length == 1) {
+          patternView.acceptArgument(argName, argViews[0])
+        } else {
+          patternView.acceptArgument(argName, argViews)
+        }
+      } else {
+        patternView.acceptArgument(argName, createView(arg))
+      }
+    }
+    return patternView
+  } else if(unit instanceof ArgumentReference) {
+    return new ArgumentReferenceView(unit)
+  } else if(unit instanceof JavascriptMeaning) {
+    return new JavascriptCodeView(unit)
+  } else if(unit instanceof _BasicMeaning) {
+    return new PatternView(unit.pattern())
+  } else {
+    throw new Error("what kind of unit is this?")
   }
 }
 
