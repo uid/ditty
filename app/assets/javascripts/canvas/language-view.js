@@ -26,6 +26,10 @@ function SlotView(parent, fillerText) {
   // patterns can be dropped onto slots
   this.dom.droppable({
     hoverClass: "hover",
+    accept: function(obj) {
+      var patternView = objFor(obj)
+      return !patternView.isExpanded()
+    },
     drop: function(event, ui) {
       ui.helper.dropped_on_droppable = true
       var patternView = objFor(ui.draggable)
@@ -296,8 +300,10 @@ function PatternView(pattern, options) {
     this.dom.draggable({
       cursor: "move",
       helper: function() {
-        return $("<div class='expression-drag-helper'></div>")
-      },
+        var helper = $("<div class='expression-drag-helper'></div>")
+        setObjFor(helper, this)
+        return helper
+      }.bind(this),
       appendTo: "body",
       cursorAt: { left: 8, top: 8 },
       // revert: "invalid",
@@ -325,7 +331,7 @@ function PatternView(pattern, options) {
     clearSelection() // right-clicking usually selects the word under the cursor
     
     var menu = new MenuBuilder()
-    menu.add(this.sourceDom.is(":hidden") ? "Show Source" : "Hide Source", this.toggleSourceView.bind(this))
+    menu.add(this.isExpanded() ? "Hide Source" : "Show Source", this.toggleSourceView.bind(this))
     var viewsMenu = menu.addSubmenu("Change View &rarr;")
     for(var i in this.pattern.representations) {
       var template = this.pattern.representations[i]
@@ -543,8 +549,11 @@ PatternView.prototype.meaning = function() {
 PatternView.prototype.acceptArgument = function(argumentName, view) {
   this.slotViewsByParam[argumentName].accept(view)
 }
+PatternView.prototype.isExpanded = function() {
+  return !this.sourceDom.is(":hidden")
+}
 PatternView.prototype.toggleSourceView = function(instant) {
-  if(this.sourceDom.is(":hidden")) {
+  if(!this.isExpanded()) {
     if(this.pattern.meaning.components) {
       this.source.accept(_.map(this.pattern.meaning.components, createView))
     } else {

@@ -91,13 +91,19 @@ function environmentLoaded() {
   // set up global dragging styles
   
   $("body").addClass("no-drag-in-progress")
-  $("body").bind("dragstart", function() {
-    $("body").removeClass("no-drag-in-progress");
-    $("body").addClass("drag-in-progress")
+  $("body").bind("dragstart", function(e, ui) {
+    var patternView = objFor(ui.helper)
+    if(!patternView.isExpanded()) {
+      $("body").removeClass("no-drag-in-progress");
+      $("body").addClass("drag-in-progress")
+    }
   })
-  $("body").bind("dragstop", function() {
-    $("body").addClass("no-drag-in-progress");
-    $("body").removeClass("drag-in-progress")
+  $("body").bind("dragstop", function(e, ui) {
+    var patternView = objFor(ui.helper)
+    if(!patternView.isExpanded()) {
+      $("body").addClass("no-drag-in-progress");
+      $("body").removeClass("drag-in-progress")
+    }
   })
   
   // set up palette
