@@ -299,6 +299,7 @@ function PatternView(pattern, options) {
   } else {
     this.dom.draggable({
       cursor: "move",
+      distance: 5, // pixels to move before the drag starts
       helper: function() {
         var helper = $("<div class='expression-drag-helper'></div>")
         setObjFor(helper, this)
