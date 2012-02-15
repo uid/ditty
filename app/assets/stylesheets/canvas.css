@@ -121,7 +121,7 @@ ul.multislot li {
   margin: 2px;
   -webkit-border-radius: 4px;
   border: 1px solid black;
-  cursor: hand;
+  cursor: pointer;
 }
 .expression {
   background: #fff;
@@ -133,7 +133,7 @@ ul.multislot li {
   margin: 2px;
   -webkit-border-radius: 10px;
   border: 1px solid black;
-  cursor: hand;
+  cursor: pointer;
 }
 .expression.active {
   background-color: #efe;
