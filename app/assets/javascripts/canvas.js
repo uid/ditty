@@ -148,7 +148,7 @@ function environmentLoaded() {
   var newBubble = function(pattern) {
     var saveAfter = !pattern
     pattern = pattern || new Pattern({ representations: [new Template("My Code")] })
-    var myCode = new PatternView(pattern, { drag: "free" })
+    var myCode = new PatternView(pattern)
     myCode.dom.appendTo($("#program"))
     myCode.toggleSourceView(true /* instant */)
     if(saveAfter) myCode.save()

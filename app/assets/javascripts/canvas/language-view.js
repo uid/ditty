@@ -262,7 +262,6 @@ function PatternView(pattern, options) {
   
   this.pattern = pattern
   this.representationIndex = options.representationIndex || 0
-  this.drag = options.drag
   this.convertComponents()
   this.activeCount = 0
   if(options.parent)
@@ -446,6 +445,7 @@ PatternView.prototype.becameInactive = function() {
 }
 PatternView.prototype.childChanged = function(child) {
   if(this.source == child) {
+    this.pattern.meaning = this.source.meaning()
     this.save()
   }
   if(this.parent && this.parent.childChanged) {
@@ -459,8 +459,6 @@ PatternView.prototype.save = function() {
   }
   
   this.saving = true
-  
-  this.pattern.meaning = this.meaning()
   
   this.loadingDom.show()
   
@@ -524,11 +522,6 @@ PatternView.prototype.save = function() {
   setTimeout(function() { this._save() }.bind(this), 300)
 }
 PatternView.prototype.meaning = function() {
-  // XXX MAJOR HACK XXX
-  if(this.drag == "free") {
-    return this.source.meaning().notifying(this.becameActive.bind(this), this.becameInactive.bind(this))
-  }
-  
   var args = {}
   for(var param in this.slotViewsByParam) {
     var slotMeaning = this.slotViewsByParam[param].meaning()
