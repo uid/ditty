@@ -290,42 +290,34 @@ function PatternView(pattern, options) {
   // this.expressionDom.click(ifTarget(this.toggleSourceView.bind(this)));
 
   // draggable
-  if(this.drag == "free") {
-    this.dom.draggable({
-      cursor: "move",
-      start: function(event, ui) { this.noclick = true }.bind(this),
-      stop: function(event, ui) { setTimeout(function() { delete this.noclick }.bind(this), 100) }.bind(this)
-    })
-  } else {
-    this.dom.draggable({
-      cursor: "move",
-      distance: 5, // pixels to move before the drag starts
-      helper: function() {
-        var helper = $("<div class='expression-drag-helper'></div>")
-        setObjFor(helper, this)
-        return helper
-      }.bind(this),
-      appendTo: "body",
-      cursorAt: { left: 8, top: 8 },
-      // revert: "invalid",
-      revertDuration: 300,
-      stack: "#palette",
-      start: function(event, ui) { 
-        this.dom.addClass("dragging")
-        this.noclick = true
-      }.bind(this),
-      stop: function(event, ui) {
-        this.dom.removeClass("dragging")
-        setTimeout(function() { delete this.noclick }.bind(this), 100)
-        if(!ui.helper.dropped_on_droppable && ui.helper.position().left > $("#palette-container").width()) {
-          var pos = ui.helper.position()
-          this.setParent(null)
-          this.dom.appendTo($("#program"))
-          this.dom.css({ position: "absolute", top: pos.top + "px", left: pos.left + "px" })
-        }
-      }.bind(this),
-    });
-  }
+  this.dom.draggable({
+    cursor: "move",
+    distance: 5, // pixels to move before the drag starts
+    helper: function() {
+      var helper = $("<div class='expression-drag-helper'></div>")
+      setObjFor(helper, this)
+      return helper
+    }.bind(this),
+    appendTo: "body",
+    cursorAt: { left: 8, top: 8 },
+    // revert: "invalid",
+    revertDuration: 300,
+    stack: "#palette",
+    start: function(event, ui) {
+      this.dom.addClass("dragging")
+      this.noclick = true
+    }.bind(this),
+    stop: function(event, ui) {
+      this.dom.removeClass("dragging")
+      setTimeout(function() { delete this.noclick }.bind(this), 100)
+      if(!ui.helper.dropped_on_droppable && ui.helper.position().left > $("#palette-container").width()) {
+        var pos = ui.helper.position()
+        this.setParent(null)
+        this.dom.appendTo($("#program"))
+        this.dom.css({ position: "absolute", top: pos.top + "px", left: pos.left + "px" })
+      }
+    }.bind(this),
+  })
   
   // right-clickable
   this.dom.bind('contextmenu', function(e) {
