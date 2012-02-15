@@ -16,19 +16,15 @@ body {
   padding: 0;
 }
 #program-container {
-  padding: 1em;
-  margin-left: 35%;
-}
-.code-canvas {
   position: fixed;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
-  background: #fee;
 }
-.code-canvas.hover {
-  background: #eef;
+#program {
+  padding: 1em;
+  margin-left: 35%;
 }
 ul.multislot {
   display: inline-block;
