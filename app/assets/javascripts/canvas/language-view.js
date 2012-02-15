@@ -294,7 +294,7 @@ function PatternView(pattern, options) {
     this.dom.draggable({
       cursor: "move",
       start: function(event, ui) { this.noclick = true }.bind(this),
-      stop: function(event, ui) { this.noclick = false }.bind(this)
+      stop: function(event, ui) { setTimeout(function() { delete this.noclick }.bind(this), 100) }.bind(this)
     })
   } else {
     this.dom.draggable({
