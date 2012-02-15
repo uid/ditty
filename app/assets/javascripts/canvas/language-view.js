@@ -823,7 +823,7 @@ function flash(elem, color) {
   color = color || "red"
   elem = $(elem)
   elem.stop(true /* clear animation queue */, true /* jump to end of animation */)
-  elem.css("background", "url(/assets/" + color + "-gradient.png) repeat-y")
+  elem.css("background", "white url(/assets/" + color + "-gradient.png) repeat-y ")
   elem.css("background-position", "-80px")
   elem.animate(
     { "background-position" : elem.width() },
