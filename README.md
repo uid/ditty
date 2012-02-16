@@ -20,3 +20,8 @@ Getting Started
             i.downto(1) { puts "<<<" * rand(20) }
           end
         end
+
+Credits
+-------
+
+The trash can icon came from http://soundforge.deviantart.com/art/Trash-Can-Icon-169853077

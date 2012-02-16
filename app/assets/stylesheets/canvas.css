@@ -28,6 +28,25 @@ body {
 .cds {
   overflow: auto;
 }
+#trash {
+  width: 131px;
+  height: 132px;
+  margin: 15px 5px 0 0;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.no-drag-in-progress #trash {
+  display: none;
+}
+.drag-in-progress #trash {
+  background: url(/assets/trash-empty.png) no-repeat;
+  opacity: 0.3;
+}
+.drag-in-progress #trash.hover {
+  background: url(/assets/trash-full.png) no-repeat;
+  opacity: 0.8;
+}
 ul.multislot {
   display: inline-block;
   vertical-align: middle;

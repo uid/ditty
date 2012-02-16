@@ -31,7 +31,7 @@ function SlotView(parent, fillerText) {
       var patternView = objFor(ui.draggable)
       this.accept(patternView, true)
     }.bind(this)
-  });
+  })
   
   // make clickable
   
@@ -320,9 +320,6 @@ function PatternView(pattern, options) {
         var pos = ui.helper.offset()
         codeCanvas.accept(this)
         this.dom.offset(pos)
-      }
-      if(this.parent && this.parent.childChanged) {
-        this.parent.childChanged(this)
       }
     }.bind(this),
   })
@@ -1014,5 +1011,35 @@ MenuBuilder.prototype._appendTo = function(parentDom) {
         $('.overlay').hide();
       }.bind(item))
     }
+  }
+}
+
+
+// TRASH CAN
+
+function TrashView() {
+  // create dom
+  this.dom = $("<div id='trash'></div>")
+  setObjFor(this.dom, this)
+  
+  // droppable
+  this.dom.droppable({
+    hoverClass: "hover",
+    drop: function(event, ui) {
+      ui.helper.dropped_on_droppable = true
+      var patternView = objFor(ui.draggable)
+      setTimeout(function() { this.accept(patternView, true) }.bind(this), 100)
+    }.bind(this)
+  });
+}
+TrashView.prototype.toString = function() {
+  return "TrashView()"
+}
+TrashView.prototype.accept = function(patternView, propagate) {
+  // change linkage
+  patternView.setParent(null, true /* propagate */)
+
+  if(propagate && this.parent && this.parent.childChanged) {
+    this.parent.childChanged(this)
   }
 }

@@ -186,6 +186,10 @@ function environmentLoaded() {
   
   codeCanvas.restore(initialCanvas)
   
+  // create the trash
+  
+  $("#program-container").append(new TrashView().dom)
+  
   // set up styles/behavior for right-click menus
   
   $(".first_li , .sec_li, .inner_li span").live({
