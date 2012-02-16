@@ -21,10 +21,12 @@ body {
   right: 0;
   bottom: 0;
   left: 35%;
-  overflow: scroll;
 }
 #program {
   padding: 1em;
+}
+.cds {
+  overflow: auto;
 }
 ul.multislot {
   display: inline-block;
