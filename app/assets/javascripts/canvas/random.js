@@ -92,3 +92,43 @@ function arrayRemove(arr) {
     }
     return arr
 }
+
+
+// works like underscore.js' debounce, with two differences:
+// 1) supports asynchronous operations by providing the function with
+//    a callback to indicate when the operation is complete
+// 2) if the wrapper is called multiple times while in progress,
+//    the function will be called only once afterward. this makes it
+//    appropriate for wrapping functions that save to the server.
+// example:
+//   var f = debounceCollapse(function(finish) {
+//     console.log("executing...")
+//     setTimeout(function() {
+//       console.log("done!")
+//       finish()
+//     }, 300)
+//   })
+function debounceCollapse(doit) {
+  var inProgress = false
+  var goAgain = false // true if another request came while the last was processing
+  
+  var f = function() {
+    if(inProgress) {
+      goAgain = true
+      return
+    }
+    
+    inProgress = true
+    
+    doit(function() {
+      var again = goAgain
+      inProgress = false
+      goAgain = false
+      if(again) {
+        f()
+      }
+    })
+  }
+  
+  return f
+}

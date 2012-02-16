@@ -321,6 +321,9 @@ function PatternView(pattern, options) {
         codeCanvas.accept(this)
         this.dom.offset(pos)
       }
+      if(this.parent && this.parent.childChanged) {
+        this.parent.childChanged(this)
+      }
     }.bind(this),
   })
   
@@ -789,13 +792,6 @@ function CodeCanvasView() {
   // create dom
   this.dom = $("#program")
   setObjFor(this.dom, this)
-  
-  // upload state every 10 seconds
-  var f = function() {
-    this.upload()
-    setTimeout(f, 10000)
-  }.bind(this)
-  setTimeout(f, 10000)
 }
 CodeCanvasView.prototype.toString = function(pattern) {
   return "CodeCanvasView()"
@@ -815,6 +811,9 @@ CodeCanvasView.prototype.asJSON = function() {
   }
   return { views: views }
 }
+CodeCanvasView.prototype.childChanged = function(child) {
+  this.upload()
+}
 CodeCanvasView.prototype.restore = function(initial) {
   if(initial.views) {
     for(var i in initial.views) {
@@ -831,39 +830,46 @@ CodeCanvasView.prototype.restore = function(initial) {
   }
 }
 CodeCanvasView.prototype.upload = function() {
-  var jsonObj = this.asJSON()
-  var json = JSON.stringify(jsonObj)
-  if(json == this._lastJSON) {
-    return
-  }
-  this._lastJSON = json
-  
-  var request = {}
-  for(var i in jsonObj) {
-    request["canvas[" + i + "]"] = JSON.stringify(jsonObj[i])
-  }
-  
-  $.ajax({
-    type: "PUT",
-    url: "/canvas/" + currentUser.id,
-    data: request,
-    success: function(data) {
-    }.bind(this),
-    error: function(jqXHR, textStatus, errorThrown) {
-      var responseJSON
-      try {
-        responseJSON = JSON.parse(jqXHR.responseText)
-        if(responseJSON.error) {
-          $.achtung({ message: responseJSON.error, timeout: 5 })
-        } else {
-          $.achtung({ message: "Error syncing canvas: the server is down.", timeout: 5 })
-        }
-      } catch(e) {
-        $.achtung({ message: "Error syncing canvas: the server is down.", timeout: 5 })
+  if(!this._upload) {
+    this._upload = debounceCollapse(function(finish) {
+      var jsonObj = this.asJSON()
+      var json = JSON.stringify(jsonObj)
+      if(json == this._lastJSON) {
+        return
       }
-    },
-    dataType: "json"
-  })
+      this._lastJSON = json
+      
+      var request = {}
+      for(var i in jsonObj) {
+        request["canvas[" + i + "]"] = JSON.stringify(jsonObj[i])
+      }
+      
+      $.ajax({
+        type: "PUT",
+        url: "/canvas/" + currentUser.id,
+        data: request,
+        success: function(data) {
+          finish()
+        }.bind(this),
+        error: function(jqXHR, textStatus, errorThrown) {
+          var responseJSON
+          try {
+            responseJSON = JSON.parse(jqXHR.responseText)
+            if(responseJSON.error) {
+              $.achtung({ message: responseJSON.error, timeout: 5 })
+            } else {
+              $.achtung({ message: "Error syncing canvas: the server is down.", timeout: 5 })
+            }
+          } catch(e) {
+            $.achtung({ message: "Error syncing canvas: the server is down.", timeout: 5 })
+          }
+          finish()
+        },
+        dataType: "json"
+      })
+    }.bind(this))
+  }
+  this._upload()
 }
 CodeCanvasView.prototype.accept = function(patternView, propagate) {
   if(_.include(this.patternViews, patternView)) {
