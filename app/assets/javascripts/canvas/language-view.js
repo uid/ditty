@@ -43,6 +43,7 @@ function SlotView(parent, fillerText) {
     input = $("<input type='text' />");
     input.autocomplete({
       delay: 0,
+      autoFocus: true,
       // appendTo: this.dom.parents(".expression-container").last(),
       source: function(request, callback) {
         var matches = []
