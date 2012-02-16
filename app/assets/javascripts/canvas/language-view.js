@@ -90,7 +90,7 @@ function SlotView(parent, fillerText) {
       },
       close: function() {
         input.data("menuOpen", false);
-        // if(!input.is(":focus"))
+        if(!input.is(":focus"))
           dismiss();
       }
     }).data("autocomplete")._renderItem = function(ul, item) {
