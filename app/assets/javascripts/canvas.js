@@ -92,19 +92,17 @@ function environmentLoaded() {
   
   $("body").addClass("no-drag-in-progress")
   $("body").bind("dragstart", function(e, ui) {
-    var patternView = objFor(ui.helper)
-    if(!patternView.isExpanded()) {
-      $("body").removeClass("no-drag-in-progress");
-      $("body").addClass("drag-in-progress")
-    }
+    $("body").removeClass("no-drag-in-progress");
+    $("body").addClass("drag-in-progress")
   })
   $("body").bind("dragstop", function(e, ui) {
-    var patternView = objFor(ui.helper)
-    if(!patternView.isExpanded()) {
-      $("body").addClass("no-drag-in-progress");
-      $("body").removeClass("drag-in-progress")
-    }
+    $("body").addClass("no-drag-in-progress");
+    $("body").removeClass("drag-in-progress")
   })
+  
+  // set up the code canvas
+  
+  codeCanvas = new CodeCanvasView()
   
   // set up palette
   

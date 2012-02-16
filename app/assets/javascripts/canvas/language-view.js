@@ -26,10 +26,6 @@ function SlotView(parent, fillerText) {
   // patterns can be dropped onto slots
   this.dom.droppable({
     hoverClass: "hover",
-    accept: function(obj) {
-      var patternView = objFor(obj)
-      return !patternView.isExpanded()
-    },
     drop: function(event, ui) {
       ui.helper.dropped_on_droppable = true
       var patternView = objFor(ui.draggable)
@@ -312,9 +308,7 @@ function PatternView(pattern, options) {
       if(!ui.helper.dropped_on_droppable && ui.helper.position().left > $("#palette-container").width()) {
         var pos = ui.helper.offset()
         this.setParent(codeCanvas)
-        // this.dom.appendTo($("#program"))
         this.dom.offset(pos)
-        // this.dom.css({ position: "absolute", top: pos.top + "px", left: pos.left + "px" })
       }
     }.bind(this),
   })
@@ -764,6 +758,43 @@ PaletteView.prototype.release = function(patternView, propagate) {
   if(propagate && this.parent.childChanged) {
     this.parent.childChanged(this)
   }
+}
+
+
+// CANVAS VIEW
+
+function CodeCanvasView() {
+  this.patternViews = []
+
+  // create dom
+  this.dom = $("#program")
+  setObjFor(this.dom, this)
+}
+CodeCanvasView.prototype.toString = function(pattern) {
+  return "CodeCanvasView()"
+}
+CodeCanvasView.prototype.accept = function(patternView, propagate) {
+  if(_.include(this.patternViews, patternView)) {
+    return
+  }
+  
+  // change linkage
+  this.patternViews.append(patternView)
+  patternView.setParent(this)
+
+  // move patternView into our dom
+  this.dom.append(this.patternView.dom)
+  
+  // TODO: position it well?
+}
+CodeCanvasView.prototype.release = function(child, propagate) {
+  if(!_.include(this.patternViews, child)) {
+    return
+  }
+  
+  this.patternViews = arrayRemove(this.patternViews, child)
+
+  child.dom.detach()
 }
 
 
