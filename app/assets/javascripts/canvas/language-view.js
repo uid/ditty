@@ -41,6 +41,7 @@ function SlotView(parent, fillerText) {
 
   this.dom.click(ifTarget(function(e) {
     input = $("<input type='text' />");
+    input.keyup(function(e) { if(e.keyCode == 27) { dismiss() } })
     input.autocomplete({
       delay: 0,
       autoFocus: true,
@@ -89,7 +90,7 @@ function SlotView(parent, fillerText) {
       },
       close: function() {
         input.data("menuOpen", false);
-        if(!input.is(":focus"))
+        // if(!input.is(":focus"))
           dismiss();
       }
     }).data("autocomplete")._renderItem = function(ul, item) {
