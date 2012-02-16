@@ -2,7 +2,7 @@ class PatternsController < ApplicationController
   before_filter :authenticate_user!
   
   def index
-    @patterns = Pattern.all
+    @patterns = Pattern.all include: :creator
     respond_to do |format|
       format.json { render json: @patterns }
     end
