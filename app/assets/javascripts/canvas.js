@@ -49,18 +49,34 @@ function changeTheme() {
 }
 
 
-var audioContext, upmixer, clicker, bar
 function initAudio() {
-  audioContext = new webkitAudioContext()
-  upmixer = new UpMixer(audioContext)
-  bar = new ModalBar(audioContext)
+  var audioContext = new webkitAudioContext()
+  var upmixer = new UpMixer(audioContext)
+  var xylos = [
+    { connected: false, bar: new ModalBar(audioContext) },
+    { connected: false, bar: new ModalBar(audioContext) },
+    { connected: false, bar: new ModalBar(audioContext) },
+    { connected: false, bar: new ModalBar(audioContext) }
+  ]
+  var nextXylo = 0
   
   upmixer.connect()
   
-  globalOS.globals['xylo'] = bar
-  bar.setPreset(1)
-  bar.connect(upmixer)
-  // bar.strike(440, 0.1)
+  for(var i in xylos) {
+    xylos[i].bar.setPreset(1)
+  }
+  
+  
+  globalOS.globals['xylo'] = {
+    strike: function() {
+      if(!xylos[nextXylo].connected) {
+        xylos[nextXylo].bar.connect(upmixer)
+        xylos[nextXylo].connected = true
+      }
+      xylos[nextXylo].bar.strike.apply(xylos[nextXylo].bar, arguments)
+      nextXylo = (nextXylo + 1) % xylos.length
+    }
+  }
 }
 
 
