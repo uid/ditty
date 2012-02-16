@@ -150,7 +150,7 @@ function environmentLoaded() {
     var saveAfter = !pattern
     pattern = pattern || new Pattern({ representations: [new Template("My Code")] })
     var myCode = new PatternView(pattern)
-    myCode.dom.appendTo($("#program"))
+    codeCanvas.accept(myCode)
     myCode.toggleSourceView(true /* instant */)
     if(saveAfter) myCode.save()
     return myCode

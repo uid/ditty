@@ -318,7 +318,7 @@ function PatternView(pattern, options) {
       setTimeout(function() { delete this.noclick }.bind(this), 100)
       if(!ui.helper.dropped_on_droppable && ui.helper.position().left > $("#palette-container").width()) {
         var pos = ui.helper.offset()
-        this.setParent(codeCanvas)
+        codeCanvas.accept(this)
         this.dom.offset(pos)
       }
     }.bind(this),
@@ -433,6 +433,11 @@ PatternView.prototype.setParent = function(parent, propagate) {
     this.parent = parent
   else
     delete this.parent
+  if(this.dom) {
+    this.dom.css("position", "relative")
+    this.dom.css("top", 0)
+    this.dom.css("left", 0)
+  }
 }
 PatternView.prototype.becameActive = function() {
   flash(this.expressionDom, "green")
@@ -790,11 +795,11 @@ CodeCanvasView.prototype.accept = function(patternView, propagate) {
   }
   
   // change linkage
-  this.patternViews.append(patternView)
+  this.patternViews.push(patternView)
   patternView.setParent(this)
 
   // move patternView into our dom
-  this.dom.append(this.patternView.dom)
+  this.dom.append(patternView.dom)
   
   // TODO: position it well?
 }
