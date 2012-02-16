@@ -309,11 +309,12 @@ function PatternView(pattern, options) {
     stop: function(event, ui) {
       this.dom.removeClass("dragging")
       setTimeout(function() { delete this.noclick }.bind(this), 100)
-      if(!ui.helper.dropped_on_droppable && ui.helper.offset().left > $("#palette-container").width()) {
+      if(!ui.helper.dropped_on_droppable && ui.helper.position().left > $("#palette-container").width()) {
         var pos = ui.helper.offset()
-        this.setParent(null)
-        this.dom.appendTo($("#program"))
-        this.dom.css({ position: "absolute", top: pos.top + "px", left: pos.left + "px" })
+        this.setParent(codeCanvas)
+        // this.dom.appendTo($("#program"))
+        this.dom.offset(pos)
+        // this.dom.css({ position: "absolute", top: pos.top + "px", left: pos.left + "px" })
       }
     }.bind(this),
   })

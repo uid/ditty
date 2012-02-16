@@ -20,11 +20,11 @@ body {
   top: 0;
   right: 0;
   bottom: 0;
-  left: 0;
+  left: 35%;
+  overflow: scroll;
 }
 #program {
   padding: 1em;
-  margin-left: 35%;
 }
 ul.multislot {
   display: inline-block;
