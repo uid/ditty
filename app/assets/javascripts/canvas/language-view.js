@@ -533,6 +533,10 @@ PatternView.prototype.save = function() {
   setTimeout(function() { this._save() }.bind(this), 300)
 }
 PatternView.prototype.meaning = function() {
+  if(this.isExpanded()) {
+    return this.source.meaning().notifying(this.becameActive.bind(this), this.becameInactive.bind(this))
+  }
+  
   var args = {}
   for(var param in this.slotViewsByParam) {
     var slotMeaning = this.slotViewsByParam[param].meaning()
