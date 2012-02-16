@@ -94,6 +94,7 @@ function SlotView(parent, fillerText) {
           dismiss();
       }
     }).data("autocomplete")._renderItem = function(ul, item) {
+      // copied from jQuery source, but uses 'html' instead of 'text'
       return $("<li></li>").data("item.autocomplete", item).append($("<a></a>").html(item.label)).appendTo(ul)
     }
 
