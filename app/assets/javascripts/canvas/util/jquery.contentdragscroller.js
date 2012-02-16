@@ -4,7 +4,7 @@
 	// http://www.stevefenton.co.uk/Content/Jquery-Content-Drag-Scroller/
 	// Feel free to use this jQuery Plugin
 	// Version: 0.1.0
-    // Contributions by: 
+    // Contributions by: TOM LIEBER (took out velocity, added horizontal scrolling)
 
 	var contentdragscrollerCount = 0;
 
