@@ -80,6 +80,12 @@ function loadEnvironment() {
 
 
 function environmentLoaded() {
+  // browser check
+  
+  if(navigator.userAgent.indexOf("Chrome") != -1 || navigator.userAgent.indexOf("OS X") == -1) {
+    $("#welcome-message").append("<p>You're not using Chrome on OS X&#8230; I only ever test this site in Chrome on OS X, so it's probably quite broken for you. Good luck!</p>")
+  }
+  
   // hide the loading screen
   
   $("#loading").hide()
