@@ -105,7 +105,7 @@ function environmentLoaded() {
   // set up the code canvas
   
   codeCanvas = new CodeCanvasView()
-  $("#program").contentdragscroller({ width: "100%", height: "100%"})
+  $("#program").contentdragscroller({ width: "100%", height: "100%", cursor: null })
   
   // set up palette
   
