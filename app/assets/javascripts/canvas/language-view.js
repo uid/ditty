@@ -815,8 +815,9 @@ CodeCanvasView.prototype.restore = function(initial) {
   if(initial.views) {
     for(var i in initial.views) {
       var view = initial.views[i]
-      console.log(view)
-      var patternView = new PatternView(patterns[view.pattern], { representationIndex: view.patternRepIndex })
+      var pattern = patterns[view.pattern]
+      if(!pattern) continue
+      var patternView = new PatternView(pattern, { representationIndex: view.patternRepIndex })
       this.accept(patternView)
       patternView.dom.css({ position: "absolute", left: view.x, top: view.y })
       if(view.expanded) {
