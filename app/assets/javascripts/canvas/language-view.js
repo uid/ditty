@@ -59,27 +59,35 @@ function SlotView(parent, fillerText) {
           matches.push({ value: "text: \"" + request.term + "\"", result: function() { return new PatternView(new StringPattern(request.term)) } })
         }
         var keywords = request.term.toLowerCase().split(" ")
+        var keywordMatches = []
         for(var pattern in patterns) {
           if(!isNaN(parseFloat(pattern))) continue // skip non-numeric keys (they're backward-compatibility dupes)
           for(var i in patterns[pattern].representations) {
             var template = patterns[pattern].representations[i].text.toLowerCase()
+            // check that all keywords are present
             var found = true
+            var minIndex = 1000
             for(var j in keywords) {
-              if(template.indexOf(keywords[j]) == -1) {
+              var index = template.indexOf(keywords[j])
+              if(index == -1) {
                 found = false
                 break
               }
+              if(index < minIndex) minIndex = index
             }
             if(found) {
-              (function(pattern, i) {
-                matches.push({
+              (function(pattern, i, minIndex) {
+                keywordMatches.push({
+                  minIndex: minIndex,
                   value: patterns[pattern].representations[i].text,
                   result: function() { return new PatternView(patterns[pattern], { representationIndex: i }) }
                 })
-              })(pattern, i)
+              })(pattern, i, minIndex)
             }
           }
         }
+        keywordMatches.sort(function(a, b) { return a.minIndex - b.minIndex })
+        matches.push.apply(matches, keywordMatches)
         callback(matches);
       }.bind(this),
       select: function(event, ui) {
