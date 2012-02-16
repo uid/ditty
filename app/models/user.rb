@@ -1,5 +1,6 @@
 class User < ActiveRecord::Base
   has_many :patterns, :foreign_key => "creator_id", :dependent => :destroy
+  has_one :canvas, :dependent => :destroy
   
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable,

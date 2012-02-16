@@ -4,16 +4,20 @@
   <title>Ditty</title>
   <%= stylesheet_link_tag "application", :media => "all" %>
   <%= stylesheet_link_tag "canvas", :media => "all" %>
-  <script>
-  var currentUser = <%= current_user.to_json.html_safe %>
-  </script>
-  <%= javascript_include_tag "application" %>
-  <%= javascript_include_tag "canvas" %>
   <%= csrf_meta_tags %>
 </head>
 <body>
 
 <%= yield %>
+
+<script>
+var currentUser = <%= current_user.to_json.html_safe %>
+<% if current_user.canvas %>
+var initialCanvas = <%= current_user.canvas.to_json.html_safe %>
+<% end %>
+</script>
+<%= javascript_include_tag "application" %>
+<%= javascript_include_tag "canvas" %>
 
 </body>
 </html>

@@ -1,6 +1,8 @@
 Ditty::Application.routes.draw do
   root :to => "canvas#index"
   
+  put "canvas/:id", controller: "canvas", action: "update"
+  
   resources :patterns
   
   devise_for :users

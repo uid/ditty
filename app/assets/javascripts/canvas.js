@@ -160,12 +160,9 @@ function environmentLoaded() {
     $(this).effect("transfer", { to: bubble.dom }, 200)
   })
   
-  // create a default bubble
-  if(myPatterns().length) {
-    _.each(myPatterns(), newBubble)
-  } else {
-    newBubble()
-  }
+  // restore canvas
+  
+  codeCanvas.restore(initialCanvas)
   
   // set up styles/behavior for right-click menus
   
