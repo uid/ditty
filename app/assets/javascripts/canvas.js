@@ -232,7 +232,7 @@ function environmentLoaded() {
   
   // done!
   
-  $("#welcome, #welcome button").click(function() { $("#welcome").hide("puff") })
+  $("#welcome, #welcome button").click(function(e) { $("#welcome").hide("puff"); e.stopPropagation() })
   
   flash($("body"), "blue")
 }
