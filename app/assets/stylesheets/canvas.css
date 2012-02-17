@@ -28,6 +28,13 @@ body {
 #program {
   position: relative;
 }
+p.author {
+  margin: 0;
+  padding: 0;
+  font-weight: bold;
+  font-size: small;
+  font-variant: small-caps;
+}
 .cds {
   overflow: auto;
 }

@@ -87,6 +87,9 @@ Pattern.prototype.apply = function(args) {
   }
   return this.meaning.replacingReferences(argsHash)
 }
+Pattern.prototype.isMine = function() {
+  return this.creator.id == currentUser.id
+}
 
 // corresponds to a basic meaning
 // (don't want to store these in DB as separate patterns unless they've been modified)
@@ -96,6 +99,9 @@ extend(_BasicPattern, _PatternBase)
 _BasicPattern.prototype.isBasic = true
 _BasicPattern.prototype.apply = function(args) {
   return this.meaning
+}
+_BasicPattern.prototype.isMine = function() {
+  return true // XXX
 }
 
 function NumberPattern(value) {

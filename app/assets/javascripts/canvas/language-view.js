@@ -285,8 +285,7 @@ function PatternView(pattern, options) {
   this.buildDom()
   
   // add source code
-  this.source = new MultiSlotView(this /* parent */, "Drag or type something here.", true /* showExtraSlot */)
-  this.source.dom.appendTo(this.sourceDom)
+  this._buildSourceDom()
 
   // click to activate
   this.expressionDom.click(ifTarget(function(e) {
@@ -555,12 +554,25 @@ PatternView.prototype.acceptArgument = function(argumentName, view) {
 PatternView.prototype.isExpanded = function() {
   return !this.sourceDom.is(":hidden")
 }
+PatternView.prototype._buildSourceDom = function() {
+  if(this.pattern.creator && !this.pattern.isMine()) {
+    var authorship = $("<p class='author'>created by <span></span></p>")
+    var author = this.pattern.creator.username || "anonymous"
+    authorship.children("span").text(author)
+    this.sourceDom.append(authorship)
+  }
+  
+  if(this.pattern.meaning.components) {
+    this.source = new MultiSlotView(this /* parent */, "Drag or type something here.", true /* showExtraSlot */)
+    this.source.dom.appendTo(this.sourceDom)
+  } else {
+    this.sourceDom.append($("<pre style='white-space: normal; word-break: break-all; width: 300px'></pre>").text(this.pattern.meaning.jsSource))
+  }
+}
 PatternView.prototype.toggleSourceView = function(instant) {
   if(!this.isExpanded()) {
     if(this.pattern.meaning.components) {
       this.source.accept(_.map(this.pattern.meaning.components, createView))
-    } else {
-      this.sourceDom.html($("<pre style='word-break: break-all'></pre>").text(this.pattern.meaning.jsSource))
     }
   }
   this.sourceDom.animate(
