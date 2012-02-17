@@ -11,6 +11,9 @@ body {
   margin: 0;
   padding: 1em;
 }
+#welcome div {
+  z-index: 3;
+}
 #loading p {
   margin: 0;
   padding: 0;
@@ -192,15 +195,27 @@ ul.multislot li {
 }
 #bottom-toolbar {
   position: fixed;
-  bottom: 1em;
-  right: 1em;
+  bottom: 0;
+  right: 0;
+  padding: 20px 1em 1em 20px;
+  text-align: right;
+  z-index: 2;
+  background: url(/assets/white-halo.png) no-repeat;
+  background-position: -120px -120px;
+}
+#bottom-toolbar p {
+  margin: .3em 0;
+  padding: 0;
+}
+#bottom-toolbar form, #bottom-toolbar div {
+  display: inline;
+}
+#bottom-toolbar button, #bottom-toolbar input {
+  padding: 0.5em;
+  font-size: 11pt;
 }
 #theme-switcher {
   display: none;
-}
-#bubble-adder {
-  padding: 0.5em;
-  font-size: 11pt;
 }
 
 /* AUTOCOMPLETE */

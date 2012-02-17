@@ -182,6 +182,7 @@ function environmentLoaded() {
     var bubble = newBubble()
     $(this).effect("transfer", { to: bubble.dom }, 200)
   })
+  $("#login-button").click(function() { window.location = "/users/sign_in" })
   
   // restore canvas
   
