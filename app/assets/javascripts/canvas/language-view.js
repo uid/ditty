@@ -818,7 +818,7 @@ CodeCanvasView.prototype.restore = function(initial) {
       if(!pattern) continue
       var patternView = new PatternView(pattern, { representationIndex: view.patternRepIndex })
       this.accept(patternView)
-      patternView.dom.css({ position: "absolute", left: view.x, top: view.y })
+      patternView.dom.offset({ left: view.x + this.dom.offset().left, top: view.y })
       if(view.expanded) {
         patternView.toggleSourceView(true /* instant */)
       }
