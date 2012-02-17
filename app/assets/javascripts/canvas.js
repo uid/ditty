@@ -184,7 +184,7 @@ function environmentLoaded() {
   
   var newBubble = function(pattern) {
     var saveAfter = !pattern
-    pattern = pattern || new Pattern({ representations: [new Template("My Code")] })
+    pattern = pattern || new Pattern({ creator: { id: currentUser.id }, representations: [new Template("My Code")] })
     var myCode = new PatternView(pattern)
     codeCanvas.accept(myCode, true /* propagate */)
     myCode.dom.css({ position: "absolute", left: "10px", top: "10px" })
