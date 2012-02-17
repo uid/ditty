@@ -61,7 +61,7 @@ function SlotView(parent, fillerText) {
         var keywords = request.term.toLowerCase().split(" ")
         var keywordMatches = []
         for(var pattern in patterns) {
-          if(!isNaN(parseFloat(pattern))) continue // skip non-numeric keys (they're backward-compatibility dupes)
+          if(isNaN(parseFloat(pattern))) continue // skip non-numeric keys (they're backward-compatibility dupes)
           for(var i in patterns[pattern].representations) {
             var template = patterns[pattern].representations[i].text.toLowerCase()
             // check that all keywords are present
