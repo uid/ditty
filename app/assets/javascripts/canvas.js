@@ -172,7 +172,7 @@ function environmentLoaded() {
     var saveAfter = !pattern
     pattern = pattern || new Pattern({ representations: [new Template("My Code")] })
     var myCode = new PatternView(pattern)
-    codeCanvas.accept(myCode)
+    codeCanvas.accept(myCode, true /* propagate */)
     myCode.toggleSourceView(true /* instant */)
     if(saveAfter) myCode.save()
     return myCode

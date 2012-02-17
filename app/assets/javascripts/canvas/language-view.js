@@ -318,7 +318,7 @@ function PatternView(pattern, options) {
       setTimeout(function() { delete this.noclick }.bind(this), 100)
       if(!ui.helper.dropped_on_droppable && ui.helper.position().left > $("#palette-container").width()) {
         var pos = ui.helper.offset()
-        codeCanvas.accept(this)
+        codeCanvas.accept(this, true /* propagate */)
         this.dom.offset(pos)
       }
     }.bind(this),
@@ -870,6 +870,11 @@ CodeCanvasView.prototype.upload = function() {
 }
 CodeCanvasView.prototype.accept = function(patternView, propagate) {
   if(_.include(this.patternViews, patternView)) {
+    // the child was probably dragged around; trigger the changed event
+    // (after it's had a chance to change position in the dom)
+    if(propagate) {
+      setTimeout(function() { this.childChanged(patternView) }.bind(this), 100)
+    }
     return
   }
   
@@ -880,7 +885,10 @@ CodeCanvasView.prototype.accept = function(patternView, propagate) {
   // move patternView into our dom
   this.dom.append(patternView.dom)
   
-  // TODO: position it well?
+  if(propagate) {
+    // save after it's had a chance to change position in the dom
+    setTimeout(function() { this.childChanged(patternView) }.bind(this), 100)
+  }
 }
 CodeCanvasView.prototype.release = function(child, propagate) {
   if(!_.include(this.patternViews, child)) {
@@ -890,6 +898,10 @@ CodeCanvasView.prototype.release = function(child, propagate) {
   this.patternViews = arrayRemove(this.patternViews, child)
 
   child.dom.detach()
+  
+  if(propagate) {
+    this.childChanged(child)
+  }
 }
 
 
