@@ -362,7 +362,6 @@ function PatternView(pattern, options) {
     var debug = menu.addSubmenu("Debug &rarr;")
     debug.add("Display", function() { alert(this) }.bind(this))
     menu.add("Delete", function() { this.parent.release(this, true) }.bind(this))
-    menu.add("Upload", this.save.bind(this))
     menu.open(e)
     
     return false
