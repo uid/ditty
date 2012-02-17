@@ -595,7 +595,14 @@ PatternView.prototype.toggleSourceView = function(instant) {
   }
   this.sourceDom.animate(
     { height: 'toggle' },
-    { duration: instant ? 0 : 300 }
+    {
+      duration: instant ? 0 : 300,
+      complete: function() {
+        if(this.parent && this.parent.childChanged) {
+          this.parent.childChanged(this)
+        }
+      }.bind(this)
+    }
   )
 }
 PatternView.prototype.rootEval = function(os) {
