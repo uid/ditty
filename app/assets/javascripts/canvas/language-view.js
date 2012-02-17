@@ -520,6 +520,9 @@ PatternView.prototype.save = function() {
           success: function(data) {
             this.loadingDom.hide()
             this.pattern.id = data["pattern"]["id"]
+            if(this.parent && this.parent.childChanged) {
+              this.parent.childChanged(this)
+            }
             finish()
           }.bind(this),
           error: handleError,
