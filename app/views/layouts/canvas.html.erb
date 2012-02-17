@@ -14,6 +14,8 @@
 var currentUser = <%= current_user.to_json.html_safe %>
 <% if current_user.canvas %>
 var initialCanvas = <%= current_user.canvas.to_json.html_safe %>
+<% else %>
+var initialCanvas = {}
 <% end %>
 </script>
 <%= javascript_include_tag "application" %>
