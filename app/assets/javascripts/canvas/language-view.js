@@ -329,6 +329,23 @@ function PatternView(pattern, options) {
     
     var menu = new MenuBuilder()
     menu.add(this.isExpanded() ? "Hide Source" : "Show Source", this.toggleSourceView.bind(this))
+    menu.add("Rename...", function() {
+      var template = this.pattern.representations[this.representationIndex]
+      var text = prompt("New template?", template.text)
+      if(!text) return
+      var template = new Template(text)
+      try {
+        this.pattern.replaceRepresentation(this.representationIndex, template)
+      } catch(e) {
+        alert("couldn't do it: " + e.message)
+        return
+      }
+      this.reconvertComponents()
+      this.buildDom()
+      flash(this.expressionDom, "blue")
+      flash(this.sourceDom, "blue")
+      this.save()
+    }.bind(this))
     var viewsMenu = menu.addSubmenu("Change View &rarr;")
     for(var i in this.pattern.representations) {
       var template = this.pattern.representations[i]
@@ -338,6 +355,7 @@ function PatternView(pattern, options) {
         this.buildDom()
         flash(this.expressionDom)
         flash(this.sourceDom)
+        this.save()
       }.bind(this) }.bind(this)(i))
     }
     viewsMenu.addSeparator()
@@ -348,14 +366,14 @@ function PatternView(pattern, options) {
       var template = new Template(text)
       try {
         this.representationIndex = this.pattern.addRepresentation(template)
-        this.reconvertComponents()
-        this.buildDom()
-        flash(this.expressionDom, "blue")
-        flash(this.sourceDom, "blue")
       } catch(e) {
         alert("couldn't do it: " + e.message)
         return
       }
+      this.reconvertComponents()
+      this.buildDom()
+      flash(this.expressionDom, "blue")
+      flash(this.sourceDom, "blue")
     }.bind(this))
     // menu.addSeparator()
     var debug = menu.addSubmenu("Debug &rarr;")

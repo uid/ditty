@@ -52,6 +52,10 @@ _PatternBase.prototype.addRepresentation = function(repr) {
   this.representations.push(repr)
   return this.representations.length - 1
 }
+_PatternBase.prototype.replaceRepresentation = function(index, repr) {
+  this._checkRepresentation(repr)
+  this.representations[index] = repr
+}
 
 // attributes (all optional):
 //   id: number
