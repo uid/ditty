@@ -200,6 +200,10 @@ ul.multislot li {
 .slot.hover {
   background: #fcc !important;
 }
+button {
+  padding: 0.5em;
+  font-size: 11pt;
+}
 #bottom-toolbar {
   position: fixed;
   bottom: 0;
@@ -213,13 +217,6 @@ ul.multislot li {
 #bottom-toolbar p {
   margin: .3em 0;
   padding: 0;
-}
-#bottom-toolbar form, #bottom-toolbar div {
-  display: inline;
-}
-#bottom-toolbar button, #bottom-toolbar input {
-  padding: 0.5em;
-  font-size: 11pt;
 }
 #theme-switcher {
   display: none;
