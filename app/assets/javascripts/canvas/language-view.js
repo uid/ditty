@@ -799,7 +799,7 @@ CodeCanvasView.prototype.asJSON = function() {
   var views = []
   for(var i in this.patternViews) {
     var view = this.patternViews[i]
-    var pos = $(view.dom).position()
+    var pos = view.dom.position()
     views.push({
       pattern: view.pattern.id,
       patternRepIndex: view.representationIndex,
@@ -810,7 +810,21 @@ CodeCanvasView.prototype.asJSON = function() {
   }
   return { views: views }
 }
+CodeCanvasView.prototype.sizeToFit = function() {
+  var width = 0
+  var height = 0
+  for(var i in this.patternViews) {
+    var view = this.patternViews[i]
+    var right = view.dom.offset().left + view.dom.width()
+    var bottom = view.dom.offset().top + view.dom.height()
+    width = Math.max(right, width)
+    height = Math.max(bottom, height)
+  }
+  this.dom.width(width)
+  this.dom.height(height)
+}
 CodeCanvasView.prototype.childChanged = function(child) {
+  this.sizeToFit()
   this.upload()
 }
 CodeCanvasView.prototype.restore = function(initial) {
@@ -821,11 +835,12 @@ CodeCanvasView.prototype.restore = function(initial) {
       if(!pattern) continue
       var patternView = new PatternView(pattern, { representationIndex: view.patternRepIndex })
       this.accept(patternView)
-      patternView.dom.offset({ left: view.x + this.dom.offset().left, top: view.y })
+      patternView.dom.css({ position: "absolute", left: view.x, top: view.y })
       if(view.expanded) {
         patternView.toggleSourceView(true /* instant */)
       }
     }
+    this.sizeToFit()
   }
 }
 CodeCanvasView.prototype.upload = function() {

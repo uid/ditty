@@ -173,6 +173,7 @@ function environmentLoaded() {
     pattern = pattern || new Pattern({ representations: [new Template("My Code")] })
     var myCode = new PatternView(pattern)
     codeCanvas.accept(myCode, true /* propagate */)
+    myCode.dom.css({ position: "absolute", left: "10px", top: "10px" })
     myCode.toggleSourceView(true /* instant */)
     if(saveAfter) myCode.save()
     return myCode

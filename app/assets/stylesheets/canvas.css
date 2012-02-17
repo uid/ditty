@@ -23,7 +23,7 @@ body {
   left: 35%;
 }
 #program {
-  padding: 1em;
+  position: relative;
 }
 .cds {
   overflow: auto;
