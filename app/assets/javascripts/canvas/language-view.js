@@ -825,6 +825,10 @@ function CodeCanvasView() {
 CodeCanvasView.prototype.toString = function(pattern) {
   return "CodeCanvasView()"
 }
+CodeCanvasView.prototype.isEmpty = function() {
+  for(var i in this.patternViews) return false
+  return true
+}
 CodeCanvasView.prototype.asJSON = function() {
   var views = []
   for(var i in this.patternViews) {

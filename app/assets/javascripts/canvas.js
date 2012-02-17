@@ -201,6 +201,7 @@ function environmentLoaded() {
   // restore canvas
   
   codeCanvas.restore(initialCanvas)
+  if(codeCanvas.isEmpty()) newBubble()
   
   // create the trash
   
