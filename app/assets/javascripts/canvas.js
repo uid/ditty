@@ -13,11 +13,6 @@ function compilePatterns(json) {
     try {
       var pattern = new jsonUnserialize(json[i])
       
-      // for now, don't load other users' patterns
-      if(pattern.creator.id && pattern.creator.id != currentUser.id) {
-        continue
-      }
-      
       // store in the global pattern index
       // XXX for now, index patterns by both ID and key
       patterns[json[i]["id"]] = pattern
@@ -134,37 +129,56 @@ function environmentLoaded() {
   paletteView = new PaletteView()
   $("#palette").append(paletteView.dom)
   
-  var mine = myPatterns()
-  if(mine.length > 0) {
-    paletteView.addSection("Mine")
-    for(var i in mine) {
-      paletteView.add(mine[i])
-    }
-  }
+  // var mine = myPatterns()
+  // if(mine.length > 0) {
+  //   paletteView.addSection("Mine")
+  //   for(var i in mine) {
+  //     paletteView.add(mine[i])
+  //   }
+  // }
   
-  // paletteView.addSection("Music")
-  // paletteView.add(patterns["play"])
-  // paletteView.add(patterns["note-do"])
-  // paletteView.add(patterns["note-re"])
-  // paletteView.add(patterns["note-mi"])
+  paletteView.addSection("Music")
+  paletteView.add(patterns["play"])
+  paletteView.add(patterns["note-do"])
+  paletteView.add(patterns["note-re"])
+  paletteView.add(patterns["note-mi"])
   
-  // paletteView.addSection("Timing")
-  // paletteView.add(patterns["after-beats"])
+  paletteView.addSection("Timing")
+  paletteView.add(patterns["after-seconds"])
+  paletteView.add(patterns["wait-seconds"])
   
-  // paletteView.addSection("Program Flow")
-  // paletteView.add(patterns["while"])
-  // paletteView.add(patterns["loop"])
-  // paletteView.add(patterns["break"])
-  // paletteView.add(patterns["maybe-block"])
+  paletteView.addSection("Program Flow")
+  paletteView.add(patterns["if"])
+  paletteView.add(patterns["while"])
+  paletteView.add(patterns["loop"])
+  paletteView.add(patterns["break"])
   
-  paletteView.addSection("Boop")
+  paletteView.addSection("Logic and Numbers")
+  paletteView.add(patterns["true"])
+  paletteView.add(patterns["false"])
+  paletteView.add(patterns[164])
+  paletteView.add(patterns[165])
+  paletteView.add(patterns["is-false"])
+  
+  paletteView.addSection("Popups")
+  paletteView.add(patterns["alert"])
+  paletteView.add(patterns["prompt"])
+  
+  paletteView.addSection("Exceptions")
+  paletteView.add(patterns["throw"])
+  paletteView.add(patterns["exception"])
   paletteView.add(patterns["catch"])
   paletteView.add(patterns["break"])
   paletteView.add(patterns["loop-breaker"])
   
   paletteView.addSection("Miscellaneous")
-  for(var i in patterns)
+  for(var i in patterns) {
+    if(!patterns[i].creator.ditty) {
+      continue
+    }
+    
     paletteView.add(patterns[i])
+  }
   
   // set up 'new bubble' button
   

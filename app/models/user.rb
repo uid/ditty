@@ -21,7 +21,7 @@ class User < ActiveRecord::Base
     if anonymous?
       { id: id }
     else
-      { id: id, username: username }
+      { id: id, username: username, ditty: ditty? }
     end
   end
 end
