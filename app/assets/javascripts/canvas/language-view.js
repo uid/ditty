@@ -379,8 +379,7 @@ function PatternView(pattern, options) {
       flash(this.sourceDom, "blue")
     }.bind(this))
     // menu.addSeparator()
-    var debug = menu.addSubmenu("Debug &rarr;")
-    debug.add("Display", function() { alert(this) }.bind(this))
+    menu.add("Debug Display", function() { alert(this) }.bind(this))
     menu.add("Delete", function() { this.parent.release(this, true) }.bind(this))
     menu.open(e)
     
