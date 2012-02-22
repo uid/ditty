@@ -215,6 +215,8 @@ function environmentLoaded() {
   
   $("#welcome, #welcome button").click(function(e) { $("#welcome").hide("puff"); e.stopPropagation() })
   
+  $("body").disableSelection()
+  
   flash($("body"), "blue")
 }
 
