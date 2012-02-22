@@ -442,8 +442,6 @@ Modal.prototype.connect = function(dest) {
   }
   this.oneMinusDirectGain.connect(dest)
   
-  // new Noise(this.audioContext).connect(dest)
-  
   // wav => envelope => onepole(masterGain) => directGain => out
   //                    onepole(masterGain) => filters[] => 1 - directGain => out
 }
@@ -533,6 +531,29 @@ ModalBar.prototype.setPreset = function(preset) {
   // } else {
   //   this.vibratoGain = 0.0
   // }
+}
+
+
+function MultiBar(audioContext, count) {
+  MultiBar.baseConstructor.call(this, audioContext, audioContext.createGainNode())
+  
+  this.xylos = []
+  this.nextXylo = 0
+  
+  for(var i = 0; i < count; i++) {
+    this.xylos.push({ connected: false, bar: new ModalBar(audioContext) })
+    this.xylos[i].bar.setPreset(1)
+  }
+}
+extend(MultiBar, AudioNode)
+MultiBar.prototype.strike = function() {
+  var xylo = this.xylos[this.nextXylo]
+  if(!xylo.connected) {
+    xylo.bar.connect(this)
+    xylo.connected = true
+  }
+  xylo.bar.strike.apply(xylo.bar, arguments)
+  this.nextXylo = (this.nextXylo + 1) % this.xylos.length
 }
 
 
