@@ -47,7 +47,7 @@ function changeTheme() {
 function initAudio() {
   var audioContext = new webkitAudioContext()
   var upmixer = new UpMixer(audioContext)
-  var xylo = new MultiBar(audioContext, 4)
+  var xylo = new MultiBar(audioContext, 2)
   
   upmixer.connect()
   xylo.connect(upmixer)
