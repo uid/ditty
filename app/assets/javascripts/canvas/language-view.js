@@ -317,6 +317,9 @@ function PatternView(pattern, options) {
       setTimeout(function() { delete this.noclick }.bind(this), 100)
       if(!ui.helper.dropped_on_droppable && ui.helper.position().left > $("#palette-container").width()) {
         var pos = ui.helper.offset()
+        if(pos.top < 100) { // xylophone
+          pos.top = 100
+        }
         codeCanvas.accept(this, true /* propagate */)
         this.dom.offset(pos)
       }
