@@ -211,6 +211,13 @@ function environmentLoaded() {
   
   initAudio()
   
+  // set up xylophone
+  // (needs to happen after audio has been initialized)
+  
+  var xyloView = new XylophoneView(globalOS.globals["xylo"])
+  $("#xylo-container").append(xyloView.dom)
+  xyloView.setKey(19)
+  
   // done!
   
   $("#welcome, #welcome button").click(function(e) { $("#welcome").hide("puff"); e.stopPropagation() })

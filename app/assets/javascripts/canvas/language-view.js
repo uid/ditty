@@ -1113,3 +1113,78 @@ TrashView.prototype.accept = function(patternView, propagate) {
     this.parent.childChanged(this)
   }
 }
+
+
+// XYLO
+
+function XylophoneView(xylo) {
+  this.xylo = xylo
+  this.currentKey = -1
+  this.lastNote = -1
+  
+  // create dom
+  this.dom = $("<div></div>")
+  setObjFor(this.dom, this)
+  
+  // make a mallet
+  this.malletDom = $("<div class='xylo-mallet'></div>").appendTo(this.dom)
+  this.malletDom.mousedown(function() {
+    this.lastNote = -1
+    this.strike()
+  }.bind(this))
+  
+  // create children
+  this.keys = []
+  for(var i = 0; i < 40; i++) {
+    var key = $("<div class='xylo-key'></div>").appendTo(this.dom)
+    key.css("background-color", randomColor())
+    key.mousedown((function(key, which) {
+      return function(e) {
+        if(e.button != 0) return // left mouse button
+        this.lastNote = -1
+        this.setKey(which)
+        this.strike()
+      }.bind(this)
+    }.bind(this))(key, i))
+    key.mousemove((function(key, which) {
+      return function(e) {
+        if(e.button != 0) return // left mouse button
+        this.setKey(which)
+        if(e.which != 1) return // button down
+        this.strike()
+      }.bind(this)
+    }.bind(this))(key, i))
+    this.keys.push(key)
+  }
+}
+XylophoneView.prototype._play = function(note) {
+  var scale = [0, 2, 4, 5, 7, 9, 11]
+  var octave = Math.floor(note / scale.length)
+  var offset = note % scale.length
+  var midi = 40 + (octave * 12) + scale[offset]
+  if(midi != this.lastNote) {
+    this.xylo.strike(mtof(midi))
+    this.lastNote = midi
+  }
+}
+XylophoneView.prototype._positionMalletOverKey = function(i) {
+  this.malletDom.offset({ left: this.keys[i].offset().left - 4 })
+}
+XylophoneView.prototype.setKey = function(i) {
+  if(i < 0) i = 0
+  if(i >= this.keys.length) i = this.keys.length - 1
+  this.currentKey = i
+  this._positionMalletOverKey(i)
+}
+XylophoneView.prototype.key = function() {
+  return this.currentKey
+}
+XylophoneView.prototype.moveLeft = function() {
+  this.setKey(this.currentKey - 1)
+}
+XylophoneView.prototype.moveRight = function() {
+  this.setKey(this.currentKey + 1)
+}
+XylophoneView.prototype.strike = function() {
+  this._play(this.currentKey)
+}
