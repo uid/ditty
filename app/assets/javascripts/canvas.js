@@ -47,31 +47,12 @@ function changeTheme() {
 function initAudio() {
   var audioContext = new webkitAudioContext()
   var upmixer = new UpMixer(audioContext)
-  var xylos = [
-    { connected: false, bar: new ModalBar(audioContext) },
-    { connected: false, bar: new ModalBar(audioContext) },
-    { connected: false, bar: new ModalBar(audioContext) },
-    { connected: false, bar: new ModalBar(audioContext) }
-  ]
-  var nextXylo = 0
+  var xylo = new MultiBar(audioContext, 4)
   
   upmixer.connect()
+  xylo.connect(upmixer)
   
-  for(var i in xylos) {
-    xylos[i].bar.setPreset(1)
-  }
-  
-  
-  globalOS.globals['xylo'] = {
-    strike: function() {
-      if(!xylos[nextXylo].connected) {
-        xylos[nextXylo].bar.connect(upmixer)
-        xylos[nextXylo].connected = true
-      }
-      xylos[nextXylo].bar.strike.apply(xylos[nextXylo].bar, arguments)
-      nextXylo = (nextXylo + 1) % xylos.length
-    }
-  }
+  globalOS.globals['xylo'] = xylo
 }
 
 
