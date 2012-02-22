@@ -132,3 +132,25 @@ function debounceCollapse(doit) {
   
   return f
 }
+
+
+// we can all use random colors every once in a while
+
+function intToHex(n) {
+  var s = n.toString(16)
+  if(s.length < 2) {
+    return "0" + s
+  }
+  return s
+}
+
+function colorHex(r, g, b) {
+  return "#" + intToHex(r) + intToHex(g) + intToHex(b)
+}
+
+function randomColor() {
+  var r = Math.floor(Math.random() * 256)
+  var g = Math.floor(Math.random() * 256)
+  var b = Math.floor(Math.random() * 256)
+  return colorHex(r,g,b)
+}
