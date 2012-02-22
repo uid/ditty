@@ -119,10 +119,14 @@ function environmentLoaded() {
   // }
   
   paletteView.addSection("Music")
-  paletteView.add(patterns["play"])
-  paletteView.add(patterns["note-do"])
-  paletteView.add(patterns["note-re"])
-  paletteView.add(patterns["note-mi"])
+  // paletteView.add(patterns["play"])
+  // paletteView.add(patterns["note-do"])
+  // paletteView.add(patterns["note-re"])
+  // paletteView.add(patterns["note-mi"])
+  paletteView.add(patterns[177]) // move left
+  paletteView.add(patterns[179]) // move right
+  paletteView.add(patterns[180]) // strike
+  paletteView.add(patterns[184]) // move to
   
   paletteView.addSection("Timing")
   paletteView.add(patterns["after-seconds"])
@@ -137,9 +141,18 @@ function environmentLoaded() {
   paletteView.addSection("Logic and Numbers")
   paletteView.add(patterns["true"])
   paletteView.add(patterns["false"])
+  paletteView.add(patterns["is-false"])
   paletteView.add(patterns[164])
   paletteView.add(patterns[165])
-  paletteView.add(patterns["is-false"])
+  paletteView.add(patterns[167]) // +
+  paletteView.add(patterns[168]) // -
+  paletteView.add(patterns[169]) // *
+  paletteView.add(patterns[170]) // /
+  paletteView.add(patterns[171]) // %
+  paletteView.add(patterns[172]) // isNaN
+  paletteView.add(patterns[173]) // infinity
+  paletteView.add(patterns[174]) // -infinity
+  paletteView.add(patterns[175]) // pow
   
   paletteView.addSection("Popups")
   paletteView.add(patterns["alert"])
