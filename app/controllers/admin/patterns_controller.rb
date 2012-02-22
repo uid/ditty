@@ -17,6 +17,7 @@ class Admin::PatternsController < Admin::AdminController
 
   def create
     @pattern = Pattern.new(params[:pattern])
+    @pattern.creator = User.find_by_ditty(true)
 
     if @pattern.save
       redirect_to admin_pattern_url(@pattern), notice: "Pattern was successfully created."
