@@ -52,7 +52,7 @@ function initAudio() {
   upmixer.connect()
   xylo.connect(upmixer)
   
-  globalOS.globals['xylo'] = xylo
+  return { xylo: xylo }
 }
 
 
@@ -209,14 +209,15 @@ function environmentLoaded() {
   
   // initialize audio
   
-  initAudio()
+  var audio = initAudio()
   
   // set up xylophone
   // (needs to happen after audio has been initialized)
   
-  var xyloView = new XylophoneView(globalOS.globals["xylo"])
+  var xyloView = new XylophoneView(audio["xylo"])
   $("#xylo-container").append(xyloView.dom)
   xyloView.setKey(19)
+  globalOS.globals['xylo'] = xyloView
   
   // done!
   

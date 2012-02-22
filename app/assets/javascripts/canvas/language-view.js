@@ -1154,17 +1154,14 @@ function XylophoneView(xylo) {
         if(e.button != 0) return // left mouse button
         this.setKey(which)
         if(e.which != 1) return // button down
-        this.strike()
+        this._play(this.currentKey)
       }.bind(this)
     }.bind(this))(key, i))
     this.keys.push(key)
   }
 }
 XylophoneView.prototype._play = function(note) {
-  var scale = [0, 2, 4, 5, 7, 9, 11]
-  var octave = Math.floor(note / scale.length)
-  var offset = note % scale.length
-  var midi = 40 + (octave * 12) + scale[offset]
+  var midi = this.midiForKey(note)
   if(midi != this.lastNote) {
     this.xylo.strike(mtof(midi))
     this.lastNote = midi
@@ -1182,6 +1179,12 @@ XylophoneView.prototype.setKey = function(i) {
 XylophoneView.prototype.key = function() {
   return this.currentKey
 }
+XylophoneView.prototype.midiForKey = function(i) {
+  var scale = [0, 2, 4, 5, 7, 9, 11]
+  var octave = Math.floor(i / scale.length)
+  var offset = i % scale.length
+  return 40 + (octave * 12) + scale[offset]
+}
 XylophoneView.prototype.moveLeft = function() {
   this.setKey(this.currentKey - 1)
 }
@@ -1189,5 +1192,6 @@ XylophoneView.prototype.moveRight = function() {
   this.setKey(this.currentKey + 1)
 }
 XylophoneView.prototype.strike = function() {
+  this.lastNote = -1
   this._play(this.currentKey)
 }
