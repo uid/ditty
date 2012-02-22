@@ -127,6 +127,7 @@ function environmentLoaded() {
   paletteView.add(patterns[179]) // move right
   paletteView.add(patterns[180]) // strike
   paletteView.add(patterns[184]) // move to
+  paletteView.add(patterns[183]) // current position
   
   paletteView.addSection("Timing")
   paletteView.add(patterns["after-seconds"])
@@ -142,16 +143,16 @@ function environmentLoaded() {
   paletteView.add(patterns["true"])
   paletteView.add(patterns["false"])
   paletteView.add(patterns["is-false"])
-  paletteView.add(patterns[164])
-  paletteView.add(patterns[165])
+  paletteView.add(patterns[164]) // rand
+  paletteView.add(patterns[165]) // >
   paletteView.add(patterns[167]) // +
   paletteView.add(patterns[168]) // -
   paletteView.add(patterns[169]) // *
   paletteView.add(patterns[170]) // /
   paletteView.add(patterns[171]) // %
-  paletteView.add(patterns[172]) // isNaN
-  paletteView.add(patterns[173]) // infinity
-  paletteView.add(patterns[174]) // -infinity
+  // paletteView.add(patterns[172]) // isNaN
+  // paletteView.add(patterns[173]) // infinity
+  // paletteView.add(patterns[174]) // -infinity
   paletteView.add(patterns[175]) // pow
   
   paletteView.addSection("Popups")
