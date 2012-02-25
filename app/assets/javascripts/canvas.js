@@ -80,11 +80,18 @@ function loadAudio(assets) {
   var request = new XMLHttpRequest()
   request.open("GET", "/assets/xylo.mp3", true)
   request.responseType = "arraybuffer"
+  var onError = function() {
+    $("#loading").text("Failed to download audio from the server! Unfortunately, I can't continue.")
+  }
   request.onload = function() {
-    assets["xylo-buffer"] = assets["audioContext"].createBuffer(request.response, true /* mix to mono */)
-    initXylo(assets)
+    if(request.status == 200) {
+      assets["xylo-buffer"] = assets["audioContext"].createBuffer(request.response, true /* mix to mono */)
+      initXylo(assets)
+    } else {
+      onError()
+    }
   }.bind(this)
-  // TODO: error case?
+  request.onerror = onError
   request.send()
 }
 
