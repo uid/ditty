@@ -44,25 +44,21 @@ function changeTheme() {
 }
 
 
-function initAudio() {
-  var audioContext = new webkitAudioContext()
-  var upmixer = new UpMixer(audioContext)
-  var xylo = new MultiBar(audioContext, 2)
-  
-  upmixer.connect()
-  xylo.connect(upmixer)
-  
-  return { xylo: xylo }
-}
+/*
+All the following functions are different parts of initialization.
+They all take an "assets" object where they stuff random data needed
+by later initializers, then call the next initializer by name.
+*/
 
-
-function loadEnvironment() {
+function loadPatterns(assets) {
+  $("#loading").text("Loading patterns...")
+  
   $.ajax({
     url: "/patterns.json",
     dataType: "json",
     success: function(data) {
       compilePatterns(data)
-      environmentLoaded()
+      initAudio(assets)
     },
     error: function() {
       $("#loading").text("I'm sorry, for some reason the ditty environment could not be loaded.")
@@ -70,8 +66,48 @@ function loadEnvironment() {
   })
 }
 
+function initAudio(assets) {
+  $("#loading").text("Initializing audio...")
+  
+  assets["audioContext"] = new webkitAudioContext()
+  loadAudio(assets)
+}
 
-function environmentLoaded() {
+function loadAudio(assets) {
+  $("#loading").text("Loading audio...")
+  
+  // load audio
+  var request = new XMLHttpRequest()
+  request.open("GET", "/assets/xylo.mp3", true)
+  request.responseType = "arraybuffer"
+  request.onload = function() {
+    assets["xylo-buffer"] = assets["audioContext"].createBuffer(request.response, true /* mix to mono */)
+    initXylo(assets)
+  }.bind(this)
+  // TODO: error case?
+  request.send()
+}
+
+function initXylo(assets) {
+  $("#loading").text("Initializing audio...")
+  
+  var audioContext = assets["audioContext"]
+  
+  var upmixer = new UpMixer(audioContext)
+  var xylo = new ModalBarMP3(audioContext, assets["xylo-buffer"])
+  
+  upmixer.connect()
+  xylo.connect(upmixer)
+  
+  assets["xylo"] = xylo
+  
+  environmentLoaded(assets)
+}
+
+
+function environmentLoaded(assets) {
+  $("#loading").text("Loading environment...")
+  
   // browser check
   
   if(navigator.userAgent.indexOf("Chrome") == -1 || navigator.userAgent.indexOf("OS X") == -1) {
@@ -221,14 +257,9 @@ function environmentLoaded() {
     }
   });
   
-  // initialize audio
-  
-  var audio = initAudio()
-  
   // set up xylophone
-  // (needs to happen after audio has been initialized)
   
-  var xyloView = new XylophoneView(audio["xylo"])
+  var xyloView = new XylophoneView(assets["xylo"])
   $("#xylo-container").append(xyloView.dom)
   xyloView.setKey(19)
   globalOS.globals['xylo'] = xyloView
@@ -242,4 +273,4 @@ function environmentLoaded() {
   flash($("body"), "blue")
 }
 
-$(loadEnvironment)
+$(loadPatterns)

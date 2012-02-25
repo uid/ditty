@@ -1162,7 +1162,7 @@ function XylophoneView(xylo) {
 XylophoneView.prototype._play = function(note) {
   var midi = this.midiForKey(note)
   if(midi != this.lastNote) {
-    this.xylo.strike(mtof(midi))
+    this.xylo.strike(midi)
     this.lastNote = midi
   }
 }

@@ -534,6 +534,30 @@ ModalBar.prototype.setPreset = function(preset) {
 }
 
 
+ModalBarMP3 = function(audioContext, audioBuffer) {
+  ModalBarMP3.baseConstructor.call(this, audioContext, audioContext.createGainNode())
+  
+  this.buffer = audioBuffer
+}
+extend(ModalBarMP3, AudioNode)
+ModalBarMP3.prototype.strike = function(midi, amplitude) {
+  midi = Math.floor(midi)
+  if(midi < 40 || midi >= 120)
+    return
+  
+  var node = this.audioContext.createBufferSource()
+  node.buffer = this.buffer
+  node.connect(this.node)
+  
+  var now = this.audioContext.currentTime
+  var offset = (midi - 40) * 6
+  offset += 2 * Math.floor(Math.random() * 3)
+  
+  node.noteGrainOn(now, offset, 2)
+  node.noteOff(now + 2)
+}
+
+
 function MultiBar(audioContext, count) {
   MultiBar.baseConstructor.call(this, audioContext, audioContext.createGainNode())
   
