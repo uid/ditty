@@ -93,11 +93,9 @@ function initXylo(assets) {
   
   var audioContext = assets["audioContext"]
   
-  var upmixer = new UpMixer(audioContext)
   var xylo = new ModalBarMP3(audioContext, assets["xylo-buffer"])
   
-  upmixer.connect()
-  xylo.connect(upmixer)
+  xylo.connect()
   
   assets["xylo"] = xylo
   
