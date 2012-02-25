@@ -51,6 +51,13 @@ body {
 #program {
   position: relative;
 }
+p.parameters {
+  margin: 0;
+  padding: 0;
+  font-weight: bold;
+  font-size: small;
+  font-variant: small-caps;
+}
 p.author {
   margin: 0;
   padding: 0;

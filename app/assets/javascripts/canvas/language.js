@@ -25,6 +25,9 @@ function Template(text, options) {
   if(nonParamText != "")
     this.components.push(nonParamText)
 }
+Template.prototype.cloneWithText = function(text) {
+  return new Template(text, { style: this.style })
+}
 function ExplicitTemplate(text) {
   this.text = text
   this.components = [text]
@@ -78,6 +81,17 @@ Pattern.prototype.toString = function() {
 }
 Pattern.prototype.setMeaning = function(newMeaning) {
   this.meaning = newMeaning
+}
+// throws an exception if there's something wrong with the argument (duplicate name, etc)
+Pattern.prototype.addArgument = function(argRef) {
+  if(argRef.name in this.references) {
+    throw new Error("argument with name '" + argRef.name + "' already exists in this pattern")
+  }
+  this.references[argRef.name] = argRef
+  for(var i in this.representations) {
+    var templ = this.representations[i]
+    this.representations[i] = this.representations[i].cloneWithText(templ.text + " ([" + argRef.name + "])")
+  }
 }
 Pattern.prototype.apply = function(args) {
   // args is a map from argument name to value

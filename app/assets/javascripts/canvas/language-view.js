@@ -405,6 +405,13 @@ function PatternView(pattern, options) {
 PatternView.prototype.toString = function() {
   return "PatternView(" + this.pattern + ")"
 }
+PatternView.prototype._slotView = function(arg, showExtraSlot) {
+  if(arg.type == "instructions") {
+    return new MultiSlotView(this, arg.name, { argumentReference: arg, showExtraSlot: showExtraSlot })
+  } else {
+    return new SlotView(this, arg.name, { argumentReference: arg })
+  }
+}
 PatternView.prototype.convertComponents = function() {
   var template = this.pattern.representations[this.representationIndex]
   this.slotViewsByParam = {}
@@ -413,7 +420,7 @@ PatternView.prototype.convertComponents = function() {
     var match = /^\[(.+)\]$/i.exec(template.components[i])
     if(match) {
       var arg = this.pattern.references[match[1]]
-      var slotView = arg.type == "instructions" ? new MultiSlotView(this, match[1], { showExtraSlot: template.style == "block", argumentReference: arg }) : new SlotView(this, match[1], { argumentReference: arg })
+      var slotView = this._slotView(arg, template.style == "block")
       this.convertedComponents.push(slotView)
       this.slotViewsByParam[match[1]] = slotView
     } else {
@@ -428,11 +435,18 @@ PatternView.prototype.reconvertComponents = function() {
   for(var i in template.components) {
     var match = /^\[(.+)\]$/i.exec(template.components[i])
     if(match) {
+      // parameter
       var slotView = this.slotViewsByParam[match[1]]
+      if(!slotView) {
+        var arg = this.pattern.references[match[1]]
+        slotView = this._slotView(arg, template.style == "block")
+        this.slotViewsByParam[match[1]] = slotView
+      }
       this.convertedComponents.push(slotView)
       slotView.showExtraSlot = (template.style == "block")
       slotView.refresh()
     } else {
+      // text
       this.convertedComponents.push(template.components[i])
     }
   }
@@ -590,6 +604,32 @@ PatternView.prototype.acceptArgument = function(argumentName, view) {
 PatternView.prototype.isExpanded = function() {
   return !this.sourceDom.is(":hidden")
 }
+PatternView.prototype.addParameter = function() {
+  var name = prompt("Parameter name?")
+  var type = prompt("Type? ('instructions' or blank are okay)")
+  if(!name) {
+    return
+  }
+  var arg = type ? new ArgumentReference(name, type) : new ArgumentReference(name)
+  this.pattern.addArgument(arg)
+  
+  this.convertComponents()
+  this.buildDom()
+  this._buildSourceDom()
+  
+  this.save()
+}
+PatternView.prototype._buildParameterList = function() {
+  if(!this.parametersDom) {
+    this.parametersDom = $("<p class='parameters'></p>").prependTo(this.sourceDom)
+  }
+  this.parametersDom.text("Parameters: ")
+  for(var i in this.pattern.references) {
+    this.parametersDom.append(new ArgumentReferenceView(this.pattern.references[i]).dom)
+  }
+  var add = $("<a href='#'>(+)</a>").appendTo(this.parametersDom)
+  add.click(this.addParameter.bind(this))
+}
 PatternView.prototype._buildSourceDom = function() {
   if(this.pattern.creator && !this.pattern.isMine()) {
     var authorship = $("<p class='author'>created by <span></span></p>")
@@ -598,11 +638,17 @@ PatternView.prototype._buildSourceDom = function() {
     this.sourceDom.append(authorship)
   }
   
-  if(this.pattern.meaning.components) {
+  // TODO: have a real check
+  var isJS = !this.pattern.meaning.components
+  
+  if(isJS) {
+    this.sourceDom.append($("<pre style='white-space: normal; word-break: break-all; width: 300px'></pre>").text(this.pattern.meaning.jsSource))
+  } else {
+    this._buildParameterList()
+    
+    // source code
     this.source = new MultiSlotView(this /* parent */, "Drag or type something here.", { showExtraSlot: true })
     this.source.dom.appendTo(this.sourceDom)
-  } else {
-    this.sourceDom.append($("<pre style='white-space: normal; word-break: break-all; width: 300px'></pre>").text(this.pattern.meaning.jsSource))
   }
 }
 PatternView.prototype.toggleSourceView = function(instant) {
