@@ -215,6 +215,9 @@ function environmentLoaded(assets) {
     
     paletteView.add(patterns[i])
   }
+  $("#palette-container").scrollTop(10000)
+  $("#palette-container").animate({ scrollTop: 0 }, 1000)
+  
   
   // set up 'new bubble' button
   
