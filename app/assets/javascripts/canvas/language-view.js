@@ -303,6 +303,7 @@ function PatternView(pattern, options) {
       setObjFor(helper, this)
       return helper
     }.bind(this),
+    zIndex: 100,
     appendTo: "body",
     cursorAt: { left: 8, top: 8 },
     // revert: "invalid",
