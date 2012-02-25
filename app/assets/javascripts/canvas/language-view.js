@@ -12,13 +12,23 @@ function ifTarget(f) {
 
 // SLOT VIEW
 
-function SlotView(parent, fillerText) {
+// fillerText is the text to display on the slot when it's empty
+// options: argumentReference
+// argumentReference is used for type information and such
+function SlotView(parent, fillerText, options) {
   this.parent = parent
   this.fillerText = fillerText
 
   // create dom
   this.dom = $("<span class='slot unfilled'></span>")
   setObjFor(this.dom, this)
+  
+  // tooltip
+  if(options.argumentReference) {
+    if(options.argumentReference.type) {
+      this.dom.attr("title", "Type: " + options.argumentReference.type)
+    }
+  }
 
   // add filler
   this.setFiller()
@@ -181,10 +191,12 @@ SlotView.prototype.meaning = function() {
 
 // MULTI-SLOT VIEW
 
-function MultiSlotView(parent, fillerText, showExtraSlot) {
+// options: showExtraSlot, argumentReference
+function MultiSlotView(parent, fillerText, options) {
   this.parent = parent
   this.fillerText = fillerText
-  this.showExtraSlot = showExtraSlot
+  this.showExtraSlot = options.showExtraSlot
+  this.argumentReference = options.argumentReference
   this.slotViews = []
 
   // create dom
@@ -193,25 +205,28 @@ function MultiSlotView(parent, fillerText, showExtraSlot) {
   
   this.refresh()
 }
+MultiSlotView.prototype._newSlotView = function(fillerText) {
+  return new SlotView(this, fillerText, { argumentReference: this.argumentReference })
+}
 MultiSlotView.prototype.accept = function(views, propagate) {
   if(!(views instanceof Array)) {
     views = [views]
   }
   if(views.length > 0) {
     this.dom.text("")
-    $("<li class='inbetweener'></li>").append(new SlotView(this, "").dom).appendTo(this.dom)
+    $("<li class='inbetweener'></li>").append(this._newSlotView("").dom).appendTo(this.dom)
     for(var i in views) {
-      var slotView = new SlotView(this, this.fillerText)
+      var slotView = this._newSlotView(this.fillerText)
       slotView.accept(views[i])
       $("<li></li>").append(slotView.dom).appendTo(this.dom)
-      $("<li class='inbetweener'></li>").append(new SlotView(this, "").dom).appendTo(this.dom)
+      $("<li class='inbetweener'></li>").append(this._newSlotView("").dom).appendTo(this.dom)
     }
   }
 }
 MultiSlotView.prototype.refresh = function() {
   var lis = this.dom.children("li").toArray()
   if(lis.length == 0) {
-    $("<li></li>").append(new SlotView(this, this.fillerText).dom).appendTo(this.dom)
+    $("<li></li>").append(this._newSlotView(this.fillerText).dom).appendTo(this.dom)
     return
   }
   var prevHadChild = true
@@ -225,21 +240,21 @@ MultiSlotView.prototype.refresh = function() {
       }
     } else {
       if(prevHadChild) {
-        $("<li class='inbetweener'></li>").append(new SlotView(this, "").dom).insertBefore($(lis[i]))
+        $("<li class='inbetweener'></li>").append(this._newSlotView("").dom).insertBefore($(lis[i]))
       }
       $(lis[i]).removeClass("inbetweener")
     }
     prevHadChild = !slotView.isEmpty()
   }
   if(prevHadChild) {
-    $("<li class='inbetweener'></li>").append(new SlotView(this, "").dom).appendTo(this.dom)
+    $("<li class='inbetweener'></li>").append(this._newSlotView("").dom).appendTo(this.dom)
   }
   lis = this.dom.children("li").toArray()
   if(lis.length == 1) {
-    $(lis[lis.length - 1]).replaceWith($("<li></li>").append(new SlotView(this, this.fillerText).dom))
+    $(lis[lis.length - 1]).replaceWith($("<li></li>").append(this._newSlotView(this.fillerText).dom))
   } else if (this.showExtraSlot) {
     var li = $("<li></li>")
-    $(lis[lis.length - 1]).replaceWith(li.append(new SlotView(this, "").dom))
+    $(lis[lis.length - 1]).replaceWith(li.append(this._newSlotView("").dom))
     li.addClass("inbetweener")
   }
 }
@@ -398,7 +413,7 @@ PatternView.prototype.convertComponents = function() {
     var match = /^\[(.+)\]$/i.exec(template.components[i])
     if(match) {
       var arg = this.pattern.references[match[1]]
-      var slotView = arg.type == "instructions" ? new MultiSlotView(this, match[1], template.style == "block") : new SlotView(this, match[1])
+      var slotView = arg.type == "instructions" ? new MultiSlotView(this, match[1], { showExtraSlot: template.style == "block", argumentReference: arg }) : new SlotView(this, match[1], { argumentReference: arg })
       this.convertedComponents.push(slotView)
       this.slotViewsByParam[match[1]] = slotView
     } else {
@@ -584,7 +599,7 @@ PatternView.prototype._buildSourceDom = function() {
   }
   
   if(this.pattern.meaning.components) {
-    this.source = new MultiSlotView(this /* parent */, "Drag or type something here.", true /* showExtraSlot */)
+    this.source = new MultiSlotView(this /* parent */, "Drag or type something here.", { showExtraSlot: true })
     this.source.dom.appendTo(this.sourceDom)
   } else {
     this.sourceDom.append($("<pre style='white-space: normal; word-break: break-all; width: 300px'></pre>").text(this.pattern.meaning.jsSource))

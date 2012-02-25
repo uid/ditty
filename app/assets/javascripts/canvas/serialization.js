@@ -15,11 +15,12 @@ JsonPatternUnarchiver.prototype.unarchive = function(json) {
   this.references = {}
   this.id = json["id"]
   this.key = json["key"]
+  var refs = _.inject(_.map(json["arguments"], this._arg.bind(this)), function(obj, ref) { obj[ref.name] = ref; return obj }, {})
   var attrs = {
     id: json["id"],
     key: json["key"],
     representations: _.map(json["representations"], this._representation.bind(this)),
-    references: _.inject(_.map(json["arguments"], this._arg.bind(this)), function(obj, ref) { obj[ref.name] = ref; return obj }, {}),
+    references: refs,
     meaning: this._patternMeaning(json["meaning"])
   }
   if(json["creator"]) attrs["creator"] = json["creator"]
