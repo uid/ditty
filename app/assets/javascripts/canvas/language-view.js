@@ -511,6 +511,16 @@ PatternView.prototype.childChanged = function(child) {
     this.parent.childChanged(this)
   }
 }
+PatternView.prototype.release = function(view, propagate) {
+  if(view instanceof ArgumentReferenceView) {
+    var newView = new ArgumentReferenceView(view.argumentReference, { parent: this })
+    newView.dom.insertBefore(view.dom)
+    view.dom.detach()
+  }
+  if(propagate && this.parent.childChanged) {
+    this.parent.childChanged(this)
+  }
+}
 PatternView.prototype.save = function() {
   if(this.saving) {
     this.needsAnotherSave = true
@@ -625,7 +635,7 @@ PatternView.prototype._buildParameterList = function() {
   }
   this.parametersDom.text("Parameters: ")
   for(var i in this.pattern.references) {
-    this.parametersDom.append(new ArgumentReferenceView(this.pattern.references[i]).dom)
+    this.parametersDom.append(new ArgumentReferenceView(this.pattern.references[i], { parent: this }).dom)
   }
   var add = $("<a href='#'>(+)</a>").appendTo(this.parametersDom)
   add.click(this.addParameter.bind(this))
