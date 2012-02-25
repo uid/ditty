@@ -24,10 +24,13 @@ function SlotView(parent, fillerText, options) {
   setObjFor(this.dom, this)
   
   // tooltip
-  if(options.argumentReference) {
-    if(options.argumentReference.type) {
-      this.dom.attr("title", "Type: " + options.argumentReference.type)
-    }
+  if(fillerText == "actions") {
+    this.fillerText += " type: " + options.argumentReference
+  }
+  if(options.argumentReference && options.argumentReference.type) {
+    this.dom.attr("title", "Type: " + options.argumentReference.type)
+  } else {
+    this.dom.attr("title", "Type: anything/unknown")
   }
 
   // add filler
