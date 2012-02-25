@@ -61,11 +61,8 @@ UpMixer.prototype.process = function(e) {
   var inputSamples = e.inputBuffer.getChannelData(0)
   var outputSamples1 = e.outputBuffer.getChannelData(0)
   var outputSamples2 = e.outputBuffer.getChannelData(1)
-
-  for(var i = 0; i < inputSamples.length; i++) {
-    var s = this.gain * inputSamples[i]
-    outputSamples1[i] = outputSamples2[i] = s
-  }
+  outputSamples1.set(inputSamples)
+  outputSamples2.set(inputSamples)
 }
 
 
