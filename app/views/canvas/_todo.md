@@ -48,3 +48,5 @@
 * wrap js functions in try/catch
 * save the initial bubble
 * don't show inbetweeners that are in a different scope than the one a parameter is being dragged from
+* actual modal dialogs for rename, add parameter, remove parameter
+* highlight the source of an error (such as 'xxx is required')
