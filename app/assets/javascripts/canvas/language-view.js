@@ -1195,6 +1195,7 @@ function XylophoneView(xylo) {
   this.xylo = xylo
   this.currentKey = -1
   this.lastNote = -1
+  this.scale = [0, 2, 4, 5, 7, 9, 11]
   
   // create dom
   this.dom = $("<div></div>")
@@ -1209,9 +1210,14 @@ function XylophoneView(xylo) {
   
   // create children
   this.keys = []
-  for(var i = 0; i < 40; i++) {
+  for(var i = 0; i < 36; i++) {
     var key = $("<div class='xylo-key'></div>").appendTo(this.dom)
     key.css("background-color", randomColor())
+    
+    var off = this.scaleDegreeOfKey(i)
+    key.height(70 - off)
+    key.css("margin-bottom", off)
+    
     key.mousedown((function(key, which) {
       return function(e) {
         if(e.button != 0) return // left mouse button
@@ -1250,11 +1256,13 @@ XylophoneView.prototype.setKey = function(i) {
 XylophoneView.prototype.key = function() {
   return this.currentKey
 }
+XylophoneView.prototype.scaleDegreeOfKey = function(i) {
+  return i % this.scale.length
+}
 XylophoneView.prototype.midiForKey = function(i) {
-  var scale = [0, 2, 4, 5, 7, 9, 11]
-  var octave = Math.floor(i / scale.length)
-  var offset = i % scale.length
-  return 40 + (octave * 12) + scale[offset]
+  var octave = Math.floor(i / this.scale.length)
+  var offset = i % this.scale.length
+  return 40 + (octave * 12) + this.scale[offset]
 }
 XylophoneView.prototype.moveLeft = function() {
   this.setKey(this.currentKey - 1)
