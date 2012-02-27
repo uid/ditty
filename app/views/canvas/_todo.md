@@ -45,3 +45,5 @@
 * when modifying a pattern used elsewhere, ask whether they want to create a enw pattern instead of modifying the existing one
 * Fix erroneous "you are not logged in"
 * make passed parameters work when source is expanded
+* wrap js functions in try/catch
+* save the initial bubble
