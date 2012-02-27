@@ -47,3 +47,4 @@
 * make passed parameters work when source is expanded
 * wrap js functions in try/catch
 * save the initial bubble
+* don't show inbetweeners that are in a different scope than the one a parameter is being dragged from
