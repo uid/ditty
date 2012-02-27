@@ -5,6 +5,7 @@ gem "twitter-bootstrap-rails", ">= 2.0rc0", :group => :assets
 gem "jquery-rails"
 gem "aws-ses", :require => "aws/ses"
 gem "devise"
+gem "markdown-rails"
 
 group :development do
   gem "sqlite3"
