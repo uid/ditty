@@ -152,6 +152,9 @@ ul.multislot li {
   text-decoration: underline;
   cursor: hand;
 }
+#coming-up .content {
+  display: none;
+}
 .expression-container {
   display: inline-block;
   position: relative;

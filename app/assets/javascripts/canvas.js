@@ -270,7 +270,6 @@ function environmentLoaded(assets) {
   $("#coming-up .expander").click(function() {
     $("#coming-up .content").animate({ height: "toggle" }, { duration: 300 })
   })
-  $("#coming-up .content").hide()
   
   // set up xylophone
   
