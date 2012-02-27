@@ -53,7 +53,6 @@ function SlotView(parent, fillerText, options) {
     accept: function(dom) {
       var obj = objFor(dom)
       if(obj instanceof ArgumentReferenceView) {
-        console.log(obj, obj.findScopeParent() == this.findScopeParent(), obj.findScopeParent(), this.findScopeParent())
         return obj.findScopeParent() == this.findScopeParent()
       } else {
         return true
