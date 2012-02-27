@@ -10,6 +10,20 @@ function ifTarget(f) {
 }
 
 
+// prototypical findScopeParent implementation.
+// searches up parent references for one containing a scopeParent, returning that.
+// add it to the prototype of any object you can drag around.
+var findScopeParent = function() {
+  var obj = this
+  
+  while(obj) {
+    if(obj.scopeParent)
+      return obj.scopeParent
+    obj = obj.parent
+  }
+}
+
+
 // SLOT VIEW
 
 // fillerText is the text to display on the slot when it's empty
@@ -36,6 +50,15 @@ function SlotView(parent, fillerText, options) {
   // patterns can be dropped onto slots
   this.dom.droppable({
     hoverClass: "hover",
+    accept: function(dom) {
+      var obj = objFor(dom)
+      if(obj instanceof ArgumentReferenceView) {
+        console.log(obj, obj.findScopeParent() == this.findScopeParent(), obj.findScopeParent(), this.findScopeParent())
+        return obj.findScopeParent() == this.findScopeParent()
+      } else {
+        return true
+      }
+    }.bind(this),
     drop: function(event, ui) {
       ui.helper.dropped_on_droppable = true
       var patternView = objFor(ui.draggable)
@@ -128,6 +151,7 @@ function SlotView(parent, fillerText, options) {
 SlotView.prototype.toString = function() {
   return "SlotView()"
 }
+SlotView.prototype.findScopeParent = findScopeParent
 SlotView.prototype.refresh = function() {
 }
 SlotView.prototype.makeActive = function() {
@@ -405,15 +429,7 @@ function PatternView(pattern, options) {
 PatternView.prototype.toString = function() {
   return "PatternView(" + this.pattern + ")"
 }
-PatternView.prototype.findScopeParent = function() {
-  var obj = this
-  
-  while(obj) {
-    if(obj.scopeParent)
-      return obj.scopeParent
-    obj = obj.parent
-  }
-}
+PatternView.prototype.findScopeParent = findScopeParent
 PatternView.prototype._slotView = function(arg, showExtraSlot) {
   if(arg.type == "instructions") {
     return new MultiSlotView(this, arg.name, { argumentReference: arg, showExtraSlot: showExtraSlot })
@@ -644,7 +660,7 @@ PatternView.prototype._buildParameterList = function() {
   }
   this.parametersDom.text("Parameters: ")
   for(var i in this.pattern.references) {
-    this.parametersDom.append(new ArgumentReferenceView(this.pattern.references[i], { parent: this }).dom)
+    this.parametersDom.append(new ArgumentReferenceView(this.pattern.references[i], { parent: this, scopeParent: this }).dom)
   }
   var add = $("<a href='#'>(+)</a>").appendTo(this.parametersDom)
   add.click(this.addParameter.bind(this))
@@ -723,6 +739,7 @@ function ArgumentReferenceView(argumentReference, options) {
   options = options || {}
   
   this.argumentReference = argumentReference
+  this.scopeParent = options.scopeParent
   if(options.parent)
     this.setParent(options.parent)
   
@@ -770,6 +787,7 @@ function ArgumentReferenceView(argumentReference, options) {
 ArgumentReferenceView.prototype.toString = function() {
   return "ArgumentReferenceView(" + this.argumentReference + ")"
 }
+ArgumentReferenceView.prototype.findScopeParent = findScopeParent
 ArgumentReferenceView.prototype.setParent = function(parent, propagate) {
   if(this.parent == parent)
     return
