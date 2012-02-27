@@ -653,6 +653,19 @@ PatternView.prototype.addParameter = function() {
   
   this.save()
 }
+PatternView.prototype.deleteParameter = function(paramView) {
+  if(typeof(prompt("Are you sure? The parameter will be deleted from all the places it's used. (press OK or Cancel)")) === "undefined") {
+    return
+  }
+  
+  this.pattern.removeArgument(paramView.argumentReference)
+  
+  this.convertComponents()
+  this.buildDom()
+  this._buildSourceDom()
+  
+  this.save()
+}
 PatternView.prototype._buildParameterList = function() {
   if(!this.parametersDom) {
     this.parametersDom = $("<p class='parameters'></p>").prependTo(this.sourceDom)
@@ -777,7 +790,13 @@ function ArgumentReferenceView(argumentReference, options) {
     clearSelection() // right-clicking usually selects the word under the cursor
     
     var menu = new MenuBuilder()
-    menu.add("Delete", function() { this.parent.release(this, true) }.bind(this))
+    menu.add("Delete", function() {
+      if(this.parent.deleteParameter) {
+        this.parent.deleteParameter(this)
+      } else {
+        this.parent.release(this, true)
+      }
+    }.bind(this))
     menu.open(e)
     
     return false

@@ -6,6 +6,10 @@ function Template(text, options) {
   
   this.text = text
   if(options["style"]) { this.style = options["style"] }
+  
+  this._parse()
+}
+Template.prototype._parse = function() {
   this.components = []
   this.params = [] // TODO: rename to args
   this.args = this.params
@@ -13,21 +17,35 @@ function Template(text, options) {
   var i = 0
   
   var paramRegexp = /\[([^\]]+)\]/gi
-  while((result = paramRegexp.exec(text)) != null) {
-    var nonParamText = text.slice(i, paramRegexp.lastIndex - result[1].length - 2)
+  while((result = paramRegexp.exec(this.text)) != null) {
+    var nonParamText = this.text.slice(i, paramRegexp.lastIndex - result[1].length - 2)
     if(nonParamText != "")
       this.components.push(nonParamText)
     this.components.push("[" + result[1] + "]")
     this.params.push(result[1])
     i = paramRegexp.lastIndex
   }
-  var nonParamText = text.slice(i)
+  var nonParamText = this.text.slice(i)
   if(nonParamText != "")
     this.components.push(nonParamText)
+}
+Template.prototype.setText = function(text) {
+  this.text = text
+  this._parse()
+}
+Template.prototype.deleteReferencesTo = function(name) {
+  // first search for a version with parentheses, since that's how they're added by default
+  var text = this.text.replace(" ([" + name + "])", "")
+  
+  // now remove instances that aren't surrounded by parentheses
+  text = this.text.replace("[" + name + "]", "").trim()
+  
+  this.setText(text)
 }
 Template.prototype.cloneWithText = function(text) {
   return new Template(text, { style: this.style })
 }
+
 function ExplicitTemplate(text) {
   this.text = text
   this.components = [text]
@@ -90,7 +108,17 @@ Pattern.prototype.addArgument = function(argRef) {
   this.references[argRef.name] = argRef
   for(var i in this.representations) {
     var templ = this.representations[i]
-    this.representations[i] = this.representations[i].cloneWithText(templ.text + " ([" + argRef.name + "])")
+    templ.setText(templ.text + " ([" + argRef.name + "])")
+  }
+}
+Pattern.prototype.removeArgument = function(argRef) {
+  if(!(argRef.name in this.references)) {
+    return
+  }
+  delete this.references[argRef.name]
+  for(var i in this.representations) {
+    var templ = this.representations[i]
+    templ.deleteReferencesTo(argRef.name)
   }
 }
 Pattern.prototype.apply = function(args) {
