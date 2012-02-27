@@ -405,6 +405,15 @@ function PatternView(pattern, options) {
 PatternView.prototype.toString = function() {
   return "PatternView(" + this.pattern + ")"
 }
+PatternView.prototype.findScopeParent = function() {
+  var obj = this
+  
+  while(obj) {
+    if(obj.scopeParent)
+      return obj.scopeParent
+    obj = obj.parent
+  }
+}
 PatternView.prototype._slotView = function(arg, showExtraSlot) {
   if(arg.type == "instructions") {
     return new MultiSlotView(this, arg.name, { argumentReference: arg, showExtraSlot: showExtraSlot })
@@ -658,6 +667,7 @@ PatternView.prototype._buildSourceDom = function() {
     
     // source code
     this.source = new MultiSlotView(this /* parent */, "Drag or type something here.", { showExtraSlot: true })
+    this.source.scopeParent = this // XXX HACK
     this.source.dom.appendTo(this.sourceDom)
   }
 }
@@ -1013,6 +1023,7 @@ CodeCanvasView.prototype.accept = function(patternView, propagate) {
   // change linkage
   this.patternViews.push(patternView)
   patternView.setParent(this)
+  patternView.scopeParent = this // XXX HACK
 
   // move patternView into our dom
   this.dom.append(patternView.dom)
@@ -1028,6 +1039,7 @@ CodeCanvasView.prototype.release = function(child, propagate) {
   }
   
   this.patternViews = arrayRemove(this.patternViews, child)
+  delete child.scopeParent // XXX HACK
 
   child.dom.detach()
   
