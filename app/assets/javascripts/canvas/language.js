@@ -115,11 +115,18 @@ Pattern.prototype.removeArgument = function(argRef) {
   if(!(argRef.name in this.references)) {
     return
   }
-  delete this.references[argRef.name]
+  
+  // delete all references in the source
+  this.meaning = this.meaning.deletingReferencesTo(argRef.name)
+  
+  // delete it from all the templates
   for(var i in this.representations) {
     var templ = this.representations[i]
     templ.deleteReferencesTo(argRef.name)
   }
+  
+  // delete it from the collection of references
+  delete this.references[argRef.name]
 }
 Pattern.prototype.apply = function(args) {
   // args is a map from argument name to value
@@ -202,6 +209,13 @@ function argsReplacingReferences(oldArgs, argsHash) {
   }
   return newArgs
 }
+function argsDeletingReferences(oldArgs, argName) {
+  var newArgs = {}
+  for(var i in oldArgs) {
+    newArgs[argName] = oldArgs[i].deletingReferencesTo(argName)
+  }
+  return newArgs
+}
 
 function ArgumentReference(name, type) {
   this.name = name
@@ -209,6 +223,13 @@ function ArgumentReference(name, type) {
 }
 ArgumentReference.prototype.replacingReferences = function(argsHash) {
   return argsHash.get(this) || this
+}
+ArgumentReference.prototype.deletingReferencesTo = function(argName) {
+  if(this.name == argName) {
+    return undefined
+  } else {
+    return this
+  }
 }
 ArgumentReference.prototype.notifying = function(beginf, endf) {
   this.notifyBeginF = beginf
@@ -232,6 +253,9 @@ JavascriptMeaning.prototype.notifying = function(beginf, endf) {
 }
 JavascriptMeaning.prototype.replacingReferences = function(argsHash) {
   return new JavascriptMeaning(this.jsSource, argsReplacingReferences(this.args, argsHash))
+}
+JavascriptMeaning.prototype.deletingReferencesTo = function(argName) {
+  return new JavascriptMeaning(this.jsSource, argsDeletingReferences(this.args, argName))
 }
 JavascriptMeaning.prototype.evaluate = function(c, e, os) {
   if(!this.f) {
@@ -269,6 +293,9 @@ NativeMeaning.prototype.notifying = function(beginf, endf) {
 NativeMeaning.prototype.replacingReferences = function(argsHash) {
   return new NativeMeaning(_.map(this.components, function(component) { return component.replacingReferences(argsHash) }))
 }
+NativeMeaning.prototype.deletingReferencesTo = function(argName) {
+  return new NativeMeaning(_.map(this.components, function(component) { return component.deletingReferencesTo(argName) }))
+}
 NativeMeaning.prototype.evaluate = function(c, e, os) {
   if(this.notifyBeginF) this.notifyBeginF()
   cpsMap(function(cc, ee, i, component) {
@@ -287,6 +314,9 @@ NativeMeaning.prototype.evaluate = function(c, e, os) {
 function _BasicMeaning() {
 }
 _BasicMeaning.prototype.replacingReferences = function() {
+  return this
+}
+_BasicMeaning.prototype.deletingReferencesTo = function() {
   return this
 }
 _BasicMeaning.prototype.notifying = function(beginf, endf) {
@@ -341,8 +371,17 @@ InvocationMeaning.prototype.pattern = function() {
   
   return this._pattern
 }
+// TODO: Is this right??? I think this should return a new invocation!
 InvocationMeaning.prototype.replacingReferences = function(argsHash) {
   return this._meaning().replacingReferences(argsHash)
+}
+InvocationMeaning.prototype.deletingReferencesTo = function(argName) {
+  return new InvocationMeaning({
+    patternId: this.patternId,
+    pattern: this.pattern,
+    representationIndex: this.representationIndex,
+    args: argsDeletingReferences(this.args)
+  })
 }
 InvocationMeaning.prototype.notifying = function(beginf, endf) {
   this.notifyBeginF = beginf
