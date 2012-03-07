@@ -109,10 +109,14 @@ function SlotView(parent, fillerText, options) {
               if(index < minIndex) minIndex = index
             }
             if(found) {
-              (function(pattern, i, minIndex) {
+              var text = patterns[pattern].representations[i].text
+              if(patterns[pattern].creator && !patterns[pattern].isMine()) {
+                text = "<p class='author'>created by " + (patterns[pattern].creator.username || "anonymous") + "</p>" + text
+              }
+              ;(function(pattern, i, minIndex) {
                 keywordMatches.push({
                   minIndex: minIndex,
-                  value: patterns[pattern].representations[i].text,
+                  value: text,
                   result: function() { return new PatternView(patterns[pattern], { representationIndex: i }) }
                 })
               })(pattern, i, minIndex)
