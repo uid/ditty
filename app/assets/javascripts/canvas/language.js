@@ -382,9 +382,13 @@ InvocationMeaning.prototype.pattern = function() {
   
   return this._pattern
 }
-// TODO: Is this right??? I think this should return a new invocation!
 InvocationMeaning.prototype.replacingReferences = function(argsHash) {
-  return this._meaning().replacingReferences(argsHash)
+  return new InvocationMeaning({
+    patternId: this.patternId,
+    pattern: this._pattern,
+    representationIndex: this.representationIndex,
+    args: argsReplacingReferences(this.args, argsHash)
+  })
 }
 InvocationMeaning.prototype.deletingReferencesTo = function(argName) {
   return new InvocationMeaning({
