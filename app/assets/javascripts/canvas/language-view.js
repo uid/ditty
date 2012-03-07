@@ -308,7 +308,6 @@ function PatternView(pattern, options) {
   
   this.pattern = pattern
   this.representationIndex = options.representationIndex || 0
-  this.convertComponents()
   this.activeCount = 0
   if(options.parent)
     this.setParent(options.parent)
@@ -321,10 +320,9 @@ function PatternView(pattern, options) {
   this.sourceDom = $("<div class='source'></div>").appendTo(this.dom)
   setObjFor(this.dom, this)
   
-  // add filler
+  // set up the dom
+  this.convertComponents()
   this.buildDom()
-  
-  // add source code
   this._buildSourceDom()
 
   // click to activate
@@ -516,7 +514,7 @@ PatternView.prototype.buildDom = function() {
         paramView.dom.addClass("when-editing") // only show when editing
         this.expressionDom.append(paramView.dom)
         
-        var deleteDom = $("<a href='#' class='when-editing remove-param' title='Click to remove this parameter'><button>delete</button></a>")
+        var deleteDom = $("<a href='#' class='when-editing remove-param' title='Click to remove this parameter'><button class='red'>delete</button></a>")
         ;(function(argRef) {
           deleteDom.click(function() {
             if(typeof(prompt("The parameter will be deleted from all the places it's used. Continue? (Press OK or Cancel.)")) === "undefined") {
@@ -695,6 +693,10 @@ PatternView.prototype.deleteParameter = function(argumentReference) {
   this.save()
 }
 PatternView.prototype._buildSourceDom = function() {
+  if(this.source) this.source.dom.detach()
+  
+  this.sourceDom.html("")
+  
   if(this.pattern.creator && !this.pattern.isMine()) {
     var authorship = $("<p class='author'>created by <span></span></p>")
     var author = this.pattern.creator.username || "anonymous"
@@ -708,17 +710,22 @@ PatternView.prototype._buildSourceDom = function() {
   if(isJS) {
     this.sourceDom.append($("<pre style='white-space: normal; word-break: break-all; width: 300px'></pre>").text(this.pattern.meaning.jsSource))
   } else {
-    this.source = new MultiSlotView(this /* parent */, "Drag or type something here.", { showExtraSlot: true })
-    this.source.scopeParent = this // XXX HACK
+    if(!this.source) {
+      this.source = new MultiSlotView(this /* parent */, "Drag or type something here.", { showExtraSlot: true })
+      this.source.scopeParent = this // XXX HACK
+    }
     this.source.dom.appendTo(this.sourceDom)
+  }
+}
+PatternView.prototype._populateSource = function() {
+  if(this.pattern.meaning.components) {
+    this.source.accept(_.map(this.pattern.meaning.components, createView))
   }
 }
 PatternView.prototype.toggleSourceView = function(instant) {
   this.expressionDom.toggleClass("editing", !this.isExpanded())
   if(!this.isExpanded()) {
-    if(this.pattern.meaning.components) {
-      this.source.accept(_.map(this.pattern.meaning.components, createView))
-    }
+    this._populateSource()
   }
   this.sourceDom.animate(
     { height: 'toggle' },
