@@ -729,7 +729,6 @@ PatternView.prototype.toggleSourceView = function(instant) {
   )
 }
 PatternView.prototype.rootEval = function(os) {
-  // flash(this.expressionDom)
   var exHandler = function(ex) {
     if(ex instanceof InternalException) {
       if(ex.type == "loop-breaker") {
