@@ -507,7 +507,16 @@ PatternView.prototype.buildDom = function() {
         paramView.dom.addClass("when-editing") // only show when editing
         this.expressionDom.append(paramView.dom)
         
-        this.expressionDom.append("<a href='#' class='when-editing remove-param' title='Click to remove this parameter'><button>delete</button></a>")
+        var deleteDom = $("<a href='#' class='when-editing remove-param' title='Click to remove this parameter'><button>delete</button></a>")
+        ;(function(argRef) {
+          deleteDom.click(function() {
+            if(typeof(prompt("The parameter will be deleted from all the places it's used. Continue? (Press OK or Cancel.)")) === "undefined") {
+              return
+            }
+            this.deleteParameter(argRef)
+          }.bind(this))
+        }.bind(this))(this.convertedComponents[i].argumentReference)
+        this.expressionDom.append(deleteDom)
       }
     }
   }
@@ -676,12 +685,8 @@ PatternView.prototype.addParameter = function() {
   
   this.save()
 }
-PatternView.prototype.deleteParameter = function(paramView) {
-  if(typeof(prompt("Are you sure? The parameter will be deleted from all the places it's used. (press OK or Cancel)")) === "undefined") {
-    return
-  }
-  
-  this.pattern.removeArgument(paramView.argumentReference)
+PatternView.prototype.deleteParameter = function(argumentReference) {
+  this.pattern.removeArgument(argumentReference)
   
   this.convertComponents()
   this.buildDom()
@@ -798,11 +803,7 @@ function ArgumentReferenceView(argumentReference, options) {
   this.dom.bind('contextmenu', function(e) {
     var menu = new MenuBuilder()
     menu.add("Delete", function() {
-      if(this.parent.deleteParameter) {
-        this.parent.deleteParameter(this)
-      } else {
-        this.parent.release(this, true)
-      }
+      this.parent.release(this, true)
     }.bind(this))
     menu.open(e)
     
