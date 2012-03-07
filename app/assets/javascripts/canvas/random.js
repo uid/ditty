@@ -23,6 +23,38 @@ function setObjFor(dom, obj) {
   $(dom).data("obj", obj)
 }
 
+// shuffles an array (supposedly Fisher-Yates, but I didn't check)
+// adapted from http://snippets.dzone.com/posts/show/849
+function shuffle(arr) {
+  for(var j, x, i = arr.length; i; j = parseInt(Math.random() * i), x = arr[--i], arr[i] = arr[j], arr[j] = x);
+    return arr
+}
+
+// returns a random element from the array
+function randomPick(arr) {
+  return arr[Math.floor(Math.random() * arr.length)]
+}
+
+// capitalizes the first letter of a string
+function capitalize(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+// generates an "adjective-noun"-looking random phrase using some goofy rules
+function randomPhrase() {
+  var cons_syllables = ["kon", "fab", "al", "el", "il", "ol", "ul", "krog", "blug", "kem", "moop", "rad", "korm", "delph", "dib", "kek", "deop", "tok", "mig", "tet", "grep", "loog", "tonk", "garf", "yap", "tulk", "krin", "zid", "nik", "zot", "kob", "xor", "aw", "ew", "iw", "ow", "uw", "ar", "er", "ir", "or", "ur", "at", "et", "it", "ot", "ut", "ay", "ey", "iy", "oy", "uy", "ap", "ep", "ip", "op", "up", "as", "es", "is", "os", "us", "ad", "ed", "id", "od", "ud", "af", "ef", "if", "of", "uf", "ag", "eg", "ig", "og", "ug", "ah", "eh", "ih", "oh", "uh", "ak", "ek", "ik", "ok", "uk", "al", "el", "il", "ol", "ul", "az", "ez", "iz", "oz", "uz", "ax", "ex", "ix", "ox", "ux", "ack", "eck", "ick", "ock", "uck", "av", "ev", "iv", "ov", "uv", "ab", "eb", "ib", "ob", "ub", "an", "en", "in", "on", "un", "am", "em", "im", "om", "um"]
+  var first_suffixes = ["ic", "ated", "aceous", "aholic", "atory", "ibant", "arpic", "idic", "inal", "inic", "emic", "ergic", "est", "erous", "ating", "ful", "genic", "iatric", "izating", "itious", "ling", "lithic", "lytic", "merous", "morphic", "morphous", "oic", "parous", "pathic", "phagous", "philiac", "philous", "phobic", "ploid", "scopic", "thermic", "trophic", "tropic", "ular", "wise", "worthy", "wide", "zoic", "zygous"]
+  var second_suffixes = ["ator", "izer"]
+  
+  var randomWord = function(suffixes) {
+    var num_syllables = Math.floor(Math.random() * 2) + 1
+    shuffle(cons_syllables)
+    return cons_syllables.slice(0, num_syllables).join("") + randomPick(suffixes)
+  }
+  
+  return capitalize(randomWord(first_suffixes)) + " " + capitalize(randomWord(second_suffixes))
+}
+
 // clears any selected text in the window
 function clearSelection() {
   if(window.getSelection) {
