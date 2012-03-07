@@ -218,6 +218,9 @@ function ArgumentReference(name, type) {
   this.name = name
   this.type = type
 }
+ArgumentReference.prototype.toString = function() {
+  return "ArgumentReference(" + this.name + ", " + this.type + ")"
+}
 ArgumentReference.prototype.replacingReferences = function(argsHash) {
   return argsHash.get(this) || this
 }
