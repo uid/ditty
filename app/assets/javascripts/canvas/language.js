@@ -305,7 +305,7 @@ NativeMeaning.prototype.replacingReferences = function(argsHash) {
   return new NativeMeaning(_.map(this.components, function(component) { return component.replacingReferences(argsHash) }))
 }
 NativeMeaning.prototype.deletingReferencesTo = function(argName) {
-  return new NativeMeaning(_.map(this.components, function(component) { return component.deletingReferencesTo(argName) }))
+  return new NativeMeaning(_.without(_.map(this.components, function(component) { return component.deletingReferencesTo(argName) }), undefined))
 }
 NativeMeaning.prototype.evaluate = function(c, e, os) {
   if(this.notifyBeginF) this.notifyBeginF()
