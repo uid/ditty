@@ -221,14 +221,15 @@ function environmentLoaded(assets) {
   
   // set up 'new bubble' button
   
-  var newBubble = function(pattern) {
-    var saveAfter = !pattern
-    pattern = pattern || new Pattern({ creator: { id: currentUser.id }, representations: [new Template(randomPhrase())] })
+  // options: hash containing either "pattern" or "title" or nothing
+  var newBubble = function(options) {
+    options = options || {}
+    var pattern = options["pattern"] || new Pattern({ creator: { id: currentUser.id }, representations: [new Template(options["title"] || randomPhrase())] })
     var myCode = new PatternView(pattern)
     codeCanvas.accept(myCode, true /* propagate */)
     myCode.dom.css({ position: "absolute", left: "10px", top: "10px" })
     myCode.toggleSourceView(true /* instant */)
-    if(saveAfter) myCode.save()
+    myCode.save()
     return myCode
   }
   $("#bubble-adder").click(function() {
@@ -240,7 +241,7 @@ function environmentLoaded(assets) {
   // restore canvas
   
   codeCanvas.restore(initialCanvas)
-  if(codeCanvas.isEmpty()) newBubble()
+  if(codeCanvas.isEmpty()) newBubble({ title: "My Code" })
   
   // create the trash
   
