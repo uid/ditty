@@ -9,6 +9,10 @@
 function jsonUnserialize(jsonObj) {
   return new JsonPatternUnarchiver().unarchive(jsonObj)
 }
+// XXX HACK oh my god I can't believe I just wrote this function
+function jsonUnserializeMeaning(jsonObj) {
+  return new JsonPatternUnarchiver()._meaning(jsonObj)
+}
 function JsonPatternUnarchiver() {
 }
 JsonPatternUnarchiver.prototype.unarchive = function(json) {

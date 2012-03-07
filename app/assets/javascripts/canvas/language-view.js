@@ -655,8 +655,10 @@ PatternView.prototype.save = function() {
   
   setTimeout(function() { this._save() }.bind(this), 300)
 }
-PatternView.prototype.meaning = function() {
-  if(this.isExpanded()) {
+// XXX note the hackhack
+// when it's true, will never take the branch that registers for execution callbacks
+PatternView.prototype.meaning = function(hackhack) {
+  if(this.isExpanded() && !hackhack) {
     return this.source.meaning().notifying(this.becameActive.bind(this), this.becameInactive.bind(this))
   }
   
@@ -979,8 +981,7 @@ CodeCanvasView.prototype.asJSON = function() {
     var view = this.patternViews[i]
     var pos = view.dom.position()
     views.push({
-      pattern: view.pattern.id,
-      patternRepIndex: view.representationIndex,
+      invocation: jsonSerialize(view.meaning(true /* hackhack */)),
       x: pos.left,
       y: pos.top,
       expanded: view.isExpanded()
@@ -1009,12 +1010,17 @@ CodeCanvasView.prototype.restore = function(initial) {
   if(initial.views) {
     for(var i in initial.views) {
       var view = initial.views[i]
-      var pattern = patterns[view.pattern]
-      if(!pattern) continue
-      var patternView = new PatternView(pattern, { representationIndex: view.patternRepIndex })
+      // view has keys: invocation, x, y, expanded
+      var patternView
+      try {
+        patternView = createView(jsonUnserializeMeaning(view["invocation"]))
+      } catch(e) {
+        $.achtung({ message: "failed to restore a canvas item", timeout: 5 })
+        continue
+      }
       this.accept(patternView)
-      patternView.dom.css({ position: "absolute", left: view.x, top: view.y })
-      if(view.expanded) {
+      patternView.dom.css({ position: "absolute", left: view["x"], top: view["y"] })
+      if(view["expanded"]) {
         patternView.toggleSourceView(true /* instant */)
       }
     }
