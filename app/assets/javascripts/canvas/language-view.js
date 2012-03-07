@@ -375,7 +375,7 @@ function PatternView(pattern, options) {
   // right-clickable
   this.dom.bind('contextmenu', function(e) {
     var menu = new MenuBuilder()
-    menu.add(this.isExpanded() ? "Hide Source" : "Show Source", this.toggleSourceView.bind(this))
+    menu.add(this.isExpanded() ? "Finish Editing" : "Begin Editing", this.toggleSourceView.bind(this))
     menu.add("Rename...", function() {
       var template = this.pattern.representations[this.representationIndex]
       var text = prompt("New template?", template.text)
