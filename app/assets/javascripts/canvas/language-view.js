@@ -691,6 +691,8 @@ PatternView.prototype.deleteParameter = function(argumentReference) {
   this.buildDom()
   this._buildSourceDom()
   
+  this._populateSource()
+  
   this.save()
 }
 PatternView.prototype._buildSourceDom = function() {
