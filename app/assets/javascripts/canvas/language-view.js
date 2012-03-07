@@ -410,35 +410,35 @@ function PatternView(pattern, options) {
       flash(this.sourceDom, "blue")
       this.save()
     }.bind(this))
-    var viewsMenu = menu.addSubmenu("Change View &rarr;")
-    for(var i in this.pattern.representations) {
-      var template = this.pattern.representations[i]
-      viewsMenu.add(template.text, function(i) { return function() {
-        this.representationIndex = i
-        this.reconvertComponents()
-        this.buildDom()
-        flash(this.expressionDom)
-        flash(this.sourceDom)
-        this.save()
-      }.bind(this) }.bind(this)(i))
-    }
-    viewsMenu.addSeparator()
-    viewsMenu.add("New&#8230;", function() {
-      var template = this.pattern.representations[this.representationIndex]
-      var text = prompt("New template?", template.text)
-      if(!text) return
-      var template = new Template(text)
-      try {
-        this.representationIndex = this.pattern.addRepresentation(template)
-      } catch(e) {
-        alert("couldn't do it: " + e.message)
-        return
-      }
-      this.reconvertComponents()
-      this.buildDom()
-      flash(this.expressionDom, "blue")
-      flash(this.sourceDom, "blue")
-    }.bind(this))
+    // var viewsMenu = menu.addSubmenu("Change View &rarr;")
+    // for(var i in this.pattern.representations) {
+    //   var template = this.pattern.representations[i]
+    //   viewsMenu.add(template.text, function(i) { return function() {
+    //     this.representationIndex = i
+    //     this.reconvertComponents()
+    //     this.buildDom()
+    //     flash(this.expressionDom)
+    //     flash(this.sourceDom)
+    //     this.save()
+    //   }.bind(this) }.bind(this)(i))
+    // }
+    // viewsMenu.addSeparator()
+    // viewsMenu.add("New&#8230;", function() {
+    //   var template = this.pattern.representations[this.representationIndex]
+    //   var text = prompt("New template?", template.text)
+    //   if(!text) return
+    //   var template = new Template(text)
+    //   try {
+    //     this.representationIndex = this.pattern.addRepresentation(template)
+    //   } catch(e) {
+    //     alert("couldn't do it: " + e.message)
+    //     return
+    //   }
+    //   this.reconvertComponents()
+    //   this.buildDom()
+    //   flash(this.expressionDom, "blue")
+    //   flash(this.sourceDom, "blue")
+    // }.bind(this))
     menu.add("Delete", function() { this.parent.release(this, true) }.bind(this))
     menu.open(e)
     
