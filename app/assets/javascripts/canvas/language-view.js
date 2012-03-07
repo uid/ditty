@@ -661,11 +661,14 @@ PatternView.prototype.isExpanded = function() {
 }
 PatternView.prototype.addParameter = function() {
   var name = prompt("Parameter name?")
-  var type = prompt("Type? ('instructions' or blank are okay)")
   if(!name) {
     return
   }
-  var arg = type ? new ArgumentReference(name, type) : new ArgumentReference(name)
+  
+  // var type = prompt("Type? ('instructions' or blank are okay)")
+  // var arg = type ? new ArgumentReference(name, type) : new ArgumentReference(name)
+  
+  var arg = new ArgumentReference(name)
   this.pattern.addArgument(arg)
   
   this.convertComponents()
