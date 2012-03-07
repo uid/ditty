@@ -367,8 +367,6 @@ function PatternView(pattern, options) {
   
   // right-clickable
   this.dom.bind('contextmenu', function(e) {
-    clearSelection() // right-clicking usually selects the word under the cursor
-    
     var menu = new MenuBuilder()
     menu.add(this.isExpanded() ? "Hide Source" : "Show Source", this.toggleSourceView.bind(this))
     menu.add("Rename...", function() {
@@ -787,8 +785,6 @@ function ArgumentReferenceView(argumentReference, options) {
   
   // right-clickable
   this.dom.bind('contextmenu', function(e) {
-    clearSelection() // right-clicking usually selects the word under the cursor
-    
     var menu = new MenuBuilder()
     menu.add("Delete", function() {
       if(this.parent.deleteParameter) {
@@ -854,8 +850,6 @@ function JavascriptCodeView(javascriptMeaning, options) {
   
   // right-clickable
   this.dom.bind('contextmenu', function(e) {
-    clearSelection() // right-clicking usually selects the word under the cursor
-    
     var menu = new MenuBuilder()
     menu.add("Delete", function() { this.parent.release(this, true) }.bind(this))
     menu.add("Show Source", function() { alert(this.javascriptMeaning.jsSource) }.bind(this))
