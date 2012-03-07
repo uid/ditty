@@ -335,7 +335,16 @@ function PatternView(pattern, options) {
   
   // click to add a parameter
   this.paramEditDom.click(function() {
-    this.addParameter()
+    var name = prompt("Parameter name?")
+    if(!name) {
+      return
+    }
+    
+    // var type = prompt("Type? ('instructions' or blank are okay)")
+    // var arg = type ? new ArgumentReference(name, type) : new ArgumentReference(name)
+    var arg = new ArgumentReference(name)
+    
+    this.addParameter(arg)
     return false
   }.bind(this))
 
@@ -667,17 +676,8 @@ PatternView.prototype.acceptArgument = function(argumentName, view) {
 PatternView.prototype.isExpanded = function() {
   return !this.sourceDom.is(":hidden")
 }
-PatternView.prototype.addParameter = function() {
-  var name = prompt("Parameter name?")
-  if(!name) {
-    return
-  }
-  
-  // var type = prompt("Type? ('instructions' or blank are okay)")
-  // var arg = type ? new ArgumentReference(name, type) : new ArgumentReference(name)
-  
-  var arg = new ArgumentReference(name)
-  this.pattern.addArgument(arg)
+PatternView.prototype.addParameter = function(argumentReference) {
+  this.pattern.addArgument(argumentReference)
   
   this.convertComponents()
   this.buildDom()
