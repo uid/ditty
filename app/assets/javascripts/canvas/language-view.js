@@ -517,7 +517,7 @@ PatternView.prototype.buildDom = function() {
         var deleteDom = $("<a href='#' class='when-editing remove-param' title='Click to remove this parameter'><button class='red'>delete</button></a>")
         ;(function(argRef) {
           deleteDom.click(function() {
-            if(typeof(prompt("The parameter will be deleted from all the places it's used. Continue? (Press OK or Cancel.)")) === "undefined") {
+            if(prompt("The parameter will be deleted from all the places it's used. Continue? (Press OK or Cancel.)") === null) {
               return
             }
             this.deleteParameter(argRef)
