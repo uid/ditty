@@ -18,7 +18,7 @@ class User < ActiveRecord::Base
   end
   
   def as_json(options = {})
-    if anonymous?
+    if username.blank?
       { id: id }
     else
       { id: id, username: username, ditty: ditty? }

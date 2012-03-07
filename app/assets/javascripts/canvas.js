@@ -35,6 +35,11 @@ function myPatterns() {
 }
 
 
+function updateName() {
+  $("#name").text(currentUser.username || "anonymous")
+}
+
+
 var themes = ["colorful", "minimal"]
 var themeIndex = 0
 function changeTheme() {
@@ -276,8 +281,38 @@ function environmentLoaded(assets) {
   // done!
   
   $("#welcome, #welcome button").click(function(e) { $("#welcome").hide("puff"); e.stopPropagation() })
+  $("#set-name").click(function() {
+    var name = prompt("New Name?")
+    if(name === null) return
+    $.ajax({
+      type: "PUT",
+      url: "/current_user",
+      data: { "user[username]" : name },
+      dataType: "json",
+      success: function(data) {
+        console.log("got new user", currentUser, data["user"])
+        currentUser = data["user"]
+        updateName()
+      }.bind(this),
+      error: function(jqXHR, textStatus, errorThrown) {
+        var responseJSON
+        try {
+          responseJSON = JSON.parse(jqXHR.responseText)
+          if(responseJSON.error) {
+            $.achtung({ message: responseJSON.error, timeout: 5 })
+          } else {
+            $.achtung({ message: "Error setting name: the server is down.", timeout: 5 })
+          }
+        } catch(e) {
+          $.achtung({ message: "Error setting name: the server is down.", timeout: 5 })
+        }
+      }
+    })
+  })
   
   $("body").disableSelection()
+  
+  updateName()
   
   flash($("body"), "blue")
 }
