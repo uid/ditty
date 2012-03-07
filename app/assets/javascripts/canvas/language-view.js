@@ -112,6 +112,8 @@ function SlotView(parent, fillerText, options) {
               var text = patterns[pattern].representations[i].text
               if(patterns[pattern].creator && !patterns[pattern].isMine()) {
                 text = "<p class='author'>created by " + (patterns[pattern].creator.username || "anonymous") + "</p>" + text
+              } else {
+                text = "<p class='author'>created by <span style='color: blue; text-decoration: underline'>me</span></p>" + text
               }
               ;(function(pattern, i, minIndex) {
                 keywordMatches.push({
