@@ -170,16 +170,14 @@ ul.multislot li {
   font-size: 10pt;
 }
 .argument-reference {
-  background: #dfd;
-  display: inline-block;
-  line-height: 27px;
-  white-space: nowrap;
-  padding: 0 4px;
-  vertical-align: middle;
-  margin: 2px;
-  -webkit-border-radius: 4px;
-  border: 1px solid black;
+  display: inline;
   cursor: pointer;
+  background: #eef;
+  color: #900;
+  -webkit-border-radius: 4px;
+  padding: 3px;
+  line-height: 28px;
+  border: 1px solid #f00;
 }
 .expression {
   background: #fff;
@@ -202,6 +200,36 @@ ul.multislot li {
   background-color: #efe;
   border-color: #0f0;
   border-style: dashed;
+}
+.when-editing {
+  display: none;
+}
+.expression.editing .when-editing {
+  display: inline;
+}
+.expression.editing .when-not-editing {
+  display: none;
+}
+.expression.editing {
+  background-color: #eee;
+}
+.expression .add-param {
+  float: right;
+  margin-left: 15px;
+}
+.expression button {
+  font: bold 11px Arial;
+  text-decoration: none;
+  background-color: #eee;
+  color: #333;
+  padding: 2px 6px 2px 6px;
+  border-top: 1px solid #ccc;
+  border-right: 1px solid #333;
+  border-bottom: 1px solid #333;
+  border-left: 1px solid #ccc;
+}
+.expression button:hover {
+  background-color: #fdd;
 }
 .expression-container.dragging {
   background: white;

@@ -34,9 +34,6 @@ Template.prototype.setText = function(text) {
   this._parse()
 }
 Template.prototype.deleteReferencesTo = function(name) {
-  // first search for a version with parentheses, since that's how they're added by default
-  var text = this.text.replace(" ([" + name + "])", "")
-  
   // now remove instances that aren't surrounded by parentheses
   text = this.text.replace("[" + name + "]", "").trim()
   
@@ -108,7 +105,7 @@ Pattern.prototype.addArgument = function(argRef) {
   this.references[argRef.name] = argRef
   for(var i in this.representations) {
     var templ = this.representations[i]
-    templ.setText(templ.text + " ([" + argRef.name + "])")
+    templ.setText(templ.text + " [" + argRef.name + "]")
   }
 }
 Pattern.prototype.removeArgument = function(argRef) {

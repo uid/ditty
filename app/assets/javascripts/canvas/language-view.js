@@ -38,6 +38,7 @@ function SlotView(parent, fillerText, options) {
   setObjFor(this.dom, this)
   
   // tooltip
+  this.argumentReference = options.argumentReference
   if(options.argumentReference && options.argumentReference.type) {
     this.dom.attr("title", "Type: " + options.argumentReference.type)
   } else {
@@ -315,6 +316,7 @@ function PatternView(pattern, options) {
   // create dom
   this.dom = $("<div class='expression-container'></div>")
   this.expressionDom = $("<div class='expression title-expression'></div>").appendTo(this.dom)
+  this.paramEditDom = $("<a href='#' class='when-editing add-param' title='Click to add a slot'><button>add slot</button></a>")
   this.loadingDom = $("<span class='loading'>Saving&#8230;</span>").appendTo(this.expressionDom)
   this.sourceDom = $("<div class='source'></div>").appendTo(this.dom)
   setObjFor(this.dom, this)
@@ -330,7 +332,12 @@ function PatternView(pattern, options) {
     if(this.noclick) return
     this.rootEval(globalOS)
   }.bind(this)))
-  // this.expressionDom.click(ifTarget(this.toggleSourceView.bind(this)));
+  
+  // click to add a parameter
+  this.paramEditDom.click(function() {
+    this.addParameter()
+    return false
+  }.bind(this))
 
   // draggable
   this.dom.draggable({
@@ -416,7 +423,6 @@ function PatternView(pattern, options) {
       flash(this.sourceDom, "blue")
     }.bind(this))
     // menu.addSeparator()
-    menu.add("Debug Display", function() { alert(this) }.bind(this))
     menu.add("Delete", function() { this.parent.release(this, true) }.bind(this))
     menu.open(e)
     
@@ -428,11 +434,14 @@ PatternView.prototype.toString = function() {
 }
 PatternView.prototype.findScopeParent = findScopeParent
 PatternView.prototype._slotView = function(arg, showExtraSlot) {
+  var view
   if(arg.type == "instructions") {
-    return new MultiSlotView(this, arg.name, { argumentReference: arg, showExtraSlot: showExtraSlot })
+    view = new MultiSlotView(this, arg.name, { argumentReference: arg, showExtraSlot: showExtraSlot })
   } else {
-    return new SlotView(this, arg.name, { argumentReference: arg })
+    view = new SlotView(this, arg.name, { argumentReference: arg })
   }
+  view.dom.addClass("when-not-editing")
+  return view
 }
 PatternView.prototype.convertComponents = function() {
   var template = this.pattern.representations[this.representationIndex]
@@ -481,17 +490,30 @@ PatternView.prototype.buildDom = function() {
   }
   
   // clear what's left
+  
+  this.paramEditDom.detach()
+  this.loadingDom.detach()
   this.expressionDom.html("")
+  
+  this.expressionDom.append(this.paramEditDom)
   
   // add all the components back
   for(var i in this.convertedComponents) {
-    if(typeof this.convertedComponents[i] === "string")
+    if(typeof this.convertedComponents[i] === "string") {
       this.expressionDom.append(this.convertedComponents[i])
-    else
+    } else {
       this.expressionDom.append(this.convertedComponents[i].dom)
+      if(this.convertedComponents[i].argumentReference) {
+        var paramView = new ArgumentReferenceView(this.convertedComponents[i].argumentReference, { parent: this, scopeParent: this })
+        paramView.dom.addClass("when-editing") // only show when editing
+        this.expressionDom.append(paramView.dom)
+        
+        this.expressionDom.append("<a href='#' class='when-editing remove-param' title='Click to remove this parameter'><button>delete</button></a>")
+      }
+    }
   }
   
-  // add loading indicator
+  // add the gadgets
   this.expressionDom.append(this.loadingDom)
 }
 PatternView.prototype.setParent = function(parent, propagate) {
@@ -538,6 +560,7 @@ PatternView.prototype.release = function(view, propagate) {
     var newView = new ArgumentReferenceView(view.argumentReference, { parent: this })
     newView.dom.insertBefore(view.dom)
     view.dom.detach()
+    view.dom.removeClass("when-editing")
   }
   if(propagate && this.parent.childChanged) {
     this.parent.childChanged(this)
@@ -664,17 +687,6 @@ PatternView.prototype.deleteParameter = function(paramView) {
   
   this.save()
 }
-PatternView.prototype._buildParameterList = function() {
-  if(!this.parametersDom) {
-    this.parametersDom = $("<p class='parameters'></p>").prependTo(this.sourceDom)
-  }
-  this.parametersDom.text("Parameters: ")
-  for(var i in this.pattern.references) {
-    this.parametersDom.append(new ArgumentReferenceView(this.pattern.references[i], { parent: this, scopeParent: this }).dom)
-  }
-  var add = $("<a href='#'>(+)</a>").appendTo(this.parametersDom)
-  add.click(this.addParameter.bind(this))
-}
 PatternView.prototype._buildSourceDom = function() {
   if(this.pattern.creator && !this.pattern.isMine()) {
     var authorship = $("<p class='author'>created by <span></span></p>")
@@ -689,15 +701,13 @@ PatternView.prototype._buildSourceDom = function() {
   if(isJS) {
     this.sourceDom.append($("<pre style='white-space: normal; word-break: break-all; width: 300px'></pre>").text(this.pattern.meaning.jsSource))
   } else {
-    this._buildParameterList()
-    
-    // source code
     this.source = new MultiSlotView(this /* parent */, "Drag or type something here.", { showExtraSlot: true })
     this.source.scopeParent = this // XXX HACK
     this.source.dom.appendTo(this.sourceDom)
   }
 }
 PatternView.prototype.toggleSourceView = function(instant) {
+  this.expressionDom.toggleClass("editing", !this.isExpanded())
   if(!this.isExpanded()) {
     if(this.pattern.meaning.components) {
       this.source.accept(_.map(this.pattern.meaning.components, createView))
