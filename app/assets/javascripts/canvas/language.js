@@ -379,7 +379,7 @@ InvocationMeaning.prototype.replacingReferences = function(argsHash) {
 InvocationMeaning.prototype.deletingReferencesTo = function(argName) {
   return new InvocationMeaning({
     patternId: this.patternId,
-    pattern: this.pattern,
+    pattern: this._pattern,
     representationIndex: this.representationIndex,
     args: argsDeletingReferences(this.args)
   })
