@@ -229,7 +229,13 @@ ul.multislot li {
   border-left: 1px solid #ccc;
 }
 .expression button:hover {
+  background-color: #dfd;
+}
+.expression button.red {
   background-color: #fdd;
+}
+.expression button.red:hover {
+  background-color: #faa;
 }
 .expression-container.dragging {
   background: white;
