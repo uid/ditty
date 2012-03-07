@@ -110,10 +110,14 @@ function SlotView(parent, fillerText, options) {
             }
             if(found) {
               var text = patterns[pattern].representations[i].text
-              if(patterns[pattern].creator && !patterns[pattern].isMine()) {
-                text = "<p class='author'>created by " + (patterns[pattern].creator.username || "anonymous") + "</p>" + text
-              } else {
-                text = "<p class='author'>created by <span style='color: blue; text-decoration: underline'>me</span></p>" + text
+              if(patterns[pattern].creator) {
+                if(patterns[pattern].creator.ditty) {
+                  text = "<p class='author'>built-in</p>" + text
+                } else if(patterns[pattern].isMine()) {
+                  text = "<p class='author'>created by <span style='color: blue; text-decoration: underline'>me</span></p>" + text
+                } else {
+                  text = "<p class='author'>created by " + (patterns[pattern].creator.username || "anonymous") + "</p>" + text
+                }
               }
               ;(function(pattern, i, minIndex) {
                 keywordMatches.push({
@@ -710,10 +714,15 @@ PatternView.prototype._buildSourceDom = function() {
   this.sourceDom.html("")
   
   if(this.pattern.creator && !this.pattern.isMine()) {
-    var authorship = $("<p class='author'>created by <span></span></p>")
-    var author = this.pattern.creator.username || "anonymous"
-    authorship.children("span").text(author)
-    this.sourceDom.append(authorship)
+    console.log(this.pattern.creator)
+    if(this.pattern.creator.ditty) {
+      this.sourceDom.append($("<p class='author'>built-in</p>"))
+    } else {
+      var authorship = $("<p class='author'>created by <span></span></p>")
+      var author = this.pattern.creator.username || "anonymous"
+      authorship.children("span").text(author)
+      this.sourceDom.append(authorship)
+    }
   }
   
   // TODO: have a real check
