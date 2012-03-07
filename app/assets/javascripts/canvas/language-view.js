@@ -524,7 +524,7 @@ PatternView.prototype.buildDom = function() {
         paramView.dom.addClass("when-editing") // only show when editing
         this.expressionDom.append(paramView.dom)
         
-        var deleteDom = $("<a href='#' class='when-editing remove-param' title='Click to remove this parameter'><button class='red'>delete</button></a>")
+        var deleteDom = $("<a href='#' class='when-editing remove-param' title='Click to remove this parameter'><button class='red'>x</button></a>")
         ;(function(argRef) {
           deleteDom.click(function() {
             if(prompt("The parameter will be deleted from all the places it's used. Continue? (Press OK or Cancel.)") === null) {
