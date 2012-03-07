@@ -391,7 +391,7 @@ InvocationMeaning.prototype.deletingReferencesTo = function(argName) {
     patternId: this.patternId,
     pattern: this._pattern,
     representationIndex: this.representationIndex,
-    args: argsDeletingReferences(this.args)
+    args: argsDeletingReferences(this.args, argName)
   })
 }
 InvocationMeaning.prototype.notifying = function(beginf, endf) {
