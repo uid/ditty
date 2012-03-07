@@ -343,7 +343,7 @@ function PatternView(pattern, options) {
     var arg = new ArgumentReference(name)
     
     this.addParameter(arg)
-    return false
+    return false // don't navigate to #
   }.bind(this))
 
   // draggable
@@ -521,6 +521,7 @@ PatternView.prototype.buildDom = function() {
               return
             }
             this.deleteParameter(argRef)
+            return false // don't navigate to #
           }.bind(this))
         }.bind(this))(this.convertedComponents[i].argumentReference)
         this.expressionDom.append(deleteDom)
