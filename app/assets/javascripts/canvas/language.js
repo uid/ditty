@@ -200,6 +200,9 @@ function evalArgs(c, e, os, args, which) {
   }, e, which)
 }
 
+// oldArgs: an object whose keys are argument names and values are meanings
+// argsHash: a Hashtable (not an object!) whose keys are ArgumentReferences
+// returns a new args object after making cascading calls to replacingReferences on all the arguments
 function argsReplacingReferences(oldArgs, argsHash) {
   var newArgs = {}
   for(var argName in oldArgs) {
@@ -207,10 +210,17 @@ function argsReplacingReferences(oldArgs, argsHash) {
   }
   return newArgs
 }
+
+// oldArgs is an object whose keys are parameter names and values are meanings.
+// makes cascading calls to deletingReferencesTo on all the args.
+// if an arg becomes undefined (it was a reference itself), the arg is not in the resulting hash.
 function argsDeletingReferences(oldArgs, argName) {
   var newArgs = {}
   for(var i in oldArgs) {
-    newArgs[argName] = oldArgs[i].deletingReferencesTo(argName)
+    var newArg = oldArgs[i].deletingReferencesTo(argName)
+    if(newArg) {
+      newArgs[i] = newArg
+    }
   }
   return newArgs
 }
