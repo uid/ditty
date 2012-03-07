@@ -422,7 +422,6 @@ function PatternView(pattern, options) {
       flash(this.expressionDom, "blue")
       flash(this.sourceDom, "blue")
     }.bind(this))
-    // menu.addSeparator()
     menu.add("Delete", function() { this.parent.release(this, true) }.bind(this))
     menu.open(e)
     
