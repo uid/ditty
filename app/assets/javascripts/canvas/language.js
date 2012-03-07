@@ -110,6 +110,7 @@ Pattern.prototype.addArgument = function(argRef) {
 }
 Pattern.prototype.removeArgument = function(argRef) {
   if(!(argRef.name in this.references)) {
+    throw new Error("argument with name '" + argRef.name + "' doesn't exist in this pattern")
     return
   }
   
