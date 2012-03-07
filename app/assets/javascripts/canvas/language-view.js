@@ -574,6 +574,7 @@ PatternView.prototype.childChanged = function(child) {
 PatternView.prototype.release = function(view, propagate) {
   if(view instanceof ArgumentReferenceView) {
     var newView = new ArgumentReferenceView(view.argumentReference, { parent: this, scopeParent: this })
+    newView.dom.addClass("when-editing") // only show when editing
     newView.dom.insertBefore(view.dom)
     view.dom.detach()
     view.dom.removeClass("when-editing")
