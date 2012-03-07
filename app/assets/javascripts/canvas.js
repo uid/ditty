@@ -265,12 +265,6 @@ function environmentLoaded(assets) {
     }
   });
   
-  // coming-up
-  
-  $("#coming-up .expander").click(function() {
-    $("#coming-up .content").animate({ height: "toggle" }, { duration: 300 })
-  })
-  
   // set up xylophone
   
   var xyloView = new XylophoneView(assets["xylo"])

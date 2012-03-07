@@ -138,24 +138,6 @@ ul.multislot li {
 #palette-container #palette {
   margin-top: 1em;
 }
-#coming-up {
-  border: 1px solid blue;
-  padding: 0.7em;
-  background-color: #ccc;
-  font-size: small;
-  margin-top: 2em;
-}
-#coming-up .expander {
-  margin: 0;
-  padding: 0;
-  font-weight: bold;
-  color: #00f;
-  text-decoration: underline;
-  cursor: hand;
-}
-#coming-up .content {
-  display: none;
-}
 .expression-container {
   display: inline-block;
   position: relative;
