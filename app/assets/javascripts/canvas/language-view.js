@@ -348,9 +348,8 @@ function PatternView(pattern, options) {
       return
     }
     
-    // var type = prompt("Type? ('instructions' or blank are okay)")
-    // var arg = type ? new ArgumentReference(name, type) : new ArgumentReference(name)
-    var arg = new ArgumentReference(name)
+    var type = prompt("Type? (either type 'instructions' or leave it blank)")
+    var arg = type ? new ArgumentReference(name, type) : new ArgumentReference(name)
     
     this.addParameter(arg)
     return false // don't navigate to #
