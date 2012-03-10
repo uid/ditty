@@ -966,7 +966,7 @@ PaletteView.prototype.release = function(patternView, propagate) {
   }
   patternView.dom.detach()
   
-  if(propagate && this.parent.childChanged) {
+  if(propagate && this.parent && this.parent.childChanged) {
     this.parent.childChanged(this)
   }
 }
