@@ -62,6 +62,11 @@ function SlotView(parent, fillerText, options) {
     drop: function(event, ui) {
       ui.helper.dropped_on_droppable = true
       var patternView = objFor(ui.draggable)
+      if(patternView.parent instanceof PaletteView) {
+        mpq.track("Bubble Insert", { method: "drop", from: "palette" })
+      } else {
+        mpq.track("Bubble Insert", { method: "drop" })
+      }
       this.accept(patternView, true)
     }.bind(this)
   })
@@ -135,6 +140,7 @@ function SlotView(parent, fillerText, options) {
       }.bind(this),
       select: function(event, ui) {
         this.accept(ui.item["result"](), true)
+        mpq.track("Bubble Insert", { method: "auto-complete" })
       }.bind(this),
       open: function() {
         input.data("menuOpen", true);
@@ -338,6 +344,7 @@ function PatternView(pattern, options) {
   // click to activate
   this.expressionDom.click(ifTarget(function(e) {
     if(this.noclick) return
+    mpq.track("Bubble Execute")
     this.rootEval(globalOS)
   }.bind(this)))
   
@@ -352,6 +359,9 @@ function PatternView(pattern, options) {
     var arg = type ? new ArgumentReference(name, type) : new ArgumentReference(name)
     
     this.addParameter(arg)
+    
+    mpq.track("Add Slot")
+    
     return false // don't navigate to #
   }.bind(this))
 
@@ -438,7 +448,10 @@ function PatternView(pattern, options) {
     //   flash(this.expressionDom, "blue")
     //   flash(this.sourceDom, "blue")
     // }.bind(this))
-    menu.add("Delete", function() { this.parent.release(this, true) }.bind(this))
+    menu.add("Delete", function() {
+      this.parent.release(this, true)
+      mpq.track("Bubble Delete", { method: "context menu" })
+    }.bind(this))
     menu.open(e)
     
     return false
@@ -530,6 +543,7 @@ PatternView.prototype.buildDom = function() {
               return
             }
             this.deleteParameter(argRef)
+            mpq.track("Remove Slot")
             return false // don't navigate to #
           }.bind(this))
         }.bind(this))(this.convertedComponents[i].argumentReference)
@@ -1257,6 +1271,7 @@ function TrashView() {
       ui.helper.dropped_on_droppable = true
       var patternView = objFor(ui.draggable)
       setTimeout(function() { this.accept(patternView, true) }.bind(this), 100)
+      mpq.track("Bubble Delete", { method: "trash" })
     }.bind(this)
   });
 }
