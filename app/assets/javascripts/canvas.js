@@ -290,7 +290,6 @@ function environmentLoaded(assets) {
       data: { "user[username]" : name },
       dataType: "json",
       success: function(data) {
-        console.log("got new user", currentUser, data["user"])
         currentUser = data["user"]
         updateName()
       }.bind(this),

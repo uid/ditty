@@ -713,7 +713,6 @@ PatternView.prototype._buildSourceDom = function() {
   this.sourceDom.html("")
   
   if(this.pattern.creator && !this.pattern.isMine()) {
-    console.log(this.pattern.creator)
     if(this.pattern.creator.ditty) {
       this.sourceDom.append($("<p class='author'>built-in</p>"))
     } else {
