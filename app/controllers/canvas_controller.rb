@@ -17,7 +17,9 @@ class CanvasController < ApplicationController
     
     def be_logged_in
       unless user_signed_in?
-        sign_in :user, User.create_anonymous_user!
+        user = User.create_anonymous_user!
+        user.remember_me = true
+        sign_in :user, user
         @new_user = true
       end
     end
