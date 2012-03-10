@@ -240,6 +240,7 @@ function environmentLoaded(assets) {
   $("#bubble-adder").click(function() {
     var bubble = newBubble()
     $(this).effect("transfer", { to: bubble.dom }, 200)
+    mpq.track("Bubble Create")
   })
   $("#login-button").click(function() { window.location = "/users/sign_in" })
   
