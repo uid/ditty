@@ -212,14 +212,15 @@ function environmentLoaded(assets) {
   paletteView.add(patterns["break"])
   paletteView.add(patterns["loop-breaker"])
   
-  paletteView.addSection("Miscellaneous")
-  for(var i in patterns) {
-    if(!patterns[i].creator.ditty) {
-      continue
-    }
+  // paletteView.addSection("Miscellaneous")
+  // for(var i in patterns) {
+  //   if(!patterns[i].creator.ditty) {
+  //     continue
+  //   }
     
-    paletteView.add(patterns[i])
-  }
+  //   paletteView.add(patterns[i])
+  // }
+  
   $("#palette-container").scrollTop(10000)
   $("#palette-container").animate({ scrollTop: 0 }, 1000)
   
