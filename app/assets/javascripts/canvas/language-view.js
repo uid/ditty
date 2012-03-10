@@ -418,6 +418,7 @@ function PatternView(pattern, options) {
       flash(this.expressionDom, "blue")
       flash(this.sourceDom, "blue")
       this.save()
+      mpq.track("Bubble Rename")
     }.bind(this))
     // var viewsMenu = menu.addSubmenu("Change View &rarr;")
     // for(var i in this.pattern.representations) {
