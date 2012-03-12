@@ -27,7 +27,11 @@ var mpq=[];mpq.push(["init","58fe659eaf996e6d543eef70742f0945"]);(function(){var
 </script>
 <% else %>
 <script type="text/javascript">
-var mpq = { track: function() { console.log(arguments) } }
+var mpq = {
+  track: function() { console.log("track", arguments) },
+  name_tag: function() { console.log("name tag", arguments) },
+  register: function() { console.log("register", arguments) }
+}
 </script>
 <% end %>
 

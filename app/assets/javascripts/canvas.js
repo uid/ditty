@@ -37,6 +37,8 @@ function myPatterns() {
 
 function updateName() {
   $("#name").text(currentUser.username || "anonymous")
+  mpq.name_tag(currentUser.username || currentUser.id)
+  mpq.register({ "user id" : currentUser.id })
 }
 
 
