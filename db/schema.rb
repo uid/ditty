@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120217143418) do
+ActiveRecord::Schema.define(:version => 20120312160128) do
 
   create_table "canvas", :force => true do |t|
     t.text     "views"
@@ -19,6 +19,15 @@ ActiveRecord::Schema.define(:version => 20120217143418) do
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
+
+  create_table "feedbacks", :force => true do |t|
+    t.integer  "user_id",    :null => false
+    t.string   "message",    :null => false
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "feedbacks", ["user_id"], :name => "index_feedbacks_on_user_id"
 
   create_table "patterns", :force => true do |t|
     t.text     "representations"

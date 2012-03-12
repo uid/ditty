@@ -205,6 +205,9 @@ function environmentLoaded(assets) {
   paletteView.add(patterns["alert"])
   paletteView.add(patterns["prompt"])
   
+  paletteView.addSection("Feedback")
+  paletteView.add(patterns[209]) // send ditty feedback
+  
   paletteView.addSection("Exceptions")
   paletteView.add(patterns["throw"])
   paletteView.add(patterns["exception"])

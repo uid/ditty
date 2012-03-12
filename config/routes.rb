@@ -6,6 +6,8 @@ Ditty::Application.routes.draw do
   
   resources :patterns
   
+  post "feedback", controller: "feedback", action: "create"
+  
   devise_for :users
   
   match "admin" => "admin/patterns#index"
