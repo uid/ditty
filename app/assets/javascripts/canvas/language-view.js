@@ -665,6 +665,7 @@ PatternView.prototype.save = function() {
           success: function(data) {
             this.loadingDom.hide()
             this.pattern.id = data["pattern"]["id"]
+            patterns[this.pattern.id] = this.pattern
             if(this.parent && this.parent.childChanged) {
               this.parent.childChanged(this)
             }
