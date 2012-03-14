@@ -12,6 +12,14 @@ class Pattern < ActiveRecord::Base
   
   attr_accessor :no_creator_is_fine
   
+  def self.recently_created
+    order("created_at DESC")
+  end
+  
+  def self.recently_updated
+    order("updated_at DESC").where("created_at != updated_at")
+  end
+  
   def as_json options={}
     json = {
       id: id,
