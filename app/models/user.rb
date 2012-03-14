@@ -8,6 +8,10 @@ class User < ActiveRecord::Base
 
   attr_accessible :email, :username, :password, :password_confirmation, :remember_me
   
+  def readable_name
+    username || "anonymous"
+  end
+  
   def self.create_anonymous_user!
     user = User.new do |u|
       u.anonymous = true
@@ -19,9 +23,9 @@ class User < ActiveRecord::Base
   
   def as_json(options = {})
     if username.blank?
-      { id: id }
+      { id: id, readable_name: readable_name }
     else
-      { id: id, username: username, ditty: ditty? }
+      { id: id, readable_name: readable_name, username: username, ditty: ditty? }
     end
   end
 end
