@@ -5,6 +5,7 @@ Ditty::Application.routes.draw do
   put "current_user", controller: "users", action: "update_current"
   
   resources :patterns
+  resources :events
   
   post "feedback", controller: "feedback", action: "create"
   

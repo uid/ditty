@@ -6,6 +6,7 @@ gem "jquery-rails"
 gem "aws-ses", :require => "aws/ses"
 gem "devise"
 gem "markdown-rails"
+gem "curator"
 
 group :development do
   gem "sqlite3"

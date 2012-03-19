@@ -35,6 +35,7 @@ GEM
       mime-types
       xml-simple
     bcrypt-ruby (3.0.1)
+    beefcake (0.3.7)
     builder (3.0.0)
     coffee-rails (3.2.1)
       coffee-script (>= 2.2.0)
@@ -45,6 +46,11 @@ GEM
     coffee-script-source (1.2.0)
     commonjs (0.2.0)
       therubyracer (~> 0.9.9)
+    curator (0.4.0)
+      activemodel (>= 3.0.0)
+      activesupport (>= 3.0.0)
+      json
+      riak-client (>= 1.0.0)
     devise (2.0.0)
       bcrypt-ruby (~> 3.0)
       orm_adapter (~> 0.0.3)
@@ -105,6 +111,11 @@ GEM
     rdiscount (1.6.8)
     rdoc (3.12)
       json (~> 1.4)
+    riak-client (1.0.0)
+      beefcake (~> 0.3.7)
+      builder (>= 2.1.2)
+      i18n (>= 0.4.0)
+      multi_json (~> 1.0.0)
     sass (3.1.12)
     sass-rails (3.2.3)
       railties (~> 3.2.0.beta)
@@ -140,6 +151,7 @@ PLATFORMS
 DEPENDENCIES
   aws-ses
   coffee-rails (~> 3.2.0)
+  curator
   devise
   jquery-rails
   markdown-rails
