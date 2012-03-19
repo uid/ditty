@@ -5,6 +5,6 @@ if File.exists? app_config_path
   APP_CONFIG = YAML.load_file(app_config_path)[Rails.env]
 
   (APP_CONFIG["environment_variables"] || {}).each do |key, value|
-    ENV[key] = value
+    ENV[key] = value.to_s
   end
 end
