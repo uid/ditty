@@ -1,3 +1,4 @@
+//= require_tree ./canvas/util
 //= require_tree ./canvas
 
 var patterns = {}
