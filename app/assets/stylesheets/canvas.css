@@ -272,19 +272,40 @@ button {
 #bottom-toolbar {
   position: fixed;
   bottom: 0;
+  z-index: 2;
+  left: 35%;
   right: 0;
+}
+#bottom-toolbar-buttons {
+  display: inline-block;
+  float: right;
   padding: 20px 1em 1em 20px;
   text-align: right;
   z-index: 2;
   background: url(/assets/white-halo.png) no-repeat;
-  background-position: -120px -120px;
 }
-#bottom-toolbar p {
+#bottom-toolbar-buttons p {
   margin: .3em 0;
   padding: 0;
 }
-#theme-switcher {
+#bottom-toolbar-buttons #theme-switcher {
   display: none;
+}
+#chat {
+  clear: both;
+  border-top: 1px solid black;
+  background: #eee;
+}
+#chat-history {
+  max-height: 200px;
+  overflow: auto;
+}
+#chat-entry {
+  border-top: 1px solid black;
+}
+.chat-event {
+  border-top: 1px solid #ccc;
+  padding: 4px;
 }
 
 /* AUTOCOMPLETE */

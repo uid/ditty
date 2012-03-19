@@ -30,6 +30,8 @@ var findScopeParent = function() {
 // options: argumentReference
 // argumentReference is used for type information and such
 function SlotView(parent, fillerText, options) {
+  options = options || {}
+  
   this.parent = parent
   this.fillerText = fillerText
 
@@ -186,6 +188,9 @@ SlotView.prototype.childChanged = function(child) {
   if(this.parent && this.parent.childChanged) {
     this.parent.childChanged(this)
   }
+}
+SlotView.prototype.child = function() {
+  return this.patternView
 }
 SlotView.prototype.accept = function(patternView, propagate) {
   // change linkage

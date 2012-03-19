@@ -6,6 +6,7 @@ Ditty::Application.routes.draw do
   
   resources :patterns
   resources :events
+  resources :chat
   
   post "feedback", controller: "feedback", action: "create"
   

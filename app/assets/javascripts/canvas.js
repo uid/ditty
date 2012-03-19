@@ -12,7 +12,7 @@ function compilePatterns(json) {
   for(var i in json) {
     if("show" in json[i] && !json[i]["show"]) continue
     try {
-      var pattern = new jsonUnserialize(json[i])
+      var pattern = jsonUnserialize(json[i])
       
       // store in the global pattern index
       // XXX for now, index patterns by both ID and key
@@ -286,7 +286,7 @@ function environmentLoaded(assets) {
   xyloView.setKey(19)
   globalOS.globals['xylo'] = xyloView
   
-  // done!
+  // setup welcome box
   
   $("#welcome, #welcome button").click(function(e) { $("#welcome").hide("puff"); e.stopPropagation() })
   $("#set-name").click(function() {
@@ -317,9 +317,19 @@ function environmentLoaded(assets) {
     })
   })
   
-  $("body").disableSelection()
+  // show the user's name
   
   updateName()
+  
+  // set up the chat area
+  
+  new Chat.ChatView($("#chat"))
+  
+  // disable text selection on this page (unfortunate, but necessary for now)
+  
+  $("body").disableSelection()
+  
+  // done!
   
   flash($("body"), "blue")
 }

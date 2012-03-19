@@ -1,26 +1,22 @@
 class Event
   include Curator::Model
   
-  attr_accessor :type # :created or :updated
+  attr_accessor :type # :pattern_created, :pattern_updated, :chat
   attr_accessor :time
-  attr_accessor :pattern
-end
-
-class EventRepository
-  # include Curator::Repository # -- not backed by a database table
+  attr_accessor :user
   
-  def self.recent limit=10
-    merged_events recent_patterns(limit), limit
+  attr_accessor :chat # if type = :chat
+  attr_accessor :pattern # if type = :pattern_created or :pattern_updated
+  
+  def self.pattern_created pattern
+    Event.new type: :pattern_created, time: pattern.created_at, user: pattern.creator, pattern: pattern
   end
   
-  def self.recent_patterns limit=10
-    events = []
-    events += Pattern.recently_created.limit(limit).map { |pat| Event.new type: :created, time: pat.created_at, pattern: pat }
-    events += (Pattern.recently_updated.limit(limit) - events.map(&:pattern)).map { |pat| Event.new type: :updated, time: pat.updated_at, pattern: pat }
-    merged_events events, limit
+  def self.pattern_updated pattern
+    Event.new type: :pattern_updated, time: pattern.created_at, user: pattern.creator, pattern: pattern
   end
   
-  def self.merged_events events, limit=10
-    events.sort_by { |e| e.time }.reverse.first(limit)
+  def self.chat chat_message
+    Event.new type: :chat, time: chat_message.created_at, user: chat_message.user, chat: chat_message
   end
 end
