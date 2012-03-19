@@ -28,7 +28,7 @@ class PatternsController < ApplicationController
     elsif !@pattern.update_attributes(params[:pattern])
       render json: { error: "Couldn't save pattern: #{@pattern.errors.full_messages.join(", ")}" }, status: 400
     else
-      Pusher["chat"].trigger("event", event: Event.pattern_updated(pattern))
+      Pusher["chat"].trigger("event", event: Event.pattern_updated(@pattern))
       render json: { pattern: @pattern }
     end
   end
