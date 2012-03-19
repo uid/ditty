@@ -89,26 +89,38 @@ Chat.ChatView = my.Class({
   newPatternDom: function(ev, dom) {
     dom.append($("<span class='chat-user'></span>").text(ev.user.readable_name))
     dom.append(" created ")
-    var pattern = jsonUnserialize(ev.pattern)
-    patterns[pattern.id] = pattern
-    var pv = new PatternView(pattern)
-    dom.append(pv.dom)
+    try {
+      var pattern = jsonUnserialize(ev.pattern)
+      patterns[pattern.id] = pattern
+      var pv = new PatternView(pattern)
+      dom.append(pv.dom)
+    } catch(e) {
+      dom.append("[error]")
+    }
   },
   
   updatedPatternDom: function(ev, dom) {
     dom.append($("<span class='chat-user'></span>").text(ev.user.readable_name))
     dom.append(" changed ")
-    var pattern = jsonUnserialize(ev.pattern)
-    patterns[pattern.id] = pattern
-    var pv = new PatternView(pattern)
-    dom.append(pv.dom)
+    try {
+      var pattern = jsonUnserialize(ev.pattern)
+      patterns[pattern.id] = pattern
+      var pv = new PatternView(pattern)
+      dom.append(pv.dom)
+    } catch(e) {
+      dom.append("[error]")
+    }
   },
   
   chatDom: function(ev, dom) {
     dom.append($("<span class='chat-user'></span>").text(ev.user.readable_name))
     dom.append(" said ")
-    var view = createView(jsonUnserializeMeaning(ev.chat.invocation))
-    dom.append(view.dom)
-    if(ev.chat.invocation.expanded) view.toggleSourceView(true /* instant */)
+    try {
+      var view = createView(jsonUnserializeMeaning(ev.chat.invocation))
+      dom.append(view.dom)
+      if(ev.chat.invocation.expanded) view.toggleSourceView(true /* instant */)
+    } catch(e) {
+      dom.append("[error]")
+    }
   },
 })
