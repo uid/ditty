@@ -9,7 +9,7 @@ class User < ActiveRecord::Base
   attr_accessible :email, :username, :password, :password_confirmation, :remember_me
   
   def readable_name
-    username || "anonymous"
+    username.blank? ? "Anonymous" : username
   end
   
   def self.create_anonymous_user!
