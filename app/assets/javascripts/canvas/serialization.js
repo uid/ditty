@@ -45,16 +45,17 @@ JsonPatternUnarchiver.prototype._arg = function(json) {
 }
 JsonPatternUnarchiver.prototype._patternMeaning = function(json) {
   if(json["native_meaning"]) {
-    return new NativeMeaning(_.map(json["native_meaning"], this._meaning.bind(this)))
+    return new NativeMeaning(_.without(_.map(json["native_meaning"], this._meaning.bind(this)), undefined))
   } else if(json["javascript_meaning"]) {
     return new JavascriptMeaning(json["javascript_meaning"], this.references)
   } else {
     throw new Error("invalid meaning: unrecognized type")
   }
 }
+// may return "undefined" if there was an error parsing!
 JsonPatternUnarchiver.prototype._meaning = function(json) {
   if(json instanceof Array) {
-    return new NativeMeaning(_.map(json, this._meaning.bind(this)))
+    return new NativeMeaning(_.without(_.map(json, this._meaning.bind(this)), undefined))
   }
   if("invocation" in json) {
     return this._invocation(json["invocation"])
@@ -79,15 +80,22 @@ JsonPatternUnarchiver.prototype._invocation = function(json) {
     args: {}
   }
   for(var argName in json["arguments"]) {
-    attrs.args[argName] = this._meaning(json["arguments"][argName])
+    var meaning = this._meaning(json["arguments"][argName])
+    if(meaning) {
+      attrs.args[argName] = meaning
+    }
   }
   if(json["representationIndex"]) attrs.representationIndex = json["representationIndex"]
   return new InvocationMeaning(attrs)
 }
+// returns undefined if the referenced argument doesn't exist
+// (shouldn't need to do that, but there are some invalid bubbles in the database)
 JsonPatternUnarchiver.prototype._reference = function(json) {
   var name = json["name"]
   if(!(name in this.references)) {
-    throw new Error("reference to non-existent argument '" + name + "' when parsing pattern '" + this.id + "'")
+    // throw new Error("reference to non-existent argument '" + name + "' when parsing pattern '" + this.id + "'")
+    console.log("reference to non-existent argument '" + name + "' when parsing pattern '" + this.id + "'")
+    return undefined
   }
   return this.references[name]
 }
