@@ -345,6 +345,10 @@ button {
   background: black;
   color: white;
 }
+.ui-menu .ui-menu-item a.ui-state-hover .expression,
+.ui-menu .ui-menu-item a.ui-state-active .expression {
+  color: black; /* stay black */
+}
 
 .vmenu { border: 1px solid #aaa; position: absolute; background: #fff; display: none; font-size: 0.75em; }
 .vsubmenu { border: 1px solid #aaa; position: absolute; background: #fff; display: none; }

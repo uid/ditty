@@ -116,20 +116,20 @@ function SlotView(parent, fillerText, options) {
               if(index < minIndex) minIndex = index
             }
             if(found) {
-              var text = patterns[pattern].representations[i].text
+              var dom = new PatternView(patterns[pattern], { representationIndex: i, interactive: false }).dom
               if(patterns[pattern].creator) {
                 if(patterns[pattern].creator.ditty) {
-                  text = "<p class='author'>built-in</p>" + text
+                  dom.prepend($("<p class='author'>built-in</p>"))
                 } else if(patterns[pattern].isMine()) {
-                  text = "<p class='author'>created by <span style='color: blue; text-decoration: underline'>me</span></p>" + text
+                  dom.prepend($("<p class='author'>created by <span style='color: blue; text-decoration: underline'>me</span></p>"))
                 } else {
-                  text = "<p class='author'>created by " + (patterns[pattern].creator.username || "anonymous") + "</p>" + text
+                  dom.prepend($("<p class='author'>created by " + (patterns[pattern].creator.username || "anonymous") + "</p>"))
                 }
               }
               ;(function(pattern, i, minIndex) {
                 keywordMatches.push({
                   minIndex: minIndex,
-                  value: text,
+                  value: dom,
                   result: function() { return new PatternView(patterns[pattern], { representationIndex: i }) }
                 })
               })(pattern, i, minIndex)
@@ -332,6 +332,11 @@ function PatternView(pattern, options) {
   this.activeCount = 0
   if(options.parent)
     this.setParent(options.parent)
+  if("interactive" in options) {
+    this.interactive = options.interactive
+  } else {
+    this.interactive = true
+  }
 
   // create dom
   this.dom = $("<div class='expression-container'></div>")
@@ -345,123 +350,130 @@ function PatternView(pattern, options) {
   this.convertComponents()
   this.buildDom()
   this._buildSourceDom()
+  
+  if(!this.interactive) {
+    this.paramEditDom.hide()
+    this.loadingDom.hide()
+  }
 
   // click to activate
-  this.expressionDom.click(ifTarget(function(e) {
-    if(this.noclick) return
-    mpq.track("Bubble Execute")
-    this.rootEval(globalOS)
-  }.bind(this)))
-  
-  // click to add a parameter
-  this.paramEditDom.click(function() {
-    var name = prompt("Parameter name?")
-    if(!name) {
-      return
-    }
+  if(this.interactive) {
+    this.expressionDom.click(ifTarget(function(e) {
+      if(this.noclick) return
+      mpq.track("Bubble Execute")
+      this.rootEval(globalOS)
+    }.bind(this)))
     
-    var type = prompt("Type? (either type 'instructions' or leave it blank)")
-    var arg = type ? new ArgumentReference(name, type) : new ArgumentReference(name)
-    
-    this.addParameter(arg)
-    
-    mpq.track("Add Slot")
-    
-    return false // don't navigate to #
-  }.bind(this))
-
-  // draggable
-  this.dom.draggable({
-    cursor: "move",
-    distance: 5, // pixels to move before the drag starts
-    helper: function() {
-      var helper = $("<div class='expression-drag-helper'></div>")
-      setObjFor(helper, this)
-      return helper
-    }.bind(this),
-    zIndex: 100,
-    appendTo: "body",
-    cursorAt: { left: 8, top: 8 },
-    // revert: "invalid",
-    revertDuration: 300,
-    stack: "#palette",
-    start: function(event, ui) {
-      this.dom.addClass("dragging")
-      this.noclick = true
-    }.bind(this),
-    stop: function(event, ui) {
-      this.dom.removeClass("dragging")
-      setTimeout(function() { delete this.noclick }.bind(this), 100)
-      if(!ui.helper.dropped_on_droppable && ui.helper.position().left > $("#palette-container").width()) {
-        var pos = ui.helper.offset()
-        if(pos.top < 100) { // xylophone
-          pos.top = 100
-        }
-        codeCanvas.accept(this, true /* propagate */)
-        this.dom.offset(pos)
-      }
-    }.bind(this),
-  })
-  
-  // right-clickable
-  this.dom.bind('contextmenu', function(e) {
-    var menu = new MenuBuilder()
-    menu.add(this.isExpanded() ? "Finish Editing" : "Begin Editing", this.toggleSourceView.bind(this))
-    menu.add("Rename...", function() {
-      var template = this.pattern.representations[this.representationIndex]
-      var text = prompt("New template?", template.text)
-      if(!text) return
-      var template = new Template(text)
-      try {
-        this.pattern.replaceRepresentation(this.representationIndex, template)
-      } catch(e) {
-        alert("couldn't do it: " + e.message)
+    // click to add a parameter
+    this.paramEditDom.click(function() {
+      var name = prompt("Parameter name?")
+      if(!name) {
         return
       }
-      this.reconvertComponents()
-      this.buildDom()
-      flash(this.expressionDom, "blue")
-      flash(this.sourceDom, "blue")
-      this.save()
-      mpq.track("Bubble Rename")
+      
+      var type = prompt("Type? (either type 'instructions' or leave it blank)")
+      var arg = type ? new ArgumentReference(name, type) : new ArgumentReference(name)
+      
+      this.addParameter(arg)
+      
+      mpq.track("Add Slot")
+      
+      return false // don't navigate to #
     }.bind(this))
-    var viewsMenu = menu.addSubmenu("Change View &rarr;")
-    for(var i in this.pattern.representations) {
-      var template = this.pattern.representations[i]
-      viewsMenu.add(template.text, function(i) { return function() {
-        this.representationIndex = i
+
+    // draggable
+    this.dom.draggable({
+      cursor: "move",
+      distance: 5, // pixels to move before the drag starts
+      helper: function() {
+        var helper = $("<div class='expression-drag-helper'></div>")
+        setObjFor(helper, this)
+        return helper
+      }.bind(this),
+      zIndex: 100,
+      appendTo: "body",
+      cursorAt: { left: 8, top: 8 },
+      // revert: "invalid",
+      revertDuration: 300,
+      stack: "#palette",
+      start: function(event, ui) {
+        this.dom.addClass("dragging")
+        this.noclick = true
+      }.bind(this),
+      stop: function(event, ui) {
+        this.dom.removeClass("dragging")
+        setTimeout(function() { delete this.noclick }.bind(this), 100)
+        if(!ui.helper.dropped_on_droppable && ui.helper.position().left > $("#palette-container").width()) {
+          var pos = ui.helper.offset()
+          if(pos.top < 100) { // xylophone
+            pos.top = 100
+          }
+          codeCanvas.accept(this, true /* propagate */)
+          this.dom.offset(pos)
+        }
+      }.bind(this),
+    })
+    
+    // right-clickable
+    this.dom.bind('contextmenu', function(e) {
+      var menu = new MenuBuilder()
+      menu.add(this.isExpanded() ? "Finish Editing" : "Begin Editing", this.toggleSourceView.bind(this))
+      menu.add("Rename...", function() {
+        var template = this.pattern.representations[this.representationIndex]
+        var text = prompt("New template?", template.text)
+        if(!text) return
+        var template = new Template(text)
+        try {
+          this.pattern.replaceRepresentation(this.representationIndex, template)
+        } catch(e) {
+          alert("couldn't do it: " + e.message)
+          return
+        }
         this.reconvertComponents()
         this.buildDom()
-        flash(this.expressionDom)
-        flash(this.sourceDom)
+        flash(this.expressionDom, "blue")
+        flash(this.sourceDom, "blue")
         this.save()
-      }.bind(this) }.bind(this)(i))
-    }
-    viewsMenu.addSeparator()
-    viewsMenu.add("New&#8230;", function() {
-      var template = this.pattern.representations[this.representationIndex]
-      var text = prompt("New template?", template.text)
-      if(!text) return
-      var template = new Template(text)
-      try {
-        this.representationIndex = this.pattern.addRepresentation(template)
-      } catch(e) {
-        alert("couldn't do it: " + e.message)
-        return
+        mpq.track("Bubble Rename")
+      }.bind(this))
+      var viewsMenu = menu.addSubmenu("Change View &rarr;")
+      for(var i in this.pattern.representations) {
+        var template = this.pattern.representations[i]
+        viewsMenu.add(template.text, function(i) { return function() {
+          this.representationIndex = i
+          this.reconvertComponents()
+          this.buildDom()
+          flash(this.expressionDom)
+          flash(this.sourceDom)
+          this.save()
+        }.bind(this) }.bind(this)(i))
       }
-      this.reconvertComponents()
-      this.buildDom()
-      flash(this.expressionDom, "blue")
-      flash(this.sourceDom, "blue")
-    }.bind(this))
-    menu.add("Delete", function() {
-      this.parent.release(this, true)
-      mpq.track("Bubble Delete", { method: "context menu" })
-    }.bind(this))
-    menu.open(e)
-    
-    return false
- }.bind(this));
+      viewsMenu.addSeparator()
+      viewsMenu.add("New&#8230;", function() {
+        var template = this.pattern.representations[this.representationIndex]
+        var text = prompt("New template?", template.text)
+        if(!text) return
+        var template = new Template(text)
+        try {
+          this.representationIndex = this.pattern.addRepresentation(template)
+        } catch(e) {
+          alert("couldn't do it: " + e.message)
+          return
+        }
+        this.reconvertComponents()
+        this.buildDom()
+        flash(this.expressionDom, "blue")
+        flash(this.sourceDom, "blue")
+      }.bind(this))
+      menu.add("Delete", function() {
+        this.parent.release(this, true)
+        mpq.track("Bubble Delete", { method: "context menu" })
+      }.bind(this))
+      menu.open(e)
+      
+      return false
+   }.bind(this));
+  } // if interactive
 }
 PatternView.prototype.toString = function() {
   return "PatternView(" + this.pattern + ")"
@@ -542,18 +554,20 @@ PatternView.prototype.buildDom = function() {
         paramView.dom.addClass("when-editing") // only show when editing
         this.expressionDom.append(paramView.dom)
         
-        var deleteDom = $("<a href='#' class='when-editing remove-param' title='Click to remove this parameter'><button class='red'>x</button></a>")
-        ;(function(argRef) {
-          deleteDom.click(function() {
-            if(prompt("The parameter will be deleted from all the places it's used. Continue? (Press OK or Cancel.)") === null) {
-              return
-            }
-            this.deleteParameter(argRef)
-            mpq.track("Remove Slot")
-            return false // don't navigate to #
-          }.bind(this))
-        }.bind(this))(this.convertedComponents[i].argumentReference)
-        this.expressionDom.append(deleteDom)
+        if(this.interactive) {
+          var deleteDom = $("<a href='#' class='when-editing remove-param' title='Click to remove this parameter'><button class='red'>x</button></a>")
+          ;(function(argRef) {
+            deleteDom.click(function() {
+              if(prompt("The parameter will be deleted from all the places it's used. Continue? (Press OK or Cancel.)") === null) {
+                return
+              }
+              this.deleteParameter(argRef)
+              mpq.track("Remove Slot")
+              return false // don't navigate to #
+            }.bind(this))
+          }.bind(this))(this.convertedComponents[i].argumentReference)
+          this.expressionDom.append(deleteDom)
+        }
       }
     }
   }
