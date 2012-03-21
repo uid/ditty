@@ -3,8 +3,16 @@ var Chat = {}
 Chat.ChatView = my.Class({
   constructor: function(dom) {
     this.dom = dom
-    this.historyDom = $("<div id='chat-history'></div>").appendTo(this.dom)
-    this.entryDom = $("<div id='chat-entry'></div>").appendTo(this.dom)
+    this.toggleButton = $("<button>Chat</button>").appendTo(this.dom)
+    this.bottomDom = $("<div></div>").appendTo(this.dom)
+    this.historyDom = $("<div id='chat-history'></div>").appendTo(this.bottomDom)
+    this.entryDom = $("<div id='chat-entry'></div>").appendTo(this.bottomDom)
+    
+    // toggle
+    this.toggleButton.click(this.toggleVisibility.bind(this))
+    
+    // start hidden
+    $(this.toggleVisibility.bind(this))
     
     // entry
     this.slotView = new SlotView(this, "Drag or type something here to chat")
@@ -22,6 +30,18 @@ Chat.ChatView = my.Class({
     var pusher = new Pusher('7539baa0432dfe0bed06')
     var chatChannel = pusher.subscribe("chat")
     chatChannel.bind("event", this.received.bind(this))
+  },
+  
+  toggleVisibility: function() {
+    this.bottomDom.animate(
+      { height: 'toggle' },
+      { duration: 300 }
+    )
+    this.scrollToBottom()
+  },
+  
+  scrollToBottom: function() {
+    this.historyDom.scrollTop(10000)
   },
   
   fetchBacklog: function() {
@@ -83,7 +103,7 @@ Chat.ChatView = my.Class({
     else if(ev.type == "pattern_updated") this.updatedPatternDom(ev, dom)
     else if(ev.type == "chat") this.chatDom(ev, dom)
     
-    this.historyDom.scrollTop(10000)
+    this.scrollToBottom()
   },
   
   newPatternDom: function(ev, dom) {

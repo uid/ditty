@@ -302,6 +302,7 @@ button {
 }
 #chat-entry {
   border-top: 1px solid black;
+  background: #aaa;
 }
 .chat-event {
   border-top: 1px solid #ccc;

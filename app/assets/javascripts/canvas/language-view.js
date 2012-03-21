@@ -1047,7 +1047,7 @@ CodeCanvasView.prototype.sizeToFit = function() {
     height = Math.max(bottom, height)
   }
   this.dom.width(width)
-  this.dom.height(height)
+  this.dom.height(height + 300 /* compensate for chat area */)
 }
 CodeCanvasView.prototype.childChanged = function(child) {
   this.sizeToFit()
