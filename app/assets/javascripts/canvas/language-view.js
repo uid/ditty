@@ -418,7 +418,7 @@ function PatternView(pattern, options) {
     this.dom.bind('contextmenu', function(e) {
       var menu = new MenuBuilder()
       menu.add(this.isExpanded() ? "Finish Editing" : "Begin Editing", this.toggleSourceView.bind(this))
-      menu.add("Rename...", function() {
+      menu.add("Reword...", function() {
         var template = this.pattern.representations[this.representationIndex]
         var text = prompt("New template?", template.text)
         if(!text) return
