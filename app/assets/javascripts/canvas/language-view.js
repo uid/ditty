@@ -332,10 +332,9 @@ function PatternView(pattern, options) {
   this.activeCount = 0
   if(options.parent)
     this.setParent(options.parent)
+  this.interactive = true
   if("interactive" in options) {
     this.interactive = options.interactive
-  } else {
-    this.interactive = true
   }
 
   // create dom
