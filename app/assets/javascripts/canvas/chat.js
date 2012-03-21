@@ -51,9 +51,11 @@ Chat.ChatView = my.Class({
       success: function(data) {
         var events = data["events"]
         events.reverse()
+        this.batching = true
         for(var i in events) {
           this.addEvent(events[i])
         }
+        delete this.batching
       }.bind(this),
       error: function() {
         // this.historyDom.text("Couldn't get chat history!")
@@ -111,7 +113,9 @@ Chat.ChatView = my.Class({
     dom.append(" created ")
     try {
       var pattern = jsonUnserialize(ev.pattern)
-      patterns[pattern.id] = pattern
+      if(!this.batching) {
+        patterns[pattern.id] = pattern
+      }
       var pv = new PatternView(pattern)
       dom.append(pv.dom)
     } catch(e) {
@@ -124,7 +128,9 @@ Chat.ChatView = my.Class({
     dom.append(" changed ")
     try {
       var pattern = jsonUnserialize(ev.pattern)
-      patterns[pattern.id] = pattern
+      if(!this.batching) {
+        patterns[pattern.id] = pattern
+      }
       var pv = new PatternView(pattern)
       dom.append(pv.dom)
     } catch(e) {
