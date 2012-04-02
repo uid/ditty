@@ -1,27 +1,34 @@
 
-// copied from: http://www.kevlindev.com/tutorials/javascript/inheritance/index.htm#Anchor-Creatin-49778
-function extend(subClass, baseClass) {
-   function inheritance() {}
-   inheritance.prototype = baseClass.prototype;
-
-   subClass.prototype = new inheritance();
-   subClass.prototype.constructor = subClass;
-   subClass.baseConstructor = baseClass;
-   subClass.superClass = baseClass.prototype;
+var DittyMath = {
+  distance: function(x1, y1, x2, y2) {
+    return Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1))
+  },
+  
+  clamp: function(val, min, max) {
+    if(val < min) return min
+    if(val > max) return max
+    return val
+  },
 }
 
-// extremely basic HTML escape
-function escapeHTML(str) {
-  return (str || "").replace(/&/g,'&amp;').replace(/>/g,'&gt;').replace(/</g,'&lt;')
+
+// strings: returns the string surounded by quotes (but doesn't bother escaping)
+// arrays: includes square brackets, and recurses for each element
+// numbers, booleans, functions: delegates to the default toString()
+// everything else: surrounds with {} and recurses for all keys and values
+function myToString(v) {
+  if(typeof(v) === "string") {
+    return "\"" + v + "\""
+  } else if(typeof(v) === "number" || typeof(v) === "boolean" || typeof(v) === "function") {
+    return "" + v
+  } else if(v instanceof Array) {
+    return "[" + _.map(v, myToString) + "]"
+  } else {
+    // return "" + v
+    return  "{" + _.map(v, function(v, k) { return k + ": " + myToString(v) }).join(", ") + "}"
+  }
 }
 
-// set and get objects associated with dom elements
-function objFor(dom) {
-  return $(dom).data("obj")
-}
-function setObjFor(dom, obj) {
-  $(dom).data("obj", obj)
-}
 
 // shuffles an array (supposedly Fisher-Yates, but I didn't check)
 // adapted from http://snippets.dzone.com/posts/show/849
@@ -30,15 +37,18 @@ function shuffle(arr) {
     return arr
 }
 
+
 // returns a random element from the array
 function randomPick(arr) {
   return arr[Math.floor(Math.random() * arr.length)]
 }
 
+
 // capitalizes the first letter of a string
 function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
+
 
 // generates an "adjective-noun"-looking random phrase using some goofy rules
 function randomPhrase() {
@@ -55,18 +65,6 @@ function randomPhrase() {
   return capitalize(randomWord(first_suffixes)) + " " + capitalize(randomWord(second_suffixes))
 }
 
-// clears any selected text in the window
-function clearSelection() {
-  if(window.getSelection) {
-    if(window.getSelection().empty) {  // Chrome
-      window.getSelection().empty();
-    } else if(window.getSelection().removeAllRanges) {  // Firefox
-      window.getSelection().removeAllRanges();
-    }
-  } else if(document.selection) {  // IE?
-    document.selection.empty();
-  }
-}
 
 // set equality: returns true if all the items in a are == to one in b, in any order, and the reverse
 function setEq(a, b) {
@@ -92,37 +90,6 @@ function setEq(a, b) {
     if(!found) return false
   }
   return true
-}
-
-// CPS-style map for arrays
-// calls f(c, e, arrayIndex, arrayValue) for each item
-// calls c(resultingArray) when finished
-function cpsMap(f, c, e, arr) {
-  var results = []
-  var loop = function(i) {
-    if(i >= arr.length) {
-      c(results)
-    } else {
-      f(function(result) {
-        results.push(result)
-        loop(i + 1)
-      }, e, i, arr[i])
-    }
-  }
-  loop(0)
-}
-
-// returns an array with the provided elements removed
-// (the provided elements are unnamed arguments after 'arr')
-function arrayRemove(arr) {
-    var what, a = arguments, L = a.length, ax
-    while(L > 1 && arr.length) {
-        what= a[--L]
-        while((ax = arr.indexOf(what))!= -1) {
-            arr.splice(ax, 1)
-        }
-    }
-    return arr
 }
 
 
@@ -166,8 +133,7 @@ function debounceCollapse(doit) {
 }
 
 
-// we can all use random colors every once in a while
-
+// a couple helpers for generating random colors
 function intToHex(n) {
   var s = n.toString(16)
   if(s.length < 2) {
@@ -175,11 +141,9 @@ function intToHex(n) {
   }
   return s
 }
-
 function colorHex(r, g, b) {
   return "#" + intToHex(r) + intToHex(g) + intToHex(b)
 }
-
 function randomColor() {
   var r = Math.floor(Math.random() * 256)
   var g = Math.floor(Math.random() * 256)

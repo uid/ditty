@@ -1,313 +1,173 @@
 /*
  *= require_tree ./canvas
  */
-body {
-  font-family: sans-serif;
-  margin: 0;
-  padding: 0;
-  background: url(/assets/grid.jpg);
+
+/*
+ * drag the loop from one while into the loop of another while
+ * color according to nesting level
+ * allow creation of commands by right-click... 'solidifies' the line as a sentence
+ * recommend abstraction according to nesting level
+ */
+
+table {
+  border: outset 5pt;
+  border-collapse: separate;
+  border-spacing: 5px;
 }
-#loading {
-  margin: 0;
-  padding: 1em;
-}
-#welcome div {
-  z-index: 3;
-}
-#loading p {
-  margin: 0;
-  padding: 0;
-}
-#xylo-container {
-  position: fixed;
-  top: 0;
-  left: 35%;
-  height: 70px;
-  white-space: nowrap;
-}
-.xylo-key {
-  width: 20px;
-  height: 70px;
-  display: inline-block;
-  cursor: pointer;
-}
-.xylo-key:hover {
-  opacity: 0.2;
-}
-.xylo-mallet {
-  position: absolute;
-  top: 30px;
-  width: 28px;
-  height: 74px;
-  background: url(/assets/mallet.png);
-  /*-webkit-transform: rotate(-10deg);*/
-}
-#program-container {
-  position: fixed;
-  top: 100px;
-  right: 0;
-  bottom: 0;
-  left: 35%;
-}
-#program {
-  position: relative;
-}
-p.parameters {
-  margin: 0;
-  padding: 0;
-  font-weight: bold;
-  font-size: small;
-  font-variant: small-caps;
-}
-p.author {
-  margin: 0;
-  padding: 0;
-  font-weight: bold;
-  font-size: small;
-  font-variant: small-caps;
-}
-.cds {
-  overflow: auto;
-}
-#trash {
-  width: 131px;
-  height: 132px;
-  margin: 15px 5px 0 0;
-  position: absolute;
-  top: 0;
-  right: 0;
-}
-.no-drag-in-progress #trash {
-  display: none;
-}
-.drag-in-progress #trash {
-  background: url(/assets/trash-empty.png) no-repeat;
-  opacity: 0.3;
-}
-.drag-in-progress #trash.hover {
-  background: url(/assets/trash-full.png) no-repeat;
-  opacity: 0.8;
-}
-ul.multislot {
-  display: inline-block;
-  vertical-align: middle;
-  margin-top: 0;
-  margin-bottom: 0;
-  padding: 0;
-}
-ul.multislot li {
-  position: relative;
-  list-style-type: none;
-  padding: 0;
-  margin: .1em 0;
-}
-.no-drag-in-progress ul.multislot li.inbetweener {
-  display: none;
-}
-.drag-in-progress ul.multislot li.inbetweener {
-  margin: 3px 0 3px 0;
-  line-height: 5px;
-  padding: 0;
-}
-.multislot li.inbetweener .slot {
-  display: inline-block;
-  vertical-align: middle;
-  height: 3px;
-  width: 90%;
-}
-#palette-container {
-  position: fixed;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 35%;
-  /*min-width: 15em;*/
-  border-right: 1px solid #ccc;
-  /*border: 2px solid #ccc;*/
-  overflow: auto;
-  background: url(/assets/tex.jpg);
-  /*-webkit-border-radius: 10px;*/
-}
-#palette-subcontainer {
-  padding: 1em;
-}
-#palette-container h2 {
-  padding: 0;
-  margin: 0;
-}
-#palette-container #palette {
-  margin-top: 1em;
-}
-.expression-container {
-  display: inline-block;
-  position: relative;
-  vertical-align: middle;
-  z-index: 0;
-}
-.expression-container .title-expression {
-  display: inline-block;
-  background: white;
-  padding: 0 8px;
-  -webkit-border-radius: 10px;
-  border: 1px solid black;
-  z-index: -1;
-}
-.expression-container .source {
-  display: none;
-  margin: 0 5px;
-  background: white;
-  -webkit-border-radius: 10px;
-  border: 1px solid black;
-  padding: 23px 8px 8px;
-  position: relative;
-  top: -20px;
-  left: -8px;
-  z-index: -2;
-}
-.expression-container .loading {
-  display: none;
-  margin-left: 1em;
-  font-size: 10pt;
-}
-.argument-reference {
-  display: inline;
-  cursor: pointer;
-  background: #eef;
-  color: #900;
-  -webkit-border-radius: 4px;
-  padding: 3px;
-  line-height: 28px;
-  border: 1px solid #f00;
-}
-.expression {
-  background: #fff;
-  display: inline-block;
-  line-height: 35px;
-  white-space: nowrap;
-  padding: 0 8px;
-  vertical-align: middle;
-  margin: 2px;
-  -webkit-border-radius: 10px;
-  border: 1px solid black;
-  cursor: pointer;
-}
-.expression.active {
-  background-color: #efe;
-  border-color: #0f0;
-  border-style: dashed;
-}
-.source.active {
-  background-color: #efe;
-  border-color: #0f0;
-  border-style: dashed;
-}
-.when-editing {
-  display: none;
-}
-.expression.editing .when-editing {
-  display: inline;
-}
-.expression.editing .when-not-editing {
-  display: none;
-}
-.expression.editing {
-  background-color: #eee;
-}
-.expression .add-param {
-  float: right;
-  margin-left: 15px;
-}
-.expression button {
-  font: bold 11px Arial;
-  text-decoration: none;
-  background-color: #eee;
-  color: #333;
-  padding: 2px 6px 2px 6px;
-  border-top: 1px solid #ccc;
-  border-right: 1px solid #333;
-  border-bottom: 1px solid #333;
-  border-left: 1px solid #ccc;
-}
-.expression button:hover {
-  background-color: #dfd;
-}
-.expression button.red {
-  background-color: #fdd;
-}
-.expression button.red:hover {
-  background-color: #faa;
-}
-.expression-container.dragging {
-  background: white;
-  opacity: 0.2;
-}
-.expression-drag-helper {
-  width: 20px;
-  height: 20px;
-  background: white;
-  -webkit-border-radius: 4px;
-  border: 1px solid black;
-}
-.slot.unfilled {
-  /*
-  background: #633;
-  color: white;
-  */
-  background: #eef;
-  color: #900;
-  -webkit-border-radius: 4px;
-  padding: 3px;
-  line-height: 28px;
-  border: 1px solid #dde;
-}
-.slot.filled {
-}
-.slot.hover {
-  background: #fcc !important;
-}
-button {
-  padding: 0.5em;
-  font-size: 11pt;
-}
-#bottom-toolbar {
-  position: fixed;
-  bottom: 0;
-  z-index: 2;
-  left: 35%;
-  right: 0;
-}
-#bottom-toolbar-buttons {
-  display: inline-block;
-  float: right;
-  padding: 20px 1em 1em 20px;
-  text-align: right;
-  z-index: 2;
-  background: url(/assets/white-halo.png) no-repeat;
-}
-#bottom-toolbar-buttons p {
-  margin: .3em 0;
-  padding: 0;
-}
-#bottom-toolbar-buttons #theme-switcher {
-  display: none;
-}
-#chat {
-  clear: both;
-  border-top: 1px solid black;
-  background: #eee;
-}
-#chat-history {
-  max-height: 200px;
-  overflow: auto;
-}
-#chat-entry {
-  border-top: 1px solid black;
-  background: #aaa;
-}
-.chat-event {
-  border-top: 1px solid #ccc;
+td {
+  vertical-align: bottom;
+  border: inset 5pt;
   padding: 4px;
 }
+
+body {
+  background: white url(/assets/grid.jpg);
+  font-family: "Helvetica Neue", sans-serif;
+  padding-bottom: 3000px;
+}
+div.bubble {
+  display: inline-block;
+  font-size: 16px;
+  line-height: 29px;
+  /*vertical-align: baseline;*/
+  background: white;
+  border: 1px solid #bbb;
+  -webkit-border-radius: 10px;
+  margin: 4px 2px;
+  color: black;
+  box-shadow: 1px 1px 1px #aaa;
+}
+div.bubble.editing {
+  background: #eef;
+  border: 1px solid #fcc;
+  box-shadow: 3px 3px 7px #999;
+}
+div.bubble.active {
+  background: #eef;
+  box-shadow: 3px 3px 7px #0f0;
+}
+div.bubble div.representation {
+  padding: 4px;
+  background: white;
+  -webkit-border-radius: 10px;
+  cursor: pointer;
+}
+div.bubble div.representation.editing {
+  background: #ccf;
+  box-shadow: 1px 1px 3px #000;
+}
+/*
+unfortunately these don't play nice with nesting
+div.bubble div.representation:hover {
+  background: #ccf;
+}
+div.bubble div.representation.editing:hover {
+  background: #bbe;
+}
+*/
+div.bubble div.meaning {
+  color: black;
+  display: none;
+  padding: 8px;
+  /*border-top: 3px solid black;*/
+}
+div.bubble div.meaning p.stats {
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+  position: relative;
+  top: 8px;
+}
+div.bubble div.meaning textarea {
+  display: block;
+  overflow: auto;
+  width: 400px;
+  height: 72px; /* 4px top/bottom padding in my browser */
+  font-size: 13px;
+  line-height: 16px;
+}
+
+div.editor_toolbar {
+  display: none;
+}
+div.editor {
+  background: white;
+}
+
+
+div.bubble.reference {
+  display: inline;
+  padding: 3px 0;
+  background: #dfd;
+  border: 2px solid #9b9;
+  -webkit-border-radius: 5px;
+}
+div.bubble.reference div.representation {
+  display: inline;
+  background: transparent;
+}
+
+
+span.slot {
+  cursor: hand;
+}
+span.slot.unfilled {
+  padding: 3px;
+  background: #fcc;
+  border: 2px solid #caa;
+  -webkit-border-radius: 5px;
+  cursor: text;
+  /*margin: 1px;*/
+}
+span.slot.drag-hover {
+  background: black;
+  color: white;
+}
+
+
+ul.multislot {
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+  vertical-align: baseline;
+}
+ul.multislot li {
+  list-style-type: none;
+}
+ul.multislot li.content {
+  padding: 0;
+  margin: 0;
+}
+ul.multislot li.inbetweener {
+  width: 100%;
+  height: 3px;
+  position: relative;
+  cursor: hand;
+}
+ul.multislot li.inbetweener .insert {
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  top: -8.5px;
+  left: -20px;
+  display: none;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 18px;
+  line-height: 18px;
+  background: #66f;
+  color: white;
+}
+ul.multislot li.inbetweener.drag-hover,
+ul.multislot li.inbetweener.hover {
+  background: #66f;
+}
+ul.multislot li.inbetweener.not-editing:hover,
+ul.multislot li.inbetweener.not-editing:hover .insert {
+  color: white;
+  background: #006;
+}
+
 
 /* AUTOCOMPLETE */
 .ui-autocomplete {
@@ -350,13 +210,18 @@ button {
 .ui-menu .ui-menu-item a.ui-state-active .expression {
   color: black; /* stay black */
 }
+p.author {
+  margin: 0;
+  padding: 0;
+  font-weight: bold;
+  font-size: small;
+  font-variant: small-caps;
+}
 
-.vmenu { border: 1px solid #aaa; position: absolute; background: #fff; display: none; font-size: 0.75em; }
-.vsubmenu { border: 1px solid #aaa; position: absolute; background: #fff; display: none; }
-.vmenu .first_li span { display: block; cursor: pointer; white-space: nowrap; padding: 5px 10px; }
-.vmenu .inner_li { display: block; cursor: pointer; white-space: nowrap; }
-/*.vmenu .inner_li { display: none; margin-left: 120px; position: absolute; border: 1px solid #aaa; border-left: 1px solid #ccc; margin-top: -28px; background: #fff; }*/
-.vmenu .sep_li { border-top: 1px ridge #aaa; margin: 5px 0 }
-.vmenu .fill_title { font-size:11px; font-weight: bold; height:15px; overflow: hidden; word-wrap: break-word; }
 
-.ui-effects-transfer { border: 2px solid black; }
+div.trash {
+  width: 100px;
+  height: 100px;
+  background: #ccc;
+  text-align: center;
+}

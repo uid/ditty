@@ -2,9 +2,9 @@
 <html>
 <head>
   <title>Ditty</title>
-  <%= stylesheet_link_tag "application", :media => "all" %>
   <%= stylesheet_link_tag "canvas", :media => "all" %>
-  <%= javascript_include_tag "http://js.pusher.com/1.11/pusher.min.js" %>
+  <%= stylesheet_link_tag "canvas", :media => "all" %>
+  <%= javascript_include_tag "canvas" %>
   <%= csrf_meta_tags %>
 </head>
 <body>
@@ -19,8 +19,6 @@ var initialCanvas = <%= current_user.canvas.to_json.html_safe %>
 var initialCanvas = {}
 <% end %>
 </script>
-<%= javascript_include_tag "application" %>
-<%= javascript_include_tag "canvas" %>
 
 <% if Rails.env == "production" %>
 <script type="text/javascript">
