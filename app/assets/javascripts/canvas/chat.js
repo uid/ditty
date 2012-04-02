@@ -143,10 +143,17 @@ Chat.ChatView = my.Class({
     dom.append(" said ")
     try {
       var view = createView(jsonUnserializeMeaning(ev.chat.invocation))
+      view.setParent(this)
       dom.append(view.dom)
       if(ev.chat.invocation.expanded) view.toggleSourceView(true /* instant */)
     } catch(e) {
       dom.append("[error]")
     }
   },
+  
+  release: function(child, propagate) {
+    var newView = new PatternView(child.pattern, { parent: this })
+    newView.dom.insertAfter(child.dom)
+    child.dom.detach()
+  }
 })
