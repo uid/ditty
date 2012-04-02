@@ -238,6 +238,8 @@ SlotView.prototype.meaning = function() {
 
 // options: showExtraSlot, argumentReference
 function MultiSlotView(parent, fillerText, options) {
+  options = options || {}
+  
   this.parent = parent
   this.fillerText = fillerText
   this.showExtraSlot = options.showExtraSlot
