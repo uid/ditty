@@ -22,6 +22,8 @@ $(function() {
   Globals.happyInput = new View.HappyTextbox({ text: "One, two, three, four, five." })
   Globals.happyOutput = new View.HappyTextbox()
   
+  View.patternAutocomplete($("#search"), function(){}, function(){})
+  
   // input and output text areas
   var table = $("<table style='width: 100%' />").appendTo($("#hud"))
   $("<tr><th>Input</th><th>Output</th></tr>").appendTo(table)
