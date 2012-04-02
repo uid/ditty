@@ -816,6 +816,7 @@ View.HappyTextbox = my.Class({
   
   _resetText: function() {
     var cursor = $("<div style='display: inline-block; width: 2px; margin: 0 1px; height: 20px; vertical-align: middle; background: red' />")
+    cursor.blink({ delay: Math.random() * 10 + 500 })
     this.dom.empty()
     this.dom.append($("<span />").text(this.text.slice(0, this.cursorPosition)))
     this.dom.append(cursor)
