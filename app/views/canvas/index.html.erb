@@ -1,12 +1,9 @@
 <div id="loading">
-<p>Loading lots of Javascript and stuff...</p>
+<p>Loading lots of Javascript (sorry)...</p>
 </div>
 
 
 <div id="container" style="display: none">
-
-  <div id="xylo-container">
-  </div>
   
   <div id="program-container">
     <div id="program"></div>
@@ -16,26 +13,20 @@
     <div id="palette-subcontainer">
       <h2>Command Palette</h2>
       <p>Use by dragging to the right.</p>
-      <!-- <p>Search: <input type="search" /></p> -->
       <!-- <button>Find Random Code Bubbles</button> -->
       <div id="palette"></div>
     </div>
   </div>
-
-  <div id="bottom-toolbar">
-    <div id="bottom-toolbar-buttons">
-      <p>
-        You are <span id="name"></span>.
-        <button id="set-name">Set Name</button>
-        <!-- <button id="login-button">Log In</button> -->
-      </p>
-      <p>
-        <button id="theme-switcher">Switch Theme</button>
-        <button id="bubble-adder">(+) Create New Code Bubble</button>
-      </p>
-    </div>
-    <div id="chat"></div>
+  
+  <div id="hud-container">
+    <div id="hud"></div>
   </div>
+  
+  <div id="canvas-container">
+    <div id="canvas">
+    </div>
+  </div>
+  
 </div>
 
 <% if @new_user %>

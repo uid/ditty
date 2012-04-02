@@ -7,6 +7,7 @@ var Globals = {}
 
 $(function() {
   $("#loading").hide()
+  $("#container").show()
   
   $("body").addClass("no-drag-in-progress")
   $("body").bind("dragstart", function(e, ui) {
@@ -21,7 +22,8 @@ $(function() {
   Globals.happyInput = new View.HappyTextbox({ text: "One, two, three, four, five." })
   Globals.happyOutput = new View.HappyTextbox()
   
-  var table = $("<table style='width: 80%' />").appendTo($("body"))
+  // input and output text areas
+  var table = $("<table style='width: 100%' />").appendTo($("#hud"))
   $("<tr><th>Input</th><th>Output</th></tr>").appendTo(table)
   var row = $("<tr />").appendTo(table)
   Globals.happyInput.dom.appendTo($("<td style='width: 50%' />").appendTo(row))
@@ -48,248 +50,26 @@ $(function() {
       // var pattern = Patterns.get(134)
       // pattern.set("javascript_meaning", "vm.continuation(env.lookup('message'), function(vals) { setTimeout(function() { alert(vals[0]) }, 230) })")
       
+      var addSection = function(name) {
+        $("#palette").append($("<h3></h3>").text(name))
+      }
       var add = function(patternAttributes) {
         var pattern = new Pattern(patternAttributes)
         Patterns.add(pattern)
-        $("body").append(new View.BubbleBlower(function(parent) { return new View.InvocationView(new Invocation({ pattern: pattern.cid }), { parent: parent }) }).dom)
+        $("#palette").append(new View.BubbleBlower(function(parent) { return new View.InvocationView(new Invocation({ pattern: pattern.cid }), { parent: parent }) }).dom)
         return pattern.cid
       }
+      
+      
       add({
-        representations: [{ template: "debug" }],
+        representations: [{ template: "New Command +" }],
         arguments: [],
-        javascript_meaning: "alert('debug')",
-      })
-      add({
-        representations: [{ template: "[left number] &plus; [right number]" }],
-        arguments: [{ name: "left number" }, { name: "right number" }],
-        javascript_meaning: "vm.continuation(env.lookup('left number'), env.lookup('right number'), function(vals) { return vals[0] + vals[1] })",
-      })
-      add({
-        representations: [{ template: "[left number] &minus; [right number]" }, { template: "[left number] - [right number]" }],
-        arguments: [{ name: "left number" }, { name: "right number" }],
-        javascript_meaning: "vm.continuation(env.lookup('left number'), env.lookup('right number'), function(vals) { return vals[0] - vals[1] })",
-      })
-      add({
-        representations: [{ template: "[left number] &times; [right number]" }, { template: "[left number] * [right number]" }],
-        arguments: [{ name: "left number" }, { name: "right number" }],
-        javascript_meaning: "vm.continuation(env.lookup('left number'), env.lookup('right number'), function(vals) { return vals[0] * vals[1] })",
-      })
-      add({
-        representations: [{ template: "[left number] &divide; [right number]" }, { template: "[left number] / [right number]" }],
-        arguments: [{ name: "left number" }, { name: "right number" }],
-        javascript_meaning: "vm.continuation(env.lookup('left number'), env.lookup('right number'), function(vals) { return vals[0] / vals[1] })",
-      })
-      add({
-        representations: [{ template: "[left number] % [right number]" }, { template: "[left number] mod [right number]" }],
-        arguments: [{ name: "left number" }, { name: "right number" }],
-        javascript_meaning: "vm.continuation(env.lookup('left number'), env.lookup('right number'), function(vals) { return vals[0] % vals[1] })",
-      })
-      add({
-        representations: [{ template: "[left number] &lt; [right number]" }],
-        arguments: [{ name: "left number" }, { name: "right number" }],
-        javascript_meaning: "vm.continuation(env.lookup('left number'), env.lookup('right number'), function(vals) { return vals[0] < vals[1] })",
-      })
-      add({
-        representations: [{ template: "[left number] &le; [right number]" }, { template: "[left number] &lt;= [right number]" }],
-        arguments: [{ name: "left number" }, { name: "right number" }],
-        javascript_meaning: "vm.continuation(env.lookup('left number'), env.lookup('right number'), function(vals) { return vals[0] <= vals[1] })",
-      })
-      add({
-        representations: [{ template: "[left number] == [right number]" }, { template: "[left number] equals [right number]" }],
-        arguments: [{ name: "left number" }, { name: "right number" }],
-        javascript_meaning: "vm.continuation(env.lookup('left number'), env.lookup('right number'), function(vals) { return vals[0] == vals[1] })",
-      })
-      add({
-        representations: [{ template: "[left number] &ge; [right number]" }, { template: "[left number] &gt;= [right number]" }],
-        arguments: [{ name: "left number" }, { name: "right number" }],
-        javascript_meaning: "vm.continuation(env.lookup('left number'), env.lookup('right number'), function(vals) { return vals[0] >= vals[1] })",
-      })
-      add({
-        representations: [{ template: "[left number] &gt; [right number]" }],
-        arguments: [{ name: "left number" }, { name: "right number" }],
-        javascript_meaning: "vm.continuation(env.lookup('left number'), env.lookup('right number'), function(vals) { return vals[0] > vals[1] })",
-      })
-      add({
-        representations: [{ template: "[left number] &ne; [right number]" }, { template: "[left number] != [right number]" }],
-        arguments: [{ name: "left number" }, { name: "right number" }],
-        javascript_meaning: "vm.continuation(env.lookup('left number'), env.lookup('right number'), function(vals) { return vals[0] != vals[1] })",
-      })
-      add({
-        representations: [{ template: "-[number]" }],
-        arguments: [{ name: "number" }],
-        javascript_meaning: "vm.continuation(env.lookup('number'), function(vals) { return -vals[0] })",
-      })
-      var logicalNegationPattern = add({
-        representations: [{ template: "![boolean]" }],
-        arguments: [{ name: "boolean" }],
-        javascript_meaning: "vm.continuation(env.lookup('boolean'), function(vals) { return !vals[0] })",
-      })
-      add({
-        representations: [{ template: "[left boolean] and [right boolean]" }, { template: "[left boolean] &amp;&amp; [right boolean]" }],
-        arguments: [{ name: "left boolean" }, { name: "right boolean" }],
-        javascript_meaning: "vm.continuation(env.lookup('left boolean'), env.lookup('right boolean'), function(vals) { return vals[0] && vals[1] })",
-      })
-      add({
-        representations: [{ template: "[left boolean] or [right boolean]" }, { template: "[left boolean] || [right boolean]" }],
-        arguments: [{ name: "left boolean" }, { name: "right boolean" }],
-        javascript_meaning: "vm.continuation(env.lookup('left boolean'), env.lookup('right boolean'), function(vals) { return vals[0] || vals[1] })",
-      })
-      add({
-        representations: [{ template: "[condition] ? [value if true] : [value if false]" }, { template: "[value if true] if [condition] else [value if false]" }],
-        arguments: [{ name: "condition" }, { name: "value if true" }, { name: "value if false" }],
-        javascript_meaning: "vm.continuation(env.lookup('condition'), function(vals) { vm.delegate(vals[0] ? env.lookup('value if true') : env.lookup('value if false')) })",
-      })
-      add({
-        representations: [{ template: "[string 1] + [string 2]" }],
-        arguments: [{ name: "string 1" }, { name: "string 2" }],
-        javascript_meaning: "vm.continuation(env.lookup('string 1'), env.lookup('string 2'), function(vals) { return vals[0] + vals[1] })",
-      })
-      add({
-        representations: [{ template: "[string] as a floating point number" }],
-        arguments: [{ name: "string" }],
-        javascript_meaning: "vm.continuation(env.lookup('string'), function(vals) { return parseFloat(vals[0]) })",
-      })
-      add({
-        representations: [{ template: "[string] as an integer" }],
-        arguments: [{ name: "string" }],
-        javascript_meaning: "vm.continuation(env.lookup('string'), function(vals) { return parseInt(vals[0]) })",
-      })
-      add({
-        representations: [{ template: "[number] is a valid number" }],
-        arguments: [{ name: "number" }],
-        javascript_meaning: "vm.continuation(env.lookup('number'), function(vals) { return !isNaN(vals[0]) })",
-      })
-      add({
-        representations: [{ template: "[number] as a string" }],
-        arguments: [{ name: "number" }],
-        javascript_meaning: "vm.continuation(env.lookup('number'), function(vals) { return '' + vals[0] })",
-      })
-      add({
-        representations: [{ template: "new object" }],
-        arguments: [],
-        javascript_meaning: "return {}",
-      })
-      add({
-        representations: [{ template: "keys of [object]" }],
-        arguments: [{ name: "object" }],
-        javascript_meaning: "vm.continuation(env.lookup('object'), function(vals) { return _.keys(vals[0]) })",
-      })
-      add({
-        representations: [{ template: "Set the value of [key] in [object] to [value]." }],
-        arguments: [{ name: "object" }, { name: "key" }, { name: "value" }],
-        javascript_meaning: "vm.continuation(env.lookup('object'), env.lookup('key'), env.lookup('value'), function(vals) { return vals[0][vals[1]] = vals[2] })",
-      })
-      add({
-        representations: [{ template: "value of [key] in [object]" }],
-        arguments: [{ name: "object" }, { name: "key" }],
-        javascript_meaning: "vm.continuation(env.lookup('object'), env.lookup('key'), function(vals) { return vals[0][vals[1]] })",
-      })
-      add({
-        representations: [{ template: "remove value for [key] in [object]" }],
-        arguments: [{ name: "object" }, { name: "key" }],
-        javascript_meaning: "vm.continuation(env.lookup('object'), env.lookup('key'), function(vals) { delete vals[0][vals[1]] })",
-      })
-      add({
-        representations: [{ template: "new array" }],
-        arguments: [],
-        javascript_meaning: "return []",
-      })
-      add({
-        representations: [{ template: "number of items in [array]" }],
-        arguments: [{ name: "array" }],
-        javascript_meaning: "vm.continuation(env.lookup('array'), function(vals) { return vals[0].length })",
-      })
-      add({
-        representations: [{ template: "set value of [array] at index [index] to [value]" }],
-        arguments: [{ name: "array" }, { name: "index" }, { name: "value" }],
-        javascript_meaning: "vm.continuation(env.lookup('array'), env.lookup('index'), env.lookup('value'), function(vals) { return vals[0][vals[1]] = vals[2] })",
-      })
-      add({
-        representations: [{ template: "value of [array] at index [index]" }],
-        arguments: [{ name: "array" }, { name: "index" }],
-        javascript_meaning: "vm.continuation(env.lookup('array'), env.lookup('index'), function(vals) { return vals[0][vals[1]] })",
-      })
-      add({
-        representations: [{ template: "append [value] to [array]" }],
-        arguments: [{ name: "array" }, { name: "value" }],
-        javascript_meaning: "vm.continuation(env.lookup('array'), env.lookup('value'), function(vals) { vals[0].push(vals[1]); return vals[1] })",
-      })
-      var loopPattern = add({
-        representations: [{ template: "loop {<br />[actions]<br />}" }],
-        arguments: [{ name: "actions", type: "instructions" }],
-        javascript_meaning: "vm.beginLoop(); var f = function() { vm.continuation(env.lookup('actions'), f) }; f()",
-      })
-      var breakPattern = add({
-        representations: [{ template: "Break." }],
-        arguments: [],
-        javascript_meaning: "vm.breakLoop()",
-      })
-      var ifPattern = add({
-        representations: [{ template: "if([condition]) {<br />[actions]<br />}" }],
-        arguments: [{ name: "condition" }, { name: "actions", type: "instructions" }],
-        javascript_meaning: "vm.continuation(env.lookup('condition'), function(vals) { if(vals[0]) { vm.delegate(env.lookup('actions')) } })",
-      })
-      add({
-        representations: [{ template: "if([condition]) {<br />[actions if true]<br />} else {<br />[actions if false]<br />}" }],
-        arguments: [{ name: "condition" }, { name: "actions if true", type: "instructions" }, { name: "actions if false", type: "instructions" }],
-        javascript_meaning: "vm.continuation(env.lookup('condition'), function(vals) { vm.delegate(vals[0] ? env.lookup('actions if true') : env.lookup('actions if false')) })",
-      })
-      add({
-        representations: [{ template: "maybe" }],
-        arguments: [],
-        javascript_meaning: "return Math.random() > 0.5",
-      })
-      add({
-        representations: [{ template: "while([condition]) {<br />[actions]<br />}" }],
-        arguments: [{ name: "condition" }, { name: "actions", type: "instructions" }],
-        native_meaning: [
-          {
-            invocation: {
-              pattern: loopPattern,
-              arguments: {
-                actions: [
-                  {
-                    invocation: {
-                      pattern: ifPattern,
-                      arguments: {
-                        condition: {
-                          invocation: {
-                            pattern: logicalNegationPattern,
-                            arguments: {
-                              boolean: { reference: { name: "condition" } }
-                            }
-                          }
-                        },
-                        actions: {
-                          invocation: { pattern: breakPattern }
-                        }
-                      }
-                    }
-                  },
-                  { reference: { name: "actions" } }
-                ]
-              }
-            }
-          }
-        ],
-      })
-      add({
-        representations: [{ template: "Set value of [variable name] to [value]." }],
-        arguments: [{ name: "variable name" }, { name: "value" }],
-        javascript_meaning: "vm.continuation(env.lookup('variable name'), env.lookup('value'), function(vals) { vm.envs[1].set(vals[0], vals[1]); return vals[1] })",
-      })
-      add({
-        representations: [{ template: "value of [variable name]" }],
-        arguments: [{ name: "variable name" }],
-        javascript_meaning: "vm.continuation(env.lookup('variable name'), function(vals) { return vm.envs[1].lookup(vals[0]) })",
-      })
-      add({
-        representations: [{ template: "Show a popup displaying [value]." }],
-        arguments: [{ name: "value" }],
-        javascript_meaning: "vm.continuation(env.lookup('value'), function(vals) { alert(myToString(vals[0])) })",
+        native_meaning: [],
       })
       
-      // CURSORS
+      
+      addSection("Text Processing")
+      
       add({
         representations: [{ template: "input cursor" }],
         arguments: [],
@@ -331,11 +111,260 @@ $(function() {
         javascript_meaning: "vm.continuation(env.lookup('cursor'), env.lookup('position'), function(vals) { vals[0].setCursorPosition(vals[1]) })",
       })
       
-      // USER CODE
+      
+      addSection("Numbers")
+      
       add({
-        representations: [{ template: "My Code" }],
+        representations: [{ template: "[left number] &plus; [right number]" }],
+        arguments: [{ name: "left number" }, { name: "right number" }],
+        javascript_meaning: "vm.continuation(env.lookup('left number'), env.lookup('right number'), function(vals) { return vals[0] + vals[1] })",
+      })
+      add({
+        representations: [{ template: "[left number] &minus; [right number]" }, { template: "[left number] - [right number]" }],
+        arguments: [{ name: "left number" }, { name: "right number" }],
+        javascript_meaning: "vm.continuation(env.lookup('left number'), env.lookup('right number'), function(vals) { return vals[0] - vals[1] })",
+      })
+      add({
+        representations: [{ template: "[left number] &times; [right number]" }, { template: "[left number] * [right number]" }],
+        arguments: [{ name: "left number" }, { name: "right number" }],
+        javascript_meaning: "vm.continuation(env.lookup('left number'), env.lookup('right number'), function(vals) { return vals[0] * vals[1] })",
+      })
+      add({
+        representations: [{ template: "[left number] &divide; [right number]" }, { template: "[left number] / [right number]" }],
+        arguments: [{ name: "left number" }, { name: "right number" }],
+        javascript_meaning: "vm.continuation(env.lookup('left number'), env.lookup('right number'), function(vals) { return vals[0] / vals[1] })",
+      })
+      add({
+        representations: [{ template: "[left number] % [right number]" }, { template: "[left number] mod [right number]" }],
+        arguments: [{ name: "left number" }, { name: "right number" }],
+        javascript_meaning: "vm.continuation(env.lookup('left number'), env.lookup('right number'), function(vals) { return vals[0] % vals[1] })",
+      })
+      add({
+        representations: [{ template: "-[number]" }],
+        arguments: [{ name: "number" }],
+        javascript_meaning: "vm.continuation(env.lookup('number'), function(vals) { return -vals[0] })",
+      })
+      add({
+        representations: [{ template: "[string] as a floating point number" }],
+        arguments: [{ name: "string" }],
+        javascript_meaning: "vm.continuation(env.lookup('string'), function(vals) { return parseFloat(vals[0]) })",
+      })
+      add({
+        representations: [{ template: "[string] as an integer" }],
+        arguments: [{ name: "string" }],
+        javascript_meaning: "vm.continuation(env.lookup('string'), function(vals) { return parseInt(vals[0]) })",
+      })
+      add({
+        representations: [{ template: "[number] is a valid number" }],
+        arguments: [{ name: "number" }],
+        javascript_meaning: "vm.continuation(env.lookup('number'), function(vals) { return !isNaN(vals[0]) })",
+      })
+      add({
+        representations: [{ template: "[number] as a string" }],
+        arguments: [{ name: "number" }],
+        javascript_meaning: "vm.continuation(env.lookup('number'), function(vals) { return '' + vals[0] })",
+      })
+      
+      
+      addSection("Comparisons")
+      
+      add({
+        representations: [{ template: "[left number] &lt; [right number]" }],
+        arguments: [{ name: "left number" }, { name: "right number" }],
+        javascript_meaning: "vm.continuation(env.lookup('left number'), env.lookup('right number'), function(vals) { return vals[0] < vals[1] })",
+      })
+      add({
+        representations: [{ template: "[left number] &le; [right number]" }, { template: "[left number] &lt;= [right number]" }],
+        arguments: [{ name: "left number" }, { name: "right number" }],
+        javascript_meaning: "vm.continuation(env.lookup('left number'), env.lookup('right number'), function(vals) { return vals[0] <= vals[1] })",
+      })
+      add({
+        representations: [{ template: "[left number] == [right number]" }, { template: "[left number] equals [right number]" }],
+        arguments: [{ name: "left number" }, { name: "right number" }],
+        javascript_meaning: "vm.continuation(env.lookup('left number'), env.lookup('right number'), function(vals) { return vals[0] == vals[1] })",
+      })
+      add({
+        representations: [{ template: "[left number] &ge; [right number]" }, { template: "[left number] &gt;= [right number]" }],
+        arguments: [{ name: "left number" }, { name: "right number" }],
+        javascript_meaning: "vm.continuation(env.lookup('left number'), env.lookup('right number'), function(vals) { return vals[0] >= vals[1] })",
+      })
+      add({
+        representations: [{ template: "[left number] &gt; [right number]" }],
+        arguments: [{ name: "left number" }, { name: "right number" }],
+        javascript_meaning: "vm.continuation(env.lookup('left number'), env.lookup('right number'), function(vals) { return vals[0] > vals[1] })",
+      })
+      add({
+        representations: [{ template: "[left number] &ne; [right number]" }, { template: "[left number] != [right number]" }],
+        arguments: [{ name: "left number" }, { name: "right number" }],
+        javascript_meaning: "vm.continuation(env.lookup('left number'), env.lookup('right number'), function(vals) { return vals[0] != vals[1] })",
+      })
+      
+      
+      addSection("Logic")
+      
+      var logicalNegationPattern = add({
+        representations: [{ template: "![boolean]" }],
+        arguments: [{ name: "boolean" }],
+        javascript_meaning: "vm.continuation(env.lookup('boolean'), function(vals) { return !vals[0] })",
+      })
+      add({
+        representations: [{ template: "[left boolean] and [right boolean]" }, { template: "[left boolean] &amp;&amp; [right boolean]" }],
+        arguments: [{ name: "left boolean" }, { name: "right boolean" }],
+        javascript_meaning: "vm.continuation(env.lookup('left boolean'), env.lookup('right boolean'), function(vals) { return vals[0] && vals[1] })",
+      })
+      add({
+        representations: [{ template: "[left boolean] or [right boolean]" }, { template: "[left boolean] || [right boolean]" }],
+        arguments: [{ name: "left boolean" }, { name: "right boolean" }],
+        javascript_meaning: "vm.continuation(env.lookup('left boolean'), env.lookup('right boolean'), function(vals) { return vals[0] || vals[1] })",
+      })
+      add({
+        representations: [{ template: "[condition] ? [value if true] : [value if false]" }, { template: "[value if true] if [condition] else [value if false]" }],
+        arguments: [{ name: "condition" }, { name: "value if true" }, { name: "value if false" }],
+        javascript_meaning: "vm.continuation(env.lookup('condition'), function(vals) { vm.delegate(vals[0] ? env.lookup('value if true') : env.lookup('value if false')) })",
+      })
+      
+      
+      addSection("Strings")
+      
+      add({
+        representations: [{ template: "[string 1] + [string 2]" }],
+        arguments: [{ name: "string 1" }, { name: "string 2" }],
+        javascript_meaning: "vm.continuation(env.lookup('string 1'), env.lookup('string 2'), function(vals) { return vals[0] + vals[1] })",
+      })
+      
+      
+      addSection("Objects")
+      
+      add({
+        representations: [{ template: "new object" }],
         arguments: [],
-        native_meaning: [],
+        javascript_meaning: "return {}",
+      })
+      add({
+        representations: [{ template: "keys of [object]" }],
+        arguments: [{ name: "object" }],
+        javascript_meaning: "vm.continuation(env.lookup('object'), function(vals) { return _.keys(vals[0]) })",
+      })
+      add({
+        representations: [{ template: "Set the value of [key] in [object] to [value]." }],
+        arguments: [{ name: "object" }, { name: "key" }, { name: "value" }],
+        javascript_meaning: "vm.continuation(env.lookup('object'), env.lookup('key'), env.lookup('value'), function(vals) { return vals[0][vals[1]] = vals[2] })",
+      })
+      add({
+        representations: [{ template: "value of [key] in [object]" }],
+        arguments: [{ name: "object" }, { name: "key" }],
+        javascript_meaning: "vm.continuation(env.lookup('object'), env.lookup('key'), function(vals) { return vals[0][vals[1]] })",
+      })
+      add({
+        representations: [{ template: "remove value for [key] in [object]" }],
+        arguments: [{ name: "object" }, { name: "key" }],
+        javascript_meaning: "vm.continuation(env.lookup('object'), env.lookup('key'), function(vals) { delete vals[0][vals[1]] })",
+      })
+      
+      
+      addSection("Arrays")
+      
+      add({
+        representations: [{ template: "new array" }],
+        arguments: [],
+        javascript_meaning: "return []",
+      })
+      add({
+        representations: [{ template: "number of items in [array]" }],
+        arguments: [{ name: "array" }],
+        javascript_meaning: "vm.continuation(env.lookup('array'), function(vals) { return vals[0].length })",
+      })
+      add({
+        representations: [{ template: "set value of [array] at index [index] to [value]" }],
+        arguments: [{ name: "array" }, { name: "index" }, { name: "value" }],
+        javascript_meaning: "vm.continuation(env.lookup('array'), env.lookup('index'), env.lookup('value'), function(vals) { return vals[0][vals[1]] = vals[2] })",
+      })
+      add({
+        representations: [{ template: "value of [array] at index [index]" }],
+        arguments: [{ name: "array" }, { name: "index" }],
+        javascript_meaning: "vm.continuation(env.lookup('array'), env.lookup('index'), function(vals) { return vals[0][vals[1]] })",
+      })
+      add({
+        representations: [{ template: "append [value] to [array]" }],
+        arguments: [{ name: "array" }, { name: "value" }],
+        javascript_meaning: "vm.continuation(env.lookup('array'), env.lookup('value'), function(vals) { vals[0].push(vals[1]); return vals[1] })",
+      })
+      
+      
+      addSection("Control Flow")
+      
+      var loopPattern = add({
+        representations: [{ template: "loop {<br />[actions]<br />}" }],
+        arguments: [{ name: "actions", type: "instructions" }],
+        javascript_meaning: "vm.beginLoop(); var f = function() { vm.continuation(env.lookup('actions'), f) }; f()",
+      })
+      var breakPattern = add({
+        representations: [{ template: "Break." }],
+        arguments: [],
+        javascript_meaning: "vm.breakLoop()",
+      })
+      var ifPattern = add({
+        representations: [{ template: "if([condition]) {<br />[actions]<br />}" }],
+        arguments: [{ name: "condition" }, { name: "actions", type: "instructions" }],
+        javascript_meaning: "vm.continuation(env.lookup('condition'), function(vals) { if(vals[0]) { vm.delegate(env.lookup('actions')) } })",
+      })
+      add({
+        representations: [{ template: "if([condition]) {<br />[actions if true]<br />} else {<br />[actions if false]<br />}" }],
+        arguments: [{ name: "condition" }, { name: "actions if true", type: "instructions" }, { name: "actions if false", type: "instructions" }],
+        javascript_meaning: "vm.continuation(env.lookup('condition'), function(vals) { vm.delegate(vals[0] ? env.lookup('actions if true') : env.lookup('actions if false')) })",
+      })
+      add({
+        representations: [{ template: "while([condition]) {<br />[actions]<br />}" }],
+        arguments: [{ name: "condition" }, { name: "actions", type: "instructions" }],
+        native_meaning: [
+          {
+            invocation: {
+              pattern: loopPattern,
+              arguments: {
+                actions: [
+                  {
+                    invocation: {
+                      pattern: ifPattern,
+                      arguments: {
+                        condition: {
+                          invocation: {
+                            pattern: logicalNegationPattern,
+                            arguments: {
+                              boolean: { reference: { name: "condition" } }
+                            }
+                          }
+                        },
+                        actions: {
+                          invocation: { pattern: breakPattern }
+                        }
+                      }
+                    }
+                  },
+                  { reference: { name: "actions" } }
+                ]
+              }
+            }
+          }
+        ],
+      })
+      
+      
+      addSection("Variables")
+      
+      add({
+        representations: [{ template: "Set value of [variable name] to [value]." }],
+        arguments: [{ name: "variable name" }, { name: "value" }],
+        javascript_meaning: "vm.continuation(env.lookup('variable name'), env.lookup('value'), function(vals) { vm.envs[1].set(vals[0], vals[1]); return vals[1] })",
+      })
+      add({
+        representations: [{ template: "value of [variable name]" }],
+        arguments: [{ name: "variable name" }],
+        javascript_meaning: "vm.continuation(env.lookup('variable name'), function(vals) { return vm.envs[1].lookup(vals[0]) })",
+      })
+      add({
+        representations: [{ template: "Show a popup displaying [value]." }],
+        arguments: [{ name: "value" }],
+        javascript_meaning: "vm.continuation(env.lookup('value'), function(vals) { alert(myToString(vals[0])) })",
       })
       
       // var addPattern = new Pattern({
