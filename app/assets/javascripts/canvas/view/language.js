@@ -738,6 +738,11 @@ View.TrashView = my.Class({
   
   dropped: function(child) {
     this.accept(child)
+    
+    var myAudio = document.createElement('audio')
+    myAudio.controls = true
+    myAudio.src = '/assets/drag-to-trash.mp3'
+    myAudio.play()
   },
   
   accept: function(child) {
