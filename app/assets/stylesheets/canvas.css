@@ -2,34 +2,30 @@
  *= require_tree ./canvas
  */
 
+
 /*
+ * TODO LIST (why is this here? haha)
  * drag the loop from one while into the loop of another while
  * color according to nesting level
  * allow creation of commands by right-click... 'solidifies' the line as a sentence
  * recommend abstraction according to nesting level
  */
 
-table {
-  border: outset 5pt;
-  border-collapse: separate;
-  border-spacing: 5px;
-}
-td {
-  vertical-align: bottom;
-  border: inset 5pt;
-  padding: 4px;
-}
 
 body {
   background: white url(/assets/grid.jpg);
   font-family: "Helvetica Neue", sans-serif;
   padding-bottom: 3000px;
 }
+
+
+/* BUBBLES */
+
 div.bubble {
   display: inline-block;
   font-size: 16px;
   line-height: 29px;
-  /*vertical-align: baseline;*/
+  vertical-align: baseline;
   background: white;
   border: 1px solid #bbb;
   -webkit-border-radius: 10px;
@@ -87,13 +83,8 @@ div.bubble div.meaning textarea {
   line-height: 16px;
 }
 
-div.editor_toolbar {
-  display: none;
-}
-div.editor {
-  background: white;
-}
 
+/* REFERENCE BUBBLES */
 
 div.bubble.reference {
   display: inline;
@@ -107,6 +98,8 @@ div.bubble.reference div.representation {
   background: transparent;
 }
 
+
+/* SLOTS */
 
 span.slot {
   cursor: hand;
@@ -124,6 +117,8 @@ span.slot.drag-hover {
   color: white;
 }
 
+
+/* MULTI-SLOTS */
 
 ul.multislot {
   margin: 0;
@@ -170,6 +165,7 @@ ul.multislot li.inbetweener.not-editing:hover .insert {
 
 
 /* AUTOCOMPLETE */
+
 .ui-autocomplete {
   display: inline-block;
   -webkit-border-bottom-right-radius: 4px;
@@ -219,9 +215,25 @@ p.author {
 }
 
 
+/* CRAPPY TRASH CAN */
+
 div.trash {
   width: 100px;
   height: 100px;
   background: #ccc;
   text-align: center;
+}
+
+
+/* BULKY TABLES */
+
+table {
+  border: outset 5pt;
+  border-collapse: separate;
+  border-spacing: 5px;
+}
+td {
+  vertical-align: bottom;
+  border: inset 5pt;
+  padding: 4px;
 }
