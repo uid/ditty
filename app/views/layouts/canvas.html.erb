@@ -3,7 +3,9 @@
 <head>
   <title>Ditty</title>
   <%= stylesheet_link_tag "canvas", :media => "all" %>
-  <%= stylesheet_link_tag "canvas", :media => "all" %>
+  <!-- jQuery UI 1.8.17 fixed an issue with our droppable, but jquery-rails comes with 1.8.16 -->
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.17/jquery-ui.min.js"></script>
   <%= javascript_include_tag "canvas" %>
   <%= csrf_meta_tags %>
 </head>
