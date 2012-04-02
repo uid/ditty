@@ -1,5 +1,5 @@
 
-View.patternAutocomplete = function(input, view, dismiss) {
+View.patternAutocomplete = function(input, dropped, dismiss) {
   // input.focusout(dismiss)
   input.keydown(function(ev) { if(ev.keyCode == 27) { dismiss() } })
     
@@ -90,7 +90,7 @@ View.patternAutocomplete = function(input, view, dismiss) {
       debugger
       var v = ui.item["result"]
       v.dom.detach()
-      view.dropped(v)
+      dropped(v)
     },
     open: function() {
       input.data("menuOpen", true);
@@ -160,7 +160,7 @@ View.SlotView = my.Class({
     var input = $("<input />").appendTo(this.dom)
     input.css("width", width + "px")
     input.focus()
-    View.patternAutocomplete(input, this, this.reset.bind(this))
+    View.patternAutocomplete(input, this.dropped.bind(this), this.reset.bind(this))
   },
   
   dropped: function(child) {
@@ -271,7 +271,7 @@ View.InbetweenSlotView = my.Class({
     
     var input = $("<input style='width: 100%; margin: 5px 0' />").appendTo(this.dom)
     this.dom.css("height", input.outerHeight(true /* includeMargin */) + "px")
-    View.patternAutocomplete(input, this, this.reset.bind(this))
+    View.patternAutocomplete(input, this.dropped.bind(this), this.reset.bind(this))
     // input.focusout(this.reset.bind(this))
     // input.keydown(function(ev) {
     //   if(ev.keyCode == 13) {
