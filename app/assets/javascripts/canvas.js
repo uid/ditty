@@ -4,19 +4,19 @@
 var Patterns = new PatternCollection
 var Globals = {}
 
-// $("body").addClass("no-drag-in-progress")
-// $("body").bind("dragstart", function(e, ui) {
-//   $("body").removeClass("no-drag-in-progress");
-//   $("body").addClass("drag-in-progress")
-// })
-// $("body").bind("dragstop", function(e, ui) {
-//   $("body").addClass("no-drag-in-progress");
-//   $("body").removeClass("drag-in-progress")
-// })
-
 
 $(function() {
   $("#loading").hide()
+  
+  $("body").addClass("no-drag-in-progress")
+  $("body").bind("dragstart", function(e, ui) {
+    $("body").removeClass("no-drag-in-progress");
+    $("body").addClass("drag-in-progress")
+  })
+  $("body").bind("dragstop", function(e, ui) {
+    $("body").addClass("no-drag-in-progress");
+    $("body").removeClass("drag-in-progress")
+  })
   
   Globals.happyInput = new View.HappyTextbox({ text: "One, two, three, four, five." })
   Globals.happyOutput = new View.HappyTextbox()
@@ -31,7 +31,7 @@ $(function() {
   // Patterns.fetch({
   //   success: function() {
       
-      $("body").append(new View.TrashView().dom)
+      $("#canvas").append(new View.TrashView().dom)
       
       // Patterns.each(function(p) {
       //   p.templates.each(function(t, i) {

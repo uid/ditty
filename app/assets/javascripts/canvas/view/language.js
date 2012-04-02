@@ -726,10 +726,10 @@ View.TrashView = my.Class({
   constructor: function(options) {
     options = options || {}
     
-    this.dom = $("<div class='trash'>TRASH</div>")
+    this.dom = $("<div class='trash'></div>")
     View.setObjFor(this.dom, this)
     
-    View.droppable.droppable(this, this.dom, { tolerance: "pointer" })
+    View.droppable.droppable(this, this.dom, { hoverClass: "hover", tolerance: "pointer" })
   },
   
   toString: function() {
