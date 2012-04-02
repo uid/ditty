@@ -18,6 +18,8 @@ var Globals = {}
 
 
 $(function() {
+  $("#loading").hide()
+  
   Globals.happyInput = new View.HappyTextbox({ text: "One, two, three, four, five." })
   Globals.happyOutput = new View.HappyTextbox()
   

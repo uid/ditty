@@ -1,8 +1,7 @@
-<div style="display: none">
-
 <div id="loading">
-<p>Loading...</p>
+<p>Loading lots of Javascript and stuff...</p>
 </div>
+
 
 <div id="container" style="display: none">
 
@@ -41,14 +40,13 @@
 
 <% if @new_user %>
 <div id="welcome">
-  <div id="welcome-background" style="background-color: black; opacity: 0.9; position: fixed; top: 0; right: 0; bottom: 0; left: 0"></div>
-  <div style="position: fixed; left: 20%; right: 20%; top: 10%">
+  <div id="welcome-background" style="background-color: black; opacity: 0.9; position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 1000" onclick="document.getElementById('welcome').style.display = 'none'"></div>
+  <div id="welcome-message-container" style="position: fixed; left: 20%; right: 20%; top: 10%; z-index: 1001">
     <div id="welcome-message" style="border: 40px solid black; padding: 2em; background: white; text-align: center">
       <h1>Welcome, new user!</h1>
-      <p><button>Continue!</button></p>
+      <p>Useful first-time information goes here!</p>
+      <p><button onclick="document.getElementById('welcome').style.display = 'none'">Continue!</button></p>
     </div>
   </div>
 </div>
 <% end %>
-
-</div>
