@@ -24,4 +24,4 @@ Getting Started
 Credits
 -------
 
-The trash can icon came from http://soundforge.deviantart.com/art/Trash-Can-Icon-169853077
+The [CC BY-NC-ND] trash can icon came from http://soundforge.deviantart.com/art/Trash-Can-Icon-169853077
