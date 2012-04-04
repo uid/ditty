@@ -63,6 +63,12 @@ var Env = my.Class({
     this.values[name] = value
   },
   
+  contains: function(name) {
+    if(name in this.values) return true
+    if(!this.noTraverse && this.parent) return this.parent.contains(name)
+    return false
+  },
+  
   lookup: function(name) {
     if(name in this.values) {
       return this.values[name]
