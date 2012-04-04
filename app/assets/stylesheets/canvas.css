@@ -293,9 +293,8 @@ table.debugger td {
 
 #hud {
   border: outset 5px;
-  position: fixed;
   background: white;
-  width: 60%;
+  width: 100%;
   overflow: auto;
 }
 #hud p {
