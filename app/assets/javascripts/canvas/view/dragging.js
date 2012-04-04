@@ -37,6 +37,9 @@ View.draggable = {
   
   // fired as the mouse moves during a drag
   drag: function(ev, ui) {
+    this.lastOffset = ui.helper.offset()
+    this.lastMousePos = { top: ev.pageY, left: ev.pageX }
+    
     var nearest = undefined, dist = 10000
     for(var i in this.hovered) {
       var o = this.hovered[i]
@@ -68,11 +71,16 @@ View.draggable = {
       if(this.parent) this.parent.dragout(this, this.currentDragTarget)
       this.currentDragTarget.dropped(this)
       this.currentDragTarget.dom.removeClass("drag-hover")
+    } else if(this.droppedNowhere) {
+      this.droppedNowhere(this.lastOffset, this.lastMousePos)
     }
+    
     this.hovered = []
     dragging = false
     setTimeout(function() { noclick = false }, 100)
-    this.currentDragTarget = undefined
+    delete this.currentDragTarget
+    delete this.lastOffset
+    delete this.lastMousePos
   },
   
   setParent: function(parent) {
