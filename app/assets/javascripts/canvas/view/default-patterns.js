@@ -5,7 +5,7 @@ function addDefaultPatterns() {
   }
   var addHiddenSection = function() {
     var dom = $("<div></div>").hide()
-    var expander = $("<a href='#'>More...</a>").click(function() { dom.animate({ height: "toggle", opacity: "toggle" }); return false})
+    var expander = $("<a href='#'>More&#8230;</a>").click(function() { dom.animate({ height: "toggle", opacity: "toggle" }); return false})
     $("<div></div>").append(expander).append(dom).appendTo($("#palette"))
     return dom
   }
