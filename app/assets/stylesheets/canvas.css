@@ -393,6 +393,9 @@ div.happy-text span.text {
   /*background-color: #edfac8;*/
   font-family: monospace, "Arial Unicode MS";
 }
+div.happy-text span.whitespace {
+  color: #666;
+}
 div.happy-text span.cursor {
   display: inline-block;
   width: 2px;
