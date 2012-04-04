@@ -53,6 +53,7 @@ div.bubble div.representation {
   -moz-border-radius: 10px;
   cursor: pointer;
   white-space: pre;
+  min-height: 1em;
 }
 div.bubble div.representation.editing {
   background: #ccf;
