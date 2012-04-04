@@ -70,6 +70,7 @@ var Env = my.Class({
     if(!this.noTraverse && this.parent) {
       return this.parent.lookup(name)
     }
+    throw new Error("\"" + name + "\" is required")
   },
 })
 
@@ -123,7 +124,10 @@ var Context = my.Class({
           alert("encapsulated something other than an array", frames)
           alert("encapsulated something other than an array")
         }
-        env[name] = new VM.IClosure(frames, parentEnv) // TODO: also save the frame so that break and return can work
+        // add the value if there's anything to add
+        if(frames.length > 0) {
+          env[name] = new VM.IClosure(frames, parentEnv) // TODO: also save the frame so that break and return can work
+        }
         return env
       }, {}))
       var frame = instr.frame.slice(0)
