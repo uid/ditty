@@ -243,6 +243,11 @@ ul.multislot li.inbetweener.not-editing:hover .insert {
 #palette-subcontainer {
   margin: 1em;
 }
+#palette .more {
+  display: inline-block;
+  margin-top: 6px;
+  margin-left: 12px;
+}
 
 
 /* CANVAS */
