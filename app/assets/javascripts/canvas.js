@@ -361,7 +361,7 @@ $(function() {
       add({
         representations: [{ template: "value of [variable name]" }],
         arguments: [{ name: "variable name" }],
-        javascript_meaning: "vm.continuation(env.lookup('variable name'), function(vals) { return vm.envs[1].lookup(vals[0]) })",
+        javascript_meaning: "vm.continuation(env.lookup('variable name'), function(vals) { if(!vm.envs[1].contains(vals[0])) { throw new Error('variable \"' + vals[0] + '\" does not exist') } else { return vm.envs[1].lookup(vals[0]) } })",
       })
       add({
         representations: [{ template: "Show a popup displaying [value]." }],
