@@ -464,7 +464,7 @@ View.MultiSlotView = my.Class({
     }
     
     // only rebuild the DOM if an insert isn't coming immediately afterward
-    if(target.parent == this) {
+    if(target && target.parent == this) {
       this.indexAdjustment = index
     } else {
       this.rebuildDom()
