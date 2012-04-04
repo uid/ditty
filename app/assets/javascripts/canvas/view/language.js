@@ -795,6 +795,36 @@ View.BubbleBlower = my.Class({
 })
 
 
+View.CodeCanvas = my.Class({
+  constructor: function(dom, options) {
+    options = options || {}
+    
+    this.dom = dom
+    View.setObjFor(this.dom, this)
+  },
+  
+  toString: function() {
+    return "View.CodeCanvas()"
+  },
+  
+  dragout: function(child, target) {
+  },
+  
+  release: function(child) {
+    child.dom.detach()
+  },
+  
+  dropped: function(child) {
+    this.accept(child)
+  },
+  
+  accept: function(child) {
+    child.setParent(this)
+    this.dom.append(child.dom)
+  },
+})
+
+
 View.HappyTextbox = my.Class({
   constructor: function(options) {
     options || (options = {})
