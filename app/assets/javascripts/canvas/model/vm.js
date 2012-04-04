@@ -75,9 +75,23 @@ var Env = my.Class({
 
 var Context = my.Class({
   // keeps a dupe of the frames
-  constructor: function(frames, envs) {
+  constructor: function(frames, envs, options) {
+    options || (options = {})
+    
     this.frames = _.map(frames, function(f) { return f.slice(0) }) // 2-level clone
     this.envs = envs.slice(0)
+    
+    if(options.finished) {
+      this.finishedCallback = options.finished
+    }
+    if(options.error) {
+      this.errorCallback = options.error
+    }
+  },
+  
+  reset: function() {
+    delete this.frames
+    delete this.envs
   },
   
   runOne: function(instr) {
@@ -128,8 +142,10 @@ var Context = my.Class({
       try {
         result = instr.f(this, this.envs[0])
       } catch(e) {
-        console.log("exception", e.toString(), e)
-        alert("exception!")
+        if(this.errorCallback) {
+          this.errorCallback(e)
+        }
+        this.unwind()
       }
       if(!instr.noSave) {
         this.result = result
@@ -152,6 +168,9 @@ var Context = my.Class({
     } else {
       var result = this.result
       delete this.result
+      if(this.finishedCallback) {
+        this.finishedCallback(result)
+      }
     }
   },
   
@@ -163,6 +182,9 @@ var Context = my.Class({
       } else {
         var result = this.result
         delete this.result
+        if(this.finishedCallback) {
+          this.finishedCallback(result)
+        }
         return result
       }
     }
@@ -226,6 +248,23 @@ var Context = my.Class({
     }
     
     this.frames.unshift(saved)
+  },
+  
+  unwind: function() {
+    var saved = []
+    
+    while(true) {
+      var instr = this._shift()
+      if(typeof(instr) === "undefined") {
+        break
+      } else if(instr.runOnUnwind) {
+        saved.push(instr)
+      }
+    }
+    
+    this.frames.unshift(saved)
+    
+    delete this.result
   },
   
   debugDom: function(done) {
