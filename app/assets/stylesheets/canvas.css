@@ -295,6 +295,8 @@ table.debugger td {
   border: outset 5px;
   position: fixed;
   background: white;
+  width: 60%;
+  overflow: auto;
 }
 #hud p {
   margin: 0;
@@ -324,9 +326,23 @@ table.debugger td {
   vertical-align: middle;
 }
 
+#hud table.example-text {
+  width: 100%;
+}
+#hud table.example-text td {
+  width: 50%;
+  margin: 0 10px;
+  border: inset 4px;
+  vertical-align: top;
+  padding: 8px;
+}
+#hud table.example-text .happy-text {
+  min-height: 20px;
+}
+
 #hud table.text {
   width: 100%;
-  border-spacing: 5px;
+  /*border-spacing: 5px;*/
 }
 #hud table.text td {
   width: 50%;
@@ -337,6 +353,8 @@ table.debugger td {
 }
 #hud table.text .happy-text {
   min-height: 20px;
+  border: 1px solid black;
+  padding: 4px;
 }
 
 /*
@@ -386,8 +404,6 @@ table.debugger td {
 
 div.happy-text {
   overflow: auto;
-  border: 1px solid black;
-  padding: 4px;
 }
 div.happy-text span.text {
   white-space: pre;

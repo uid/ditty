@@ -19,7 +19,7 @@ $(function() {
     $("body").removeClass("drag-in-progress")
   })
   
-  Globals.harness = new View.TaskHarness($("#hud"))
+  Globals.harness = new View.TaskHarness($("#hud"), Tasks)
   
   Globals.canvas = new View.CodeCanvas($("#canvas"))
   $("#canvas").append(new View.TrashView().dom)

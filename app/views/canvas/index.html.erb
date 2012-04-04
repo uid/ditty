@@ -23,7 +23,9 @@
         <tr>
           <td class="prev"><button disabled>&larr; Prev Task</button></td>
           <td class="description">
-            <div>Current Task (<span class="current">1</span>/<span class="total">6</span>):</div>
+            <div>
+              Current Task: <select></select>
+            </div>
             <div class="description"></div>
           </td>
           <td class="next">
@@ -31,14 +33,27 @@
           </td>
         </tr>
       </table>
-      <table class="text">
+      <table class="example-text">
         <tr>
-          <td colspan="2" class="input">
-            <div>Input:</div>
+          <td class="input">
+            <div>Example Input:</div>
             <div class="input-placeholder"></div>
           </td>
-          <td colspan="2" class="output">
-            <div>Output:</div>
+          <td class="output">
+            <div>Example Output:</div>
+            <div class="output-placeholder"></div>
+          </td>
+        </tr>
+      </table>
+      <table class="text">
+        <tr>
+          <td class="input">
+            <div>Your Input:</div>
+            <div class="input-placeholder"></div>
+            <div><button>Restore Example Input</button></div>
+          </td>
+          <td class="output">
+            <div>Your Output:</div>
             <div class="output-placeholder"></div>
           </td>
         </tr>

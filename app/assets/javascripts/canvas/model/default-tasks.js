@@ -3,35 +3,24 @@
 // transformation and asked to create a command that performs it! You will be presented
 // with several example input and output sets to test with.
 
+var TaskSections = new Backbone.Collection
+TaskSections.add({ name: "Easy" })
+TaskSections.add({ name: "Medium" })
+TaskSections.add({ name: "Hard" })
+
 var Tasks = new Backbone.Collection
 Tasks.add({
-  description: "Duplicate the input text.",
-  examples: [
-    { input: "Welcome to Ditty.", output: "Welcome to Ditty." },
-    { input: "4,692,222", output: "4692222" },
-    { input: ",", output: "" },
-    { input: "", output: "" },
-  ]
-})
-Tasks.add({
+  title: "Remove all commas.",
   description: "Remove all commas.",
-  examples: [
-    { input: "Use the Force, Luke.", output: "Use the Force Luke." },
-    { input: "4,692,222", output: "4692222" },
-    { input: ",", output: "" },
-    { input: "", output: "" },
-  ]
-})
-Tasks.add({
-  description: "Output all of the lines of text containing a certain word or phrase."
+  example_before: "\"Use the Force, Luke,\" said Obi-Wan.",
+  example_after: "\"Use the Force Luke\" said Obi-Wan.",
+  section: TaskSections.at(0),
 })
 
 /*
 do as many of these as you can in an hour
 visible tiers of difficulty
 notes fields
-current input position
-no I/O
 (a) output all of the lines of text containing a certain word or phrase
 (b) replace all instances of a given string with another string
 (c) count the number of lines and words in a file
