@@ -43,8 +43,8 @@ View.draggable = {
     var nearest = undefined, dist = 10000
     for(var i in this.hovered) {
       var o = this.hovered[i]
-      var rectX = DittyMath.clamp(ev.pageX, ui.helper.offset().left, ui.helper.offset().left + ui.helper.outerWidth())
-      var rectY = DittyMath.clamp(ev.pageY, ui.helper.offset().top, ui.helper.offset().top + ui.helper.outerHeight())
+      var rectX = DittyMath.clamp(ev.pageX, o.dom.offset().left, o.dom.offset().left + o.dom.outerWidth())
+      var rectY = DittyMath.clamp(ev.pageY, o.dom.offset().top, o.dom.offset().top + o.dom.outerHeight())
       var d = DittyMath.distance(ev.pageX, ev.pageY, rectX, rectY)
       if(d < dist) {
         nearest = o
