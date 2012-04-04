@@ -6,6 +6,7 @@ View.patternAutocomplete = function(input, dropped, dismiss) {
   input.autocomplete({
     delay: 0,
     autoFocus: true,
+    minLength: 0,
     source: function(request, callback) {
       var matches = []
       
@@ -15,7 +16,7 @@ View.patternAutocomplete = function(input, dropped, dismiss) {
         matches.push({ value: item, result: view })
       }
       
-      if("true".indexOf(request.term) == 0 || "false".indexOf(request.term) == 0) {
+      if(request.term.length > 0 && ("true".indexOf(request.term) == 0 || "false".indexOf(request.term) == 0)) {
         var value = (request.term.indexOf("t") != -1)
         var view = new View.BasicMeaningView(new BooleanMeaning({ boolean: value }))
         var item = $("<div>boolean: </div>").append(view.dom)
@@ -83,6 +84,8 @@ View.patternAutocomplete = function(input, dropped, dismiss) {
       }
       keywordMatches.sort(function(a, b) { return a.minIndex - b.minIndex })
       matches.push.apply(matches, keywordMatches)
+      
+      matches = matches.slice(0, 10)
       
       callback(matches)
     },
@@ -193,6 +196,7 @@ View.SlotView = my.Class({
     input.css("width", width + "px")
     input.focus()
     View.patternAutocomplete(input, this.dropped.bind(this), this.resetText.bind(this))
+    input.trigger("keydown.autocomplete")
   },
   
   dropped: function(child) {
