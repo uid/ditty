@@ -5,10 +5,13 @@
 
 /*
  * TODO LIST (why is this here? haha)
+ * join blocks together by dragging them (interim solution?)
+ * display multislots with nothing in them differently than single slots
  * drag the loop from one while into the loop of another while
  * color according to nesting level
  * allow creation of commands by right-click... 'solidifies' the line as a sentence
  * recommend abstraction according to nesting level
+ * dragging onto a closed block should open it?
  */
 
 
