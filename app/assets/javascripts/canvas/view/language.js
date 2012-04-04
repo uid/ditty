@@ -87,7 +87,6 @@ View.patternAutocomplete = function(input, dropped, dismiss) {
       callback(matches)
     },
     select: function(event, ui) {
-      debugger
       var v = ui.item["result"]
       v.dom.detach()
       dropped(v)
