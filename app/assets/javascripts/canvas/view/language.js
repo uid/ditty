@@ -829,13 +829,20 @@ View.HappyTextbox = my.Class({
   constructor: function(options) {
     options || (options = {})
     
-    this.dom = $("<div></div>")
+    this.dom = $("<div class='happy-text'></div>")
     View.setObjFor(this.dom, this)
+    
+    this.showCursor = true
+    if("showCursor" in options) this.showCursor = options.showCursor
     
     this.setText(options.text || "")
     this.cursorPosition = 0
     
     this._resetText()
+  },
+  
+  myToString: function() {
+    return "text cursor"
   },
   
   setText: function(text) {
@@ -857,16 +864,36 @@ View.HappyTextbox = my.Class({
     this._resetText()
   },
   
+  advanceCursor: function(amount) {
+    this.cursorPosition += amount
+    this._resetText()
+  },
+  
   characterAtCursor: function() {
     return this.text[this.cursorPosition]
   },
   
+  _asHTML: function(str) {
+    return $("<div />").text(str).html()
+  },
+  
+  _fakeSpaces: function(str) {
+    return this._asHTML(str).replace(/ /g, "&#9251;")
+  },
+  
   _resetText: function() {
-    var cursor = $("<div style='display: inline-block; width: 2px; margin: 0 1px; height: 20px; vertical-align: middle; background: red' />")
-    cursor.blink({ delay: Math.random() * 10 + 500 })
-    this.dom.empty()
-    this.dom.append($("<span />").text(this.text.slice(0, this.cursorPosition)))
-    this.dom.append(cursor)
-    this.dom.append($("<span />").text(this.text.slice(this.cursorPosition)))
+    if(this.showCursor) {
+      var cursor = $("<span class='cursor' />")
+      cursor.blink({ delay: Math.random() * 20 + 500 })
+      
+      this.dom.empty()
+      this.dom.append($("<span class='text' />").html(this._fakeSpaces(this.text.slice(0, this.cursorPosition))))
+      this.dom.append(cursor)
+      this.dom.append($("<span class='text' />").html(this._fakeSpaces(this.text.slice(this.cursorPosition)) + "\n"))
+      // the extra newline is necessary so that there's a blank line at the end if the actual text ends with \n
+    } else {
+      this.dom.empty()
+      this.dom.append($("<span class='text' />").html(this._fakeSpaces(this.text)))
+    }
   },
 })
