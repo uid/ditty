@@ -67,23 +67,15 @@ $(function() {
     $("body").removeClass("drag-in-progress")
   })
   
-  Globals.happyInput = new View.HappyTextbox({ text: "One, two, three, four, five." })
-  Globals.happyOutput = new View.HappyTextbox()
+  Globals.harness = new View.TaskHarness($("#hud"))
   
+  Globals.canvas = new View.CodeCanvas($("#canvas"))
+  $("#canvas").append(new View.TrashView().dom)
+    
   View.patternAutocomplete($("#search"), function(){}, function(){})
   
-  // input and output text areas
-  var table = $("<table style='width: 100%' />").appendTo($("#hud"))
-  $("<tr><th>Input</th><th>Output</th></tr>").appendTo(table)
-  var row = $("<tr />").appendTo(table)
-  Globals.happyInput.dom.appendTo($("<td style='width: 50%' />").appendTo(row))
-  Globals.happyOutput.dom.appendTo($("<td style='width: 50%' />").appendTo(row))
-  
-  // return
   // Patterns.fetch({
   //   success: function() {
-      
-      $("#canvas").append(new View.TrashView().dom)
       
       // Patterns.each(function(p) {
       //   p.templates.each(function(t, i) {
@@ -111,6 +103,8 @@ $(function() {
       }
       
       
+      addSection("New Command")
+      
       add({
         representations: [{ template: "New Command +" }],
         arguments: [],
@@ -120,46 +114,138 @@ $(function() {
       
       addSection("Text Processing")
       
+      // array model
+      
       add({
-        representations: [{ template: "input cursor" }],
+        representations: [{ template: "input string" }],
         arguments: [],
-        javascript_meaning: "return Globals.happyInput",
+        javascript_meaning: "return Globals.harness.input.text",
       })
       add({
-        representations: [{ template: "output cursor" }],
+        representations: [{ template: "output string" }],
         arguments: [],
-        javascript_meaning: "return Globals.happyOutput",
+        javascript_meaning: "return Globals.harness.output.text",
       })
       add({
-        representations: [{ template: "input length" }],
-        arguments: [],
-        javascript_meaning: "return Globals.happyInput.text.length",
+        representations: [{ template: "set output to [string]" }],
+        arguments: [{ name: "string" }],
+        javascript_meaning: "vm.continuation(env.lookup('string'), function(vals) { Globals.harness.output.setText(vals[0]) })",
       })
       add({
-        representations: [{ template: "output length" }],
-        arguments: [],
-        javascript_meaning: "return Globals.happyInput.text.length",
+        representations: [{ template: "length of [string]" }],
+        arguments: [{ name: "string" }],
+        javascript_meaning: "vm.continuation(env.lookup('string'), function(vals) { return vals[0].length })",
       })
       add({
-        representations: [{ template: "character at [cursor]" }],
-        arguments: [{ name: "cursor" }],
-        javascript_meaning: "vm.continuation(env.lookup('cursor'), function(vals) { return vals[0].characterAtCursor() })",
+        representations: [{ template: "character [position] of [string]" }, { template: "character of [string] at position [position]" }],
+        arguments: [{ name: "string" }, { name: "position" }],
+        javascript_meaning: "vm.continuation(env.lookup('string'), env.lookup('position'), function(vals) { return vals[0][vals[1]] })",
       })
       add({
-        representations: [{ template: "position of [cursor]" }],
-        arguments: [{ name: "cursor" }],
-        javascript_meaning: "vm.continuation(env.lookup('cursor'), function(vals) { return vals[0].cursorPosition })",
+        representations: [
+          { template: "characters of [string] between [start position] and [end position]" },
+          { template: "slice of [string] from character [start position] to [end position]" },
+          { template: "substring of [string] from character [start position] to [end position]" },
+        ],
+        arguments: [{ name: "string" }, { name: "start position" }, { name: "end position" }],
+        javascript_meaning: "vm.continuation(env.lookup('string'), env.lookup('start position'), env.lookup('end position'), function(vals) { return vals[0].substr(vals[1], vals[2]) })",
       })
       add({
-        representations: [{ template: "insert [text] at [cursor]" }],
-        arguments: [{ name: "cursor" }, { name: "text" }],
-        javascript_meaning: "vm.continuation(env.lookup('cursor'), env.lookup('text'), function(vals) { vals[0].insertText(vals[1]) })",
+        representations: [{ template: "[string 1] + [string 2]" }],
+        arguments: [{ name: "string 1" }, { name: "string 2" }],
+        javascript_meaning: "vm.continuation(env.lookup('string 1'), env.lookup('string 2'), function(vals) { return vals[0] + vals[1] })",
       })
       add({
-        representations: [{ template: "set position of [cursor] to [position]" }],
-        arguments: [{ name: "cursor" }, { name: "position" }],
-        javascript_meaning: "vm.continuation(env.lookup('cursor'), env.lookup('position'), function(vals) { vals[0].setCursorPosition(vals[1]) })",
+        representations: [{ template: "position of [search string] in [string]" }],
+        arguments: [{ name: "string" }, { name: "search string" }],
+        javascript_meaning: "vm.continuation(env.lookup('string'), env.lookup('search string'), function(vals) { return vals[0].indexOf(vals[1]) })",
       })
+      add({
+        representations: [{ template: "[string] with instances of [search string] replaced with [replacement string]" }],
+        arguments: [{ name: "string" }, { name: "search string" }, { name: "replacement string" }],
+        javascript_meaning: "vm.continuation(env.lookup('string'), env.lookup('search string'), env.lookup('replacement string'), function(vals) { return vals[0].replace(vals[1], vals[2]) })",
+      })
+      add({
+        representations: [{ template: "sub-strings of [string] separated by [separator] REVISE" }],
+        arguments: [{ name: "string" }, { name: "separator" }],
+        javascript_meaning: "vm.continuation(env.lookup('string'), env.lookup('separator'), function(vals) { return vals[0].split(vals[1]) })",
+      })
+      add({
+        representations: [{ template: "lowercase version of [string]" }],
+        arguments: [{ name: "string" }],
+        javascript_meaning: "vm.continuation(env.lookup('string'), function(vals) { return vals[0].toLowerCase() })",
+      })
+      add({
+        representations: [{ template: "uppercase version of [string]" }],
+        arguments: [{ name: "string" }],
+        javascript_meaning: "vm.continuation(env.lookup('string'), function(vals) { return vals[0].toUpperCase() })",
+      })
+      add({
+        representations: [{ template: "[object] is a string" }],
+        arguments: [{ name: "object" }],
+        javascript_meaning: "vm.continuation(env.lookup('object'), function(vals) { return typeof(vals[0]) === 'string' })",
+      })
+      
+      // stream model
+      
+      // add({
+      //   representations: [{ template: "read next character" }],
+      //   arguments: [],
+      //   javascript_meaning: "var c = Globals.harness.input.characterAtCursor(); Globals.harness.input.advanceCursor(1); return c",
+      // })
+      // add({
+      //   representations: [{ template: "seek to input position [position]" }],
+      //   arguments: [{ name: "position" }],
+      //   javascript_meaning: "vm.continuation(env.lookup('position'), function(vals) { Globals.harness.input.setCursorPosition(vals[0]) })",
+      // })
+      // add({
+      //   representations: [{ template: "write [text]" }],
+      //   arguments: [{ name: "text" }],
+      //   javascript_meaning: "vm.continuation(env.lookup('text'), function(vals) { Globals.harness.output.appendText(vals[0]) })",
+      // })
+      
+      // cursor model
+      
+      // add({
+      //   representations: [{ template: "input cursor" }],
+      //   arguments: [],
+      //   javascript_meaning: "return Globals.harness.input",
+      // })
+      // add({
+      //   representations: [{ template: "output cursor" }],
+      //   arguments: [],
+      //   javascript_meaning: "return Globals.harness.output",
+      // })
+      // add({
+      //   representations: [{ template: "input length" }],
+      //   arguments: [],
+      //   javascript_meaning: "return Globals.harness.input.text.length",
+      // })
+      // add({
+      //   representations: [{ template: "output length" }],
+      //   arguments: [],
+      //   javascript_meaning: "return Globals.harness.output.text.length",
+      // })
+      // add({
+      //   representations: [{ template: "character at [cursor]" }],
+      //   arguments: [{ name: "cursor" }],
+      //   javascript_meaning: "vm.continuation(env.lookup('cursor'), function(vals) { return vals[0].characterAtCursor() })",
+      // })
+      // add({
+      //   representations: [{ template: "position of [cursor]" }],
+      //   arguments: [{ name: "cursor" }],
+      //   javascript_meaning: "vm.continuation(env.lookup('cursor'), function(vals) { return vals[0].cursorPosition })",
+      // })
+      // add({
+      //   representations: [{ template: "insert [text] at [cursor]" }],
+      //   arguments: [{ name: "cursor" }, { name: "text" }],
+      //   javascript_meaning: "vm.continuation(env.lookup('cursor'), env.lookup('text'), function(vals) { vals[0].insertText(vals[1]) })",
+      // })
+      // add({
+      //   representations: [{ template: "set position of [cursor] to [position]" }],
+      //   arguments: [{ name: "cursor" }, { name: "position" }],
+      //   javascript_meaning: "vm.continuation(env.lookup('cursor'), env.lookup('position'), function(vals) { vals[0].setCursorPosition(vals[1]) })",
+      // })
       
       
       addSection("Numbers")
@@ -194,11 +280,11 @@ $(function() {
         arguments: [{ name: "number" }],
         javascript_meaning: "vm.continuation(env.lookup('number'), function(vals) { return -vals[0] })",
       })
-      add({
-        representations: [{ template: "[string] as a floating point number" }],
-        arguments: [{ name: "string" }],
-        javascript_meaning: "vm.continuation(env.lookup('string'), function(vals) { return parseFloat(vals[0]) })",
-      })
+      // add({
+      //   representations: [{ template: "[string] as a floating point number" }],
+      //   arguments: [{ name: "string" }],
+      //   javascript_meaning: "vm.continuation(env.lookup('string'), function(vals) { return parseFloat(vals[0]) })",
+      // })
       add({
         representations: [{ template: "[string] as an integer" }],
         arguments: [{ name: "string" }],
@@ -209,11 +295,11 @@ $(function() {
         arguments: [{ name: "number" }],
         javascript_meaning: "vm.continuation(env.lookup('number'), function(vals) { return !isNaN(vals[0]) })",
       })
-      add({
-        representations: [{ template: "[number] as a string" }],
-        arguments: [{ name: "number" }],
-        javascript_meaning: "vm.continuation(env.lookup('number'), function(vals) { return '' + vals[0] })",
-      })
+      // add({
+      //   representations: [{ template: "[number] as a string" }],
+      //   arguments: [{ name: "number" }],
+      //   javascript_meaning: "vm.continuation(env.lookup('number'), function(vals) { return '' + vals[0] })",
+      // })
       
       
       addSection("Comparisons")
@@ -258,12 +344,12 @@ $(function() {
         javascript_meaning: "vm.continuation(env.lookup('boolean'), function(vals) { return !vals[0] })",
       })
       add({
-        representations: [{ template: "[left boolean] and [right boolean]" }, { template: "[left boolean] &amp;&amp; [right boolean]" }],
+        representations: [{ template: "[left boolean] &amp;&amp; [right boolean]" }, { template: "[left boolean] and [right boolean]" }],
         arguments: [{ name: "left boolean" }, { name: "right boolean" }],
         javascript_meaning: "vm.continuation(env.lookup('left boolean'), env.lookup('right boolean'), function(vals) { return vals[0] && vals[1] })",
       })
       add({
-        representations: [{ template: "[left boolean] or [right boolean]" }, { template: "[left boolean] || [right boolean]" }],
+        representations: [{ template: "[left boolean] || [right boolean]" }, { template: "[left boolean] or [right boolean]" }],
         arguments: [{ name: "left boolean" }, { name: "right boolean" }],
         javascript_meaning: "vm.continuation(env.lookup('left boolean'), env.lookup('right boolean'), function(vals) { return vals[0] || vals[1] })",
       })
@@ -271,15 +357,6 @@ $(function() {
         representations: [{ template: "[condition] ? [value if true] : [value if false]" }, { template: "[value if true] if [condition] else [value if false]" }],
         arguments: [{ name: "condition" }, { name: "value if true" }, { name: "value if false" }],
         javascript_meaning: "vm.continuation(env.lookup('condition'), function(vals) { vm.delegate(vals[0] ? env.lookup('value if true') : env.lookup('value if false')) })",
-      })
-      
-      
-      addSection("Strings")
-      
-      add({
-        representations: [{ template: "[string 1] + [string 2]" }],
-        arguments: [{ name: "string 1" }, { name: "string 2" }],
-        javascript_meaning: "vm.continuation(env.lookup('string 1'), env.lookup('string 2'), function(vals) { return vals[0] + vals[1] })",
       })
       
       
@@ -335,9 +412,34 @@ $(function() {
         javascript_meaning: "vm.continuation(env.lookup('array'), env.lookup('index'), function(vals) { return vals[0][vals[1]] })",
       })
       add({
-        representations: [{ template: "append [value] to [array]" }],
+        representations: [{ template: "append [value] to [array]" }, { template: "push [value] onto [array]" }],
         arguments: [{ name: "array" }, { name: "value" }],
         javascript_meaning: "vm.continuation(env.lookup('array'), env.lookup('value'), function(vals) { vals[0].push(vals[1]); return vals[1] })",
+      })
+      add({
+        representations: [{ template: "pop value from end of [array]" }],
+        arguments: [{ name: "array" }],
+        javascript_meaning: "vm.continuation(env.lookup('array'), function(vals) { return vals[0].pop() })",
+      })
+      add({
+        representations: [{ template: "[array] reversed" }],
+        arguments: [{ name: "array" }],
+        javascript_meaning: "vm.continuation(env.lookup('array'), function(vals) { return vals[0].slice(0).reverse() })",
+      })
+      add({
+        representations: [{ template: "[first array] + [second array]" }],
+        arguments: [{ name: "first array" }, { name: "second array" }],
+        javascript_meaning: "vm.continuation(env.lookup('first array'), env.lookup('second array'), function(vals) { return vals[0].concat(vals[1]) })",
+      })
+      add({
+        representations: [{ template: "position of [object] in [array]" }],
+        arguments: [{ name: "object" }, { name: "array" }],
+        javascript_meaning: "vm.continuation(env.lookup('array'), env.lookup('object'), function(vals) { return vals[0].indexOf(vals[1]) })",
+      })
+      add({
+        representations: [{ template: "[object] is an array" }],
+        arguments: [{ name: "object" }],
+        javascript_meaning: "vm.continuation(env.lookup('object'), function(vals) { return vals[0] instanceof Array })",
       })
       
       

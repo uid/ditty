@@ -11,20 +11,43 @@
   
   <div id="palette-container">
     <div id="palette-subcontainer">
-      <h2>Command Palette</h2>
-      <p>Use by dragging to the right.</p>
+      <p>Search for Commands: <input id="search" type="search" /></p>
       <!-- <button>Find Random Code Bubbles</button> -->
       <div id="palette"></div>
     </div>
   </div>
   
   <div id="hud-container">
-    <div id="hud"></div>
+    <div id="hud">
+      <table class="title">
+        <tr>
+          <td class="prev"><button disabled>&larr; Prev Task</button></td>
+          <td class="description">
+            <div>Current Task (<span class="current">1</span>/<span class="total">6</span>):</div>
+            <div class="description"></div>
+          </td>
+          <td class="next">
+            <button>Next Task &rarr;</button>
+          </td>
+        </tr>
+      </table>
+      <table class="text">
+        <tr>
+          <td colspan="2" class="input">
+            <div>Input:</div>
+            <div class="input-placeholder"></div>
+          </td>
+          <td colspan="2" class="output">
+            <div>Output:</div>
+            <div class="output-placeholder"></div>
+          </td>
+        </tr>
+      </table>
+    </div>
   </div>
   
   <div id="canvas-container">
     <div id="canvas">
-      <p>Search: <input id="search" type="search" /></p>
     </div>
   </div>
   

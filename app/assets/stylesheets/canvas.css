@@ -28,7 +28,7 @@ div.bubble {
   display: inline-block;
   font-size: 16px;
   line-height: 29px;
-  vertical-align: baseline;
+  vertical-align: middle;
   background: white;
   border: 1px solid #bbb;
   -webkit-border-radius: 10px;
@@ -50,6 +50,7 @@ div.bubble div.representation {
   background: white;
   -webkit-border-radius: 10px;
   cursor: pointer;
+  white-space: pre;
 }
 div.bubble div.representation.editing {
   background: #ccf;
@@ -113,9 +114,13 @@ span.slot.unfilled {
   border: 2px solid #caa;
   -webkit-border-radius: 5px;
   cursor: text;
-  /*margin: 1px;*/
 }
-span.slot.drag-hover {
+.drag-in-progress span.slot.unfilled {
+  background: #fdd;
+  border-color: #b99;
+  border-style: dashed;
+}
+.drag-in-progress span.slot.drag-hover {
   background: black;
   color: white;
 }
@@ -226,7 +231,7 @@ ul.multislot li.inbetweener.not-editing:hover .insert {
   top: 0;
   bottom: 0;
   width: 35%;
-  background: white;
+  background: #fcfef5;
   box-shadow: 0px 0px 10px #aaa;
   overflow: auto;
 }
@@ -239,7 +244,6 @@ ul.multislot li.inbetweener.not-editing:hover .insert {
 
 #canvas {
   position: relative;
-  border: 1px solid red;
 }
 
 
@@ -268,13 +272,136 @@ div.trash {
 
 /* BULKY TABLES */
 
-table {
+table.debugger {
   border: outset 5pt;
   border-collapse: separate;
   border-spacing: 5px;
 }
-td {
+table.debugger td {
   vertical-align: bottom;
   border: inset 5pt;
   padding: 4px;
+}
+
+
+/* HUD */
+
+#hud {
+  border: outset 5px;
+  position: fixed;
+}
+#hud p {
+  margin: 0;
+}
+#hud table.task {
+  width: 100%;
+  background: white;
+/*
+  border: outset 5px;
+  border-collapse: separate;
+  border-spacing: 5px;
+*/
+}
+#hud table.title {
+  width: 100%;
+  border-spacing: 8px;
+}
+#hud table.title td.description {
+  vertical-align: middle;
+}
+#hud table.title td.description div.description {
+  margin-top: 9px;
+}
+#hud table.title td.prev {
+  width: 110px;
+}
+#hud table.title td.next {
+  width: 270px;
+}
+#hud table.title td.next {
+  text-align: right;
+}
+#hud table.title span.slot {
+  display: inline-block;
+  text-align: center;
+  vertical-align: middle;
+}
+
+#hud table.text {
+  width: 100%;
+  border-spacing: 5px;
+}
+#hud table.text td {
+  width: 50%;
+  margin: 0 10px;
+  border: inset 4px;
+  vertical-align: top;
+  padding: 8px;
+}
+#hud table.text .happy-text {
+  min-height: 20px;
+}
+
+/*
+#hud table.task td {
+  padding: 8px;
+}
+#hud table.task td.prev, #hud td.next {
+  min-width: 100px;
+}
+#hud table.task td.description {
+  width: 100%;
+}
+#hud table.task td.input, #hud td.output {
+  border: inset 4px;
+  vertical-align: top;
+}
+#hud table.task textarea {
+  width: 100%;
+}
+#hud table.examples {
+  display: inline-block;
+  vertical-align: top;
+}
+#hud table.examples td {
+  padding: 0;
+  margin: 0;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 14px;
+  line-height: 16px;
+  width: 16px;
+  height: 16px;
+}
+*/
+#hud table.examples td.success {
+  /*background: #a5f0a5;*/
+}
+#hud table.examples td.failure {
+  /*background: #ffb0b0;*/
+}
+#hud table.examples td.in-progress {
+  /*background: #ffefb0;*/
+}
+
+
+/* HAPPY TEXT */
+
+div.happy-text {
+  overflow: auto;
+  border: 1px solid black;
+  padding: 4px;
+}
+div.happy-text span.text {
+  white-space: pre;
+  /*background-color: #edfac8;*/
+  font-family: monospace, "Arial Unicode MS";
+}
+div.happy-text span.cursor {
+  display: inline-block;
+  width: 2px;
+  margin: 0 1px;
+  height: 24px;
+  vertical-align: middle;
+  background: red;
 }

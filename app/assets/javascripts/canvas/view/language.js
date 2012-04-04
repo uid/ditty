@@ -123,6 +123,34 @@ View.viewForMeaning = function(meaning) {
 }
 
 
+View.applyCanvasDropping = function(klass) {
+  klass.prototype.droppedOn = function(target) {
+    this.dom.css({
+      position: "relative",
+      left: "",
+      top: ""
+    })
+  }
+  
+  klass.prototype.droppedNowhere = function(offset, mouse) {
+    if(mouse.left > $("#palette-container").outerWidth() && mouse.top > $("#hud-container").offset().top + $("#hud-container").outerHeight()) {
+      if(this.parent) this.parent.dragout(this, Globals.canvas)
+      this.dom.css({
+        position: "absolute",
+        left: (offset.left - Globals.canvas.dom.offset().left) + "px",
+        top: (offset.top - Globals.canvas.dom.offset().top) + "px"
+      })
+      Globals.canvas.dropped(this)
+    } else {
+      if(this.parent) {
+        this.parent.dragout(this, null /* target */)
+      }
+      playAudio("/assets/poof.mp3")
+    }
+  }
+}
+
+
 View.SlotView = my.Class({
   constructor: function(options) {
     options = options || {}
@@ -503,6 +531,7 @@ View.BasicMeaningView = my.Class({
   },
 })
 View.draggable.decorate(View.BasicMeaningView)
+View.applyCanvasDropping(View.BasicMeaningView)
 
 
 View.ArgumentReferenceView = my.Class({
@@ -741,6 +770,7 @@ View.InvocationView = my.Class({
   }
 })
 View.draggable.decorate(View.InvocationView)
+View.applyCanvasDropping(View.InvocationView)
 
 
 View.TrashView = my.Class({
