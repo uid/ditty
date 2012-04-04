@@ -10,7 +10,7 @@ TaskSections.add({ name: "Hard" })
 
 var Tasks = new Backbone.Collection
 Tasks.add({
-  title: "Remove all commas.",
+  title: "Remove all commas",
   description: "Remove all commas.",
   example_before: "\"Use the Force, Luke,\" said Obi-Wan.",
   example_after: "\"Use the Force Luke\" said Obi-Wan.",
