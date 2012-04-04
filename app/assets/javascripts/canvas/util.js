@@ -162,3 +162,11 @@ function randomColor() {
   var b = Math.floor(Math.random() * 256)
   return colorHex(r,g,b)
 }
+
+
+function playAudio(uri) {
+  var audio = document.createElement('audio')
+  audio.controls = true
+  audio.src = uri
+  audio.play()
+}
