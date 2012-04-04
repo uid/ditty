@@ -129,13 +129,14 @@ View.SlotView = my.Class({
     
     this.parent = options.parent
     this.fillerText = options.fillerText || "Drag or type something here."
+    if("fillerHtml" in options) this.fillerHtml = options.fillerHtml
     this.dropCallback = options.drop
     this.dragoutCallback = options.dragout
     
     this.dom = $("<span class='slot unfilled'></span>")
     View.setObjFor(this.dom, this)
     
-    this.reset()
+    this.resetText()
     
     this.dom.click(safeClick(this.click.bind(this)))
     
@@ -146,8 +147,12 @@ View.SlotView = my.Class({
     return "SlotView()"
   },
   
-  reset: function() {
-    this.dom.text(this.fillerText)
+  resetText: function() {
+    if("fillerHtml" in this) {
+      this.dom.html(this.fillerHtml)
+    } else {
+      this.dom.text(this.fillerText)
+    }
   },
   
   click: function() {
@@ -159,7 +164,7 @@ View.SlotView = my.Class({
     var input = $("<input />").appendTo(this.dom)
     input.css("width", width + "px")
     input.focus()
-    View.patternAutocomplete(input, this.dropped.bind(this), this.reset.bind(this))
+    View.patternAutocomplete(input, this.dropped.bind(this), this.resetText.bind(this))
   },
   
   dropped: function(child) {
@@ -186,7 +191,7 @@ View.SlotView = my.Class({
     delete this.child
     
     this.dom.addClass("unfilled")
-    this.dom.text(this.fillerText)
+    this.resetText()
     this.dom.droppable("enable")
   },
 })
