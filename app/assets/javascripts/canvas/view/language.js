@@ -735,6 +735,7 @@ View.InvocationView = my.Class({
     
     var before = new VM.IJavascript(function() { View.flash(this.representationDom, "green"); this.dom.addClass("active") }.bind(this), true /* noSave */)
     var after = new VM.IJavascript(function() { this.dom.removeClass("active") }.bind(this), true /* noSave */)
+    before.runOnUnwind = after.runOnUnwind = true
     
     return [before].concat(compiled.concat([after]))
   }
