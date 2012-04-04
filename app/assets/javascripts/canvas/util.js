@@ -15,17 +15,29 @@ var DittyMath = {
 // strings: returns the string surounded by quotes (but doesn't bother escaping)
 // arrays: includes square brackets, and recurses for each element
 // numbers, booleans, functions: delegates to the default toString()
+// objects with 'myToString': returns the value of that function
 // everything else: surrounds with {} and recurses for all keys and values
-function myToString(v) {
+function myToString(v, seen) {
+  seen || (seen = [])
+  
+  if(seen.indexOf(v) != -1) return "..."
+  seen2 = seen.concat([v])
+  
   if(typeof(v) === "string") {
     return "\"" + v + "\""
   } else if(typeof(v) === "number" || typeof(v) === "boolean" || typeof(v) === "function") {
     return "" + v
   } else if(v instanceof Array) {
-    return "[" + _.map(v, myToString) + "]"
+    return "[" + _.map(v, function(v2) { return myToString(v2, seen2) }) + "]"
+  } else if(v && "myToString" in v) {
+    return v.myToString()
+  } else if(v instanceof HTMLElement) {
+    return "HTMLElement(...)"
+  } else if(v instanceof jQuery) {
+    return "jQuery(...)"
   } else {
     // return "" + v
-    return  "{" + _.map(v, function(v, k) { return k + ": " + myToString(v) }).join(", ") + "}"
+    return  "{" + _.map(v, function(v, k) { return k + ": " + myToString(v, seen2) }).join(", ") + "}"
   }
 }
 
