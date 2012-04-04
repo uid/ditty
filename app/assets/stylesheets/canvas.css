@@ -293,18 +293,10 @@ table.debugger td {
 #hud {
   border: outset 5px;
   position: fixed;
+  background: white;
 }
 #hud p {
   margin: 0;
-}
-#hud table.task {
-  width: 100%;
-  background: white;
-/*
-  border: outset 5px;
-  border-collapse: separate;
-  border-spacing: 5px;
-*/
 }
 #hud table.title {
   width: 100%;
