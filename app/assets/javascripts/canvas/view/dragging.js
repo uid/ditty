@@ -71,6 +71,9 @@ View.draggable = {
       if(this.parent) this.parent.dragout(this, this.currentDragTarget)
       this.currentDragTarget.dropped(this)
       this.currentDragTarget.dom.removeClass("drag-hover")
+      if(this.droppedOn) {
+        this.droppedOn(this.currentDragTarget)
+      }
     } else if(this.droppedNowhere) {
       this.droppedNowhere(this.lastOffset, this.lastMousePos)
     }
