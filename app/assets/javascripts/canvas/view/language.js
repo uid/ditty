@@ -557,8 +557,24 @@ View.InvocationView = my.Class({
     }.bind(this)))
     this.representationDom.click(safeClick(function(e, ui) {
       var compiled = this.compile()
-      // console.log(new Context([compiled], [new Env()]).run())
-      console.log(new Context([compiled], [new Env()]).slowRun())
+      
+      var showResult = true
+      var opts = {
+        finished: function(result) {
+          if(showResult) {
+            $.achtung({ message: myToString(result) })
+          }
+        },
+        error: function(e) {
+          showResult = false
+          $.achtung({ message: e })
+        }
+      }
+      
+      // new Context([compiled], [new Env()], opts).run()
+      new Context([compiled], [new Env()], opts).slowRun()
+      
+      // debug the VM!
       // $("#debugger").html("").append(new Context([compiled], [new Env()]).debugDom())
     }.bind(this)))
   },
