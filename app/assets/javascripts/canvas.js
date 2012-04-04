@@ -5,6 +5,34 @@ var Patterns = new PatternCollection
 var Globals = {}
 
 
+// For all of the tasks below, you will be given a description of a type of text
+// transformation and asked to create a command that performs it! You will be presented
+// with several example input and output sets to test with.
+
+var Tasks = new Backbone.Collection
+Tasks.add({
+  description: "Duplicate the input text.",
+  examples: [
+    { input: "Welcome to Ditty.", output: "Welcome to Ditty." },
+    { input: "4,692,222", output: "4692222" },
+    { input: ",", output: "" },
+    { input: "", output: "" },
+  ]
+})
+Tasks.add({
+  description: "Remove all commas.",
+  examples: [
+    { input: "Use the Force, Luke.", output: "Use the Force Luke." },
+    { input: "4,692,222", output: "4692222" },
+    { input: ",", output: "" },
+    { input: "", output: "" },
+  ]
+})
+Tasks.add({
+  description: "Output all of the lines of text containing a certain word or phrase."
+})
+
+
 $(function() {
   $("#loading").hide()
   $("#container").show()
