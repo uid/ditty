@@ -25,7 +25,7 @@ function myToString(v, seen) {
   
   if(typeof(v) === "string") {
     return "\"" + v + "\""
-  } else if(typeof(v) === "number" || typeof(v) === "boolean" || typeof(v) === "function") {
+  } else if(!v || typeof(v) === "number" || typeof(v) === "boolean" || typeof(v) === "function") {
     return "" + v
   } else if(v instanceof Array) {
     return "[" + _.map(v, function(v2) { return myToString(v2, seen2) }) + "]"
