@@ -684,6 +684,9 @@ View.InvocationView = my.Class({
         this.representationDom.append(this._slotView(arg).dom)
       }
     }
+    
+    this.representationDom.append(" ")
+    this.representationDom.append($("<button class='reword'>Edit name&#8230;</button>"))
   },
   
   renderEditableRepresentation: function() {

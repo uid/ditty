@@ -66,6 +66,12 @@ div.bubble div.representation.editing {
   background: #ccf;
   box-shadow: 1px 1px 3px #000;
 }
+div.bubble div.representation button.reword {
+  display: none;
+}
+div.bubble div.representation.editing button.reword {
+  display: inline;
+}
 /*
 unfortunately these don't play nice with nesting
 div.bubble div.representation:hover {
