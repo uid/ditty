@@ -147,7 +147,7 @@ function addDefaultPatterns() {
   add({
     representations: [{ template: "line break character" }],
     arguments: [],
-    javascript_meaning: "return \"\n\"",
+    javascript_meaning: "return \"\\n\"",
   }, more)
   add({
     representations: [{ template: "position of [search string] in [string]" }],
