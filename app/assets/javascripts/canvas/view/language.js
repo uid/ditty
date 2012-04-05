@@ -10,7 +10,7 @@ View.patternAutocomplete = function(input, dropped, dismiss) {
     source: function(request, callback) {
       var matches = []
       
-      if(/^-?[0-9.]+$/i.exec(request.term)) {
+      if(/^-?[0-9.]+$/i.exec(request.term) && !isNaN(parseFloat(request.term))) {
         var view = new View.BasicMeaningView(new NumberMeaning({ number: parseFloat(request.term) }))
         var item = $("<div>number: </div>").append(view.dom)
         matches.push({ value: item, result: view })
