@@ -108,11 +108,14 @@ var Context = my.Class({
     }
     else if(instr instanceof VM.INamedReference)
     {
-      // var val = this.envs[0].lookup(instr.name)
-      // if(val instanceof Array) {
-        
-      // }
-      this.frames[0].unshift(this.envs[0].lookup(instr.name))
+      try {
+        this.frames[0].unshift(this.envs[0].lookup(instr.name))
+      } catch(e) {
+        if(this.errorCallback) {
+          this.errorCallback(e)
+        }
+        this.unwind()
+      }
     }
     else if(instr instanceof VM.IPushEnv)
     {
