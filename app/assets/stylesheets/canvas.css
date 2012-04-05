@@ -415,7 +415,7 @@ div.happy-text span.text {
   font-family: monospace, "Arial Unicode MS";
 }
 div.happy-text span.whitespace {
-  color: #666;
+  color: #999;
 }
 div.happy-text span.cursor {
   display: inline-block;
