@@ -913,6 +913,7 @@ View.HappyTextbox = my.Class({
   
   _fakeSpaces: function(str) {
     return this._asHTML(str).replace(/ /g, "<span class='whitespace'>&#9251;</span>")
+                            .replace(/\n/g, "<span class='whitespace'>&#8629;</span>\n")
   },
   
   _resetText: function() {
