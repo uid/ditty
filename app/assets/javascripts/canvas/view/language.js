@@ -545,12 +545,12 @@ View.BasicMeaningView = my.Class({
       new Context([compiled], [new Env()], {
         finished: function(result) {
           if(showResult) {
-            $.achtung({ message: myToString(result) })
+            $.achtung({ message: myToString(result), timeout: 5 })
           }
         },
         error: function(e) {
           showResult = false
-          $.achtung({ message: e })
+          $.achtung({ message: e, timeout: 5 })
         }
       }).slowRun()
     }.bind(this)))
@@ -630,12 +630,12 @@ View.InvocationView = my.Class({
       var opts = {
         finished: function(result) {
           if(showResult) {
-            $.achtung({ message: myToString(result) })
+            $.achtung({ message: myToString(result), timeout: 5 })
           }
         },
         error: function(e) {
           showResult = false
-          $.achtung({ message: e })
+          $.achtung({ message: e, timeout: 5 })
         }
       }
       
