@@ -368,7 +368,7 @@ function addDefaultPatterns() {
   addSection("Variables")
   
   add({
-    representations: [{ template: "Set value of [variable name] to [value]." }],
+    representations: [{ template: "Set value of [variable name] to [value]." }, { template: "Set [variable name] = [value]." }],
     arguments: [{ name: "variable name" }, { name: "value" }],
     javascript_meaning: "vm.continuation(env.lookup('variable name'), env.lookup('value'), function(vals) { vm.envs[1].set(vals[0], vals[1]); return vals[1] })",
   })
