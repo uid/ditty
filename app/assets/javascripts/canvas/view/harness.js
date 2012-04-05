@@ -1,7 +1,14 @@
 
+var Submission = Backbone.DeepModel.extend({
+  defaults: {
+    solutions: {}
+  },
+})
+
 View.TaskHarness = my.Class({
   constructor: function(hud, tasks) {
     this.tasks = tasks
+    this.submission = new Submission()
     
     this.dom = $("<div class='task'></div>")
     View.setObjFor(this.dom, this)
@@ -15,7 +22,11 @@ View.TaskHarness = my.Class({
     hud.find(".text .input .input-placeholder").replaceWith(this.input.dom)
     hud.find(".text .output .output-placeholder").replaceWith(this.output.dom)
     
-    this.solutionSlot = new View.SlotView({ fillerHtml: "<div>Drag your solution</div><div>to this task here</div>" })
+    this.solutionSlot = new View.SlotView({
+      fillerHtml: "Drag your solution<br />to this task here",
+      drop: this.solutionDropped.bind(this),
+      dragout: this.solutionRemoved.bind(this)
+    })
     
     this.prevButtonDom = hud.find(".title .prev button")
     this.nextButtonDom = hud.find(".title .next button")
@@ -90,5 +101,13 @@ View.TaskHarness = my.Class({
       this.taskIndex = this.tasks.length - 1
     }
     this.render()
+  },
+  
+  solutionDropped: function(view) {
+    this.submission.set("solutions." + this.tasks.at(this.taskIndex).cid, view.model) // XXX: cid
+  },
+  
+  solutionRemoved: function(view, target) {
+    this.submission.unset("solutions." + this.tasks.at(this.taskIndex).cid) // XXX: cid
   },
 })
