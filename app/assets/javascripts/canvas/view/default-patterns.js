@@ -447,6 +447,11 @@ function addDefaultPatterns() {
     javascript_meaning: "vm.continuation(env.lookup('array'), function(vals) { return vals[0].pop() })",
   }, more)
   add({
+    representations: [{ template: "values in [array] joined by [string]" }],
+    arguments: [{ name: "array" }, { name: "string" }],
+    javascript_meaning: "vm.continuation(env.lookup('array'), env.lookup('string'), function(vals) { return vals[0].join(vals[1]) })",
+  }, more)
+  add({
     representations: [{ template: "[array] reversed" }],
     arguments: [{ name: "array" }],
     javascript_meaning: "vm.continuation(env.lookup('array'), function(vals) { return vals[0].slice(0).reverse() })",
