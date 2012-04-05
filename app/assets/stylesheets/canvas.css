@@ -282,8 +282,8 @@ div.trash {
   width: 131px;
   height: 132px;
   margin: 15px 5px 0 0;
-  position: absolute;
-  top: 0;
+  position: fixed;
+  bottom: 0;
   right: 0;
 }
 .no-drag-in-progress div.trash {
