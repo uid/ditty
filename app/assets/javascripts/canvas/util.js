@@ -189,3 +189,14 @@ var visibleWhitespace = function(str, options) {
   
   return str
 }
+
+
+// for now, only bothers getting the upper left corner into view
+var scrollIntoView = function(dom) {
+  if($("body").scrollTop() > dom.offset().top) {
+    $("body").animate({ scrollTop: dom.offset().top - 50 })
+  }
+  if($("body").scrollLeft() > dom.offset().left) {
+    $("body").animate({ scrollLeft: dom.offset().left - 50 })
+  }
+}
