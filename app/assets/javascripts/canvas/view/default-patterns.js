@@ -157,7 +157,7 @@ function addDefaultPatterns() {
   add({
     representations: [{ template: "[string] with [search string] replaced with [replacement string]" }],
     arguments: [{ name: "string" }, { name: "search string" }, { name: "replacement string" }],
-    javascript_meaning: "vm.continuation(env.lookup('string'), env.lookup('search string'), env.lookup('replacement string'), function(vals) { return vals[0].replace(vals[1], vals[2]) })",
+    javascript_meaning: "vm.continuation(env.lookup('string'), env.lookup('search string'), env.lookup('replacement string'), function(vals) { return vals[0].split(vals[1]).join(vals[2]) })",
   }, more)
   add({
     representations: [{ template: "components of [string] separated by [separator]" }],
