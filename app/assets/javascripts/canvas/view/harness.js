@@ -24,6 +24,10 @@ View.TaskHarness = my.Class({
     
     this.prevButtonDom.click(this.prevTask.bind(this))
     this.nextButtonDom.click(this.nextTask.bind(this))
+    this.taskList.change(function() {
+      this.taskIndex = this.taskList.val()
+      this.render()
+    }.bind(this))
     
     hud.find(".text .input button").click(function() {
       this.input.setText(this.task.get("example_before"))
@@ -44,6 +48,7 @@ View.TaskHarness = my.Class({
     
     var section
     var sectionDom
+    this.taskList.empty()
     this.tasks.each(function(task, index) {
       if(!section || task.get("section").name != section.name) { // XXX: cid
         section = task.get("section")
