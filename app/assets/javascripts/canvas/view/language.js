@@ -232,6 +232,13 @@ View.SlotView = my.Class({
     this.resetText()
     this.dom.droppable("enable")
   },
+  
+  eject: function() {
+    if(this.child) {
+      this.child.setParent(null)
+      delete this.child
+    }
+  },
 })
 
 
