@@ -24,7 +24,13 @@ $(function() {
   Globals.canvas = new View.CodeCanvas($("#canvas"))
   $("#canvas").append(new View.TrashView().dom)
     
-  View.patternAutocomplete($("#search"), function(){}, function(){})
+  View.patternAutocomplete($("#search"), function(view) {
+    Globals.canvas.dropped(view)
+    scrollIntoView(view.dom)
+    $("#search").val("")
+  }, function() {
+    $("#search").val("")
+  })
   
   addDefaultPatterns()
   
