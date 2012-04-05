@@ -266,6 +266,7 @@ ul.multislot li.inbetweener.not-editing:hover .insert {
   position: relative;
   min-width: 800px;
   min-height: 800px;
+  padding: 20px;
 }
 
 
