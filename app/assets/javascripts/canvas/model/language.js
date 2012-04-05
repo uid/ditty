@@ -106,16 +106,17 @@ var Pattern = Backbone.Model.extend({
     this._meaningHack()
     if(this.has("native_meaning")) {
       this.native_meaning = this.nestCollection("native_meaning", new MeaningCollection(this.get("native_meaning")))
+      // TODO: propagate changes to native_meaning too
     } else if(this.has("javascript_meaning")) {
       this.javascript_meaning = this.get("javascript_meaning")
       this.on("change:javascript_meaning", function() { this.javascript_meaning = this.get("javascript_meaning") }, this)
     }
     
-    this.templates.on("change", function() {
+    this.templates.on("add remove change", function() {
       this.trigger("change:representations", this, this.templates, { changes: { representations: true } })
       this.trigger("change", this, { changes: { representations: true } })
     }, this)
-    this.arguments.on("change", function() {
+    this.arguments.on("add remove change", function() {
       this.trigger("change:representations", this, this.templates, { changes: { representations: true } })
       this.trigger("change", this, { changes: { representations: true } })
     }, this)
@@ -182,7 +183,7 @@ var Invocation = Backbone.DeepModel.extend({
       if(!_.isArray(args[i])) {
         args[i] = [args[i]]
       }
-      this.arguments[i] = this.nestCollection("arguments." + i, new MeaningCollection(args[i]))
+      this._nestArgument(i, args[i])
     }
     
     // TODO: if pattern has only a client ID, detect when it gets a real ID and save that
@@ -216,9 +217,18 @@ var Invocation = Backbone.DeepModel.extend({
   argumentValue: function(name) {
     if(!this.arguments[name]) {
       var arg = this.get("arguments")[name] = []
-      this.arguments[name] = this.nestCollection("arguments." + name, new MeaningCollection(arg))
+      this._nestArgument(name, arg)
     }
     return this.arguments[name]
+  },
+  
+  _nestArgument: function(name, arg) {
+    this.arguments[name] = this.nestCollection("arguments." + name, new MeaningCollection(arg))
+    
+    this.arguments[name].on("add remove change", function() {
+      this.trigger("change:arguments", this, this.arguments, { changes: { arguments: true } })
+      this.trigger("change", this, { changes: { arguments: true } })
+    }, this)
   },
   
   compile: function() {
