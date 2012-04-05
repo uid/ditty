@@ -683,6 +683,7 @@ View.InvocationView = my.Class({
   
   representationsChanged: function() {
     this.renderRepresentation()
+    this.renderMeaning()
   },
   
   meaningChanged: function() {
