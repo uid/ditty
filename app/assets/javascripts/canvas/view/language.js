@@ -689,6 +689,10 @@ View.InvocationView = my.Class({
     this.renderMeaning()
   },
   
+  parentChanged: function() {
+    this.stopExecution()
+  },
+  
   stopExecution: function() {
     if(Globals.clickContext) {
       if(Globals.clickContext.starter == this) {

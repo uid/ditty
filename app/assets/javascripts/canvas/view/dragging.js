@@ -90,6 +90,7 @@ View.draggable = {
     if(parent == this.parent) return
     if(this.parent) this.parent.release(this)
     this.parent = parent
+    if(this.parentChanged) this.parentChanged()
   },
   
   // called by droppables who are within dropping distance
