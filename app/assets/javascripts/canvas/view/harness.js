@@ -29,7 +29,7 @@ View.TaskHarness = my.Class({
       this.input.setText(this.task.get("example_before"))
     }.bind(this))
     
-    hud.find(".title .next").prepend(this.solutionSlot.dom)
+    hud.find(".solution").append(this.solutionSlot.dom)
     
     this.taskIndex = 0
     this.render()

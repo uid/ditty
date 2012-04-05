@@ -343,7 +343,10 @@ table.debugger td {
 #hud table.title td.next {
   text-align: right;
 }
-#hud table.title span.slot {
+#hud .solution {
+  padding: 6px;
+}
+#hud .solution span.slot {
   display: inline-block;
   text-align: center;
   vertical-align: middle;
