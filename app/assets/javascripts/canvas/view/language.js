@@ -637,6 +637,9 @@ View.InvocationView = my.Class({
     this.invocation.on("change:representationIndex", this.representationsChanged, this)
     this.invocation.getPattern().on("change:representations", this.representationsChanged, this)
     
+    this.invocation.getPattern().on("change", this.stopExecution.bind(this))
+    this.invocation.on("change", this.stopExecution.bind(this))
+    
     View.draggable.draggable(this, this.dom, { handle: ".representation" })
     
     this.renderRepresentation()
@@ -683,11 +686,15 @@ View.InvocationView = my.Class({
   },
   
   meaningChanged: function() {
-    this.stopExecution()
     this.renderMeaning()
   },
   
   stopExecution: function() {
+    if(Globals.clickContext) {
+      if(Globals.clickContext.starter == this) {
+        Globals.clickContext.stop()
+      }
+    }
   },
   
   isEditing: function() {
