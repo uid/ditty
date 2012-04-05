@@ -9,6 +9,7 @@ View.patternAutocomplete = function(input, dropped, dismiss) {
     minLength: 0,
     source: function(request, callback) {
       var matches = []
+      var maxMatches = 10
       
       if(/^-?[0-9.]+$/i.exec(request.term) && !isNaN(parseFloat(request.term))) {
         var view = new View.BasicMeaningView(new NumberMeaning({ number: parseFloat(request.term) }))
@@ -35,63 +36,59 @@ View.patternAutocomplete = function(input, dropped, dismiss) {
         matches.push({ value: item, result: view })
       }
       
-      var keywords = request.term.toLowerCase().split(" ")
-      var keywordMatches = []
-      for(var pid in Patterns.models) {
-        if(isNaN(parseFloat(pid))) continue // skip non-numeric keys (they're backward-compatibility dupes)
-        var pattern = Patterns.models[pid]
-      
-        for(var i in pattern.templates.models) {
-          var template = pattern.templates.models[i]
-          var text = template.text.toLowerCase()
-          
-          // check that all keywords are present
-          var found = true
-          var minIndex = 1000
-          for(var j in keywords) {
-            var index = text.indexOf(keywords[j])
-            if(index == -1) {
-              found = false
-              break
-            }
-            if(index < minIndex) minIndex = index
-          }
-          if(found) {
-            var dom = $("<div style='position: relative'></div>")
-            var view = new View.InvocationView(new Invocation({ pattern: pattern, representationIndex: i }))
-            var preventClicksDom = $("<div style='position: absolute; left: 0; top: 0; width: 100%; height: 100%'></div>").appendTo(dom)
-            dom.append(view.dom)
-            dom.append(preventClicksDom)
+      if(maxMatches > matches.length) {
+        var keywords = request.term.toLowerCase().split(" ")
+        var keywordMatches = []
+        for(var pid in Patterns.models) {
+          if(isNaN(parseFloat(pid))) continue // skip non-numeric keys (they're backward-compatibility dupes)
+          var pattern = Patterns.models[pid]
+        
+          for(var i in pattern.templates.models) {
+            var template = pattern.templates.models[i]
+            var text = template.text.toLowerCase()
             
-            // // capture all mouse events before they can get to the view
-            // viewContainerDom.get(0).addEventListener('mousedown', function(e) { e.stopPropagation() }, true)
-            // viewContainerDom.get(0).addEventListener('mouseup', function(e) { e.stopPropagation() }, true)
-            // viewContainerDom.get(0).addEventListener('click', function(e) { e.stopPropagation() }, true)
-            
-            if(pattern.has("creator")) {
-              var creator = pattern.get("creator")
-              if(creator.ditty) {
-                dom.prepend($("<p class='author'>built-in</p>"))
-              } else if(pattern.isMine()) {
-                dom.prepend($("<p class='author'>created by <span style='color: blue; text-decoration: underline'>me</span></p>"))
-              } else {
-                dom.prepend($("<p class='author'>created by " + (creator.readable_name || "anonymous") + "</p>"))
+            // check that all keywords are present
+            var found = true
+            var minIndex = 1000
+            for(var j in keywords) {
+              var index = text.indexOf(keywords[j])
+              if(index == -1) {
+                found = false
+                break
               }
+              if(index < minIndex) minIndex = index
             }
-            ;(function(pattern, i, minIndex, view) {
-              keywordMatches.push({
-                minIndex: minIndex,
-                value: dom,
-                result: view
-              })
-            })(pattern, i, minIndex, view)
+            
+            // if so, remember it
+            if(found) {
+              keywordMatches.push({ minIndex: minIndex, invocation: new Invocation({ pattern: pattern, representationIndex: i }) })
+            }
           }
         }
+        keywordMatches.sort(function(a, b) { return a.minIndex - b.minIndex })
+        
+        // turn the top results into matches
+        matches.push.apply(matches, _.map(keywordMatches.slice(0, maxMatches - matches.length), function(m) {
+          var dom = $("<div style='position: relative'></div>")
+          var view = new View.InvocationView(m.invocation)
+          var preventClicksDom = $("<div style='position: absolute; left: 0; top: 0; width: 100%; height: 100%'></div>").appendTo(dom)
+          dom.append(view.dom)
+          dom.append(preventClicksDom)
+          
+          // if(pattern.has("creator")) {
+          //   var creator = pattern.get("creator")
+          //   if(creator.ditty) {
+          //     dom.prepend($("<p class='author'>built-in</p>"))
+          //   } else if(pattern.isMine()) {
+          //     dom.prepend($("<p class='author'>created by <span style='color: blue; text-decoration: underline'>me</span></p>"))
+          //   } else {
+          //     dom.prepend($("<p class='author'>created by " + (creator.readable_name || "anonymous") + "</p>"))
+          //   }
+          // }
+          
+          return { value: dom, result: view }
+        }))
       }
-      keywordMatches.sort(function(a, b) { return a.minIndex - b.minIndex })
-      matches.push.apply(matches, keywordMatches)
-      
-      matches = matches.slice(0, 10)
       
       callback(matches)
     },
