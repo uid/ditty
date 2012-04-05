@@ -918,14 +918,34 @@ View.HappyTextbox = my.Class({
   constructor: function(options) {
     options || (options = {})
     
-    this.dom = $("<div class='happy-text'></div>")
+    if(options.editable) this.editable = true
+    
+    this.dom = $("<div class='happy-text-container'></div>")
     View.setObjFor(this.dom, this)
+    
+    this.staticDom = $("<div class='happy-text'></div>").appendTo(this.dom)
     
     this.showCursor = true
     if("showCursor" in options) this.showCursor = options.showCursor
     
     this.setText(options.text || "")
     this.cursorPosition = 0
+    
+    if(this.editable) {
+      this.staticDom.click(function() {
+        this.textarea = $("<textarea></textarea>").text(this.text)
+                                                  .css({ width: this.staticDom.width(), height: this.staticDom.height() })
+                                                  .focusout(function() {
+                                                    this.setText(this.textarea.val())
+                                                    this.textarea.remove()
+                                                    delete this.textarea
+                                                    this.staticDom.show()
+                                                  }.bind(this))
+                                                  .prependTo(this.dom)
+                                                  .focus()
+        this.staticDom.hide()
+      }.bind(this))
+    }
     
     this._resetText()
   },
@@ -967,14 +987,14 @@ View.HappyTextbox = my.Class({
       var cursor = $("<span class='cursor' />")
       cursor.blink({ delay: Math.random() * 20 + 500 })
       
-      this.dom.empty()
-      this.dom.append($("<span class='text' />").html(visibleWhitespace(htmlEncode(this.text.slice(0, this.cursorPosition)))))
-      this.dom.append(cursor)
-      this.dom.append($("<span class='text' />").html(visibleWhitespace(htmlEncode(this.text.slice(this.cursorPosition)) + "\n")))
+      this.staticDom.empty()
+      this.staticDom.append($("<span class='text' />").html(visibleWhitespace(htmlEncode(this.text.slice(0, this.cursorPosition)))))
+      this.staticDom.append(cursor)
+      this.staticDom.append($("<span class='text' />").html(visibleWhitespace(htmlEncode(this.text.slice(this.cursorPosition)) + "\n")))
       // the extra newline is necessary so that there's a blank line at the end if the actual text ends with \n
     } else {
-      this.dom.empty()
-      this.dom.append($("<span class='text' />").html(visibleWhitespace(htmlEncode(this.text))))
+      this.staticDom.empty()
+      this.staticDom.append($("<span class='text' />").html(visibleWhitespace(htmlEncode(this.text))))
     }
   },
 })

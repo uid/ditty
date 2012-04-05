@@ -15,7 +15,7 @@ View.TaskHarness = my.Class({
     
     this.exampleInput = new View.HappyTextbox({ showCursor: false })
     this.exampleOutput = new View.HappyTextbox({ showCursor: false })
-    this.input = new View.HappyTextbox({ showCursor: false })
+    this.input = new View.HappyTextbox({ showCursor: false, editable: true })
     this.output = new View.HappyTextbox({ showCursor: false })
     hud.find(".example-text .input .input-placeholder").replaceWith(this.exampleInput.dom)
     hud.find(".example-text .output .output-placeholder").replaceWith(this.exampleOutput.dom)
@@ -41,7 +41,8 @@ View.TaskHarness = my.Class({
     }.bind(this))
     
     hud.find(".text .input button").click(function() {
-      this.input.setText(this.task.get("example_before"))
+      var task = this.tasks.at(this.taskIndex)
+      this.input.setText(task.get("example_before"))
     }.bind(this))
     
     hud.find(".text .output button").click(function() {
