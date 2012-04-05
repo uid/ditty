@@ -178,7 +178,7 @@ function addDefaultPatterns() {
     representations: [{ template: "[string 1] == [string 2]" }, { template: "[string 1] equals [string 2]" }],
     arguments: [{ name: "string 1" }, { name: "string 2" }],
     javascript_meaning: "vm.continuation(env.lookup('string 1'), env.lookup('string 2'), function(vals) { return vals[0] == vals[1] })",
-  })
+  }, more)
   add({
     representations: [{ template: "[object] is a string" }],
     arguments: [{ name: "object" }],
