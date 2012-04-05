@@ -29,6 +29,12 @@ View.patternAutocomplete = function(input, dropped, dismiss) {
         matches.push({ value: item, result: view })
       }
       
+      if(request.term.indexOf("\\n") != -1) {
+        var view = new View.BasicMeaningView(new StringMeaning({ string: request.term.replace(/\\n/g, "\n") }))
+        var item = $("<div>string: </div>").append(view.dom)
+        matches.push({ value: item, result: view })
+      }
+      
       var keywords = request.term.toLowerCase().split(" ")
       var keywordMatches = []
       for(var pid in Patterns.models) {
