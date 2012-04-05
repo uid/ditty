@@ -28,6 +28,12 @@ function addDefaultPatterns() {
     var invocation = new Invocation({ pattern: pattern.cid })
     var view = new View.InvocationView(invocation)
     Globals.canvas.dropped(view)
+    if($("body").scrollTop() > view.dom.offset().top) {
+      $("body").animate({ scrollTop: view.dom.offset().top - 50 })
+    }
+    if($("body").scrollLeft() > view.dom.offset().left) {
+      $("body").animate({ scrollLeft: view.dom.offset().left - 50 })
+    }
     view.toggleSource()
   }))
   
