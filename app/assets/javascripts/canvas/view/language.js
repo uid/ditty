@@ -398,6 +398,19 @@ View.MultiSlotView = my.Class({
     return "MultiSlotView()"
   },
   
+  setLimit: function(limit) {
+    if(limit == this.limit) {
+      return
+    }
+    
+    if(limit == 0) {
+      delete this.limit
+    } else {
+      this.limit = limit
+    }
+    this.rebuildDom()
+  },
+  
   // removes all children, recreates the DOM, and adds them back
   rebuildDom: function() {
     // beginning of a new epoch
@@ -771,8 +784,10 @@ View.InvocationView = my.Class({
   _slotView: function(param) {
     var name = param.get("name")
     if(name in this.slotViews) {
+      this.slotViews[name].setLimit(param.get("type") == "instructions" ? 0 : 1)
       return this.slotViews[name]
     }
+    
     // TODO: make a collection of the params and use that
     var svOpts = {
       fillerText: name,

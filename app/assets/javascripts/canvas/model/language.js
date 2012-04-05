@@ -115,6 +115,10 @@ var Pattern = Backbone.Model.extend({
       this.trigger("change:representations", this, this.templates, { changes: { representations: true } })
       this.trigger("change", this, { changes: { representations: true } })
     }, this)
+    this.arguments.on("change", function() {
+      this.trigger("change:representations", this, this.templates, { changes: { representations: true } })
+      this.trigger("change", this, { changes: { representations: true } })
+    }, this)
   },
   
   // TODO!
