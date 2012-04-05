@@ -726,12 +726,12 @@ View.InvocationView = my.Class({
       }.bind(this))
     }
     
-    var numCopies = Math.floor(Math.random() * 5) + 1 // XXX lol, obvs
-    if(numCopies > 1) {
-      var stats = $("<p class='stats'>editing all <span></span> copies. <a href='#'>edit only this copy</a></h3>").appendTo(this.meaningDom)
-      stats.children("span").text(numCopies)
-      stats.children("a").click(safeClick(function() { alert("sorry! can't do that yet."); return false }))
-    }
+    // var numCopies = Math.floor(Math.random() * 5) + 1 // XXX lol, obvs
+    // if(numCopies > 1) {
+    //   var stats = $("<p class='stats'>editing all <span></span> copies. <a href='#'>edit only this copy</a></h3>").appendTo(this.meaningDom)
+    //   stats.children("span").text(numCopies)
+    //   stats.children("a").click(safeClick(function() { alert("sorry! can't do that yet."); return false }))
+    // }
   },
   
   _slotView: function(param) {
