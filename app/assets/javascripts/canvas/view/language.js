@@ -533,11 +533,36 @@ View.BasicMeaningView = my.Class({
     View.draggable.draggable(this, this.dom, { handle: ".representation" })
     
     this.render()
+    
+    this.representationDom.click(safeClick(function(e, ui) {
+      var compiled = this.compile()
+      
+      var showResult = true
+      new Context([compiled], [new Env()], {
+        finished: function(result) {
+          if(showResult) {
+            $.achtung({ message: myToString(result) })
+          }
+        },
+        error: function(e) {
+          showResult = false
+          $.achtung({ message: e })
+        }
+      }).slowRun()
+    }.bind(this)))
   },
   
   render: function() {
     this.representationDom.empty()
     this.representationDom.html(visibleWhitespace(htmlEncode(this.meaning.getValue()), { space: false }))
+  },
+  
+  compile: function() {
+    var compiled = [this.meaning.compile()]
+    var before = new VM.IJavascript(function() { View.flash(this.representationDom, "green"); this.dom.addClass("active") }.bind(this), true /* noSave */)
+    var after = new VM.IJavascript(function() { this.dom.removeClass("active") }.bind(this), true /* noSave */)
+    before.runOnUnwind = after.runOnUnwind = true
+    return [before].concat(compiled.concat([after]))
   },
 })
 View.draggable.decorate(View.BasicMeaningView)
