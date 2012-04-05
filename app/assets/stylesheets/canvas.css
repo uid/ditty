@@ -18,8 +18,14 @@
 body {
   background: white url(/assets/grid.jpg);
   font-family: "Helvetica Neue", sans-serif;
-  padding-left: 35%;
-  margin-right: 16px;
+  padding: 0 0 0 35%;
+  margin: 0 16px 0 0;
+}
+
+#loading {
+  position: absolute;
+  left: 40px;
+  top: 40px;
 }
 
 
