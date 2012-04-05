@@ -554,18 +554,27 @@ View.BasicMeaningView = my.Class({
     this.representationDom.click(safeClick(function(e, ui) {
       var compiled = this.compile()
       
-      var showResult = true
-      new Context([compiled], [new Env()], {
+      if(Globals.clickContext) {
+        if(Globals.clickContext.starter == this) {
+          Globals.clickContext.stop()
+          return
+        }
+        Globals.clickContext.stop()
+      }
+      Globals.clickContext = new Context([compiled], [new Env()], {
         finished: function(result) {
-          if(showResult) {
+          if(typeof(result) !== "undefined") {
             $.achtung({ message: myToString(result), timeout: 5 })
           }
+          delete Globals.clickContext
         },
         error: function(e) {
-          showResult = false
           $.achtung({ message: e, timeout: 5 })
+          delete Globals.clickContext
         }
-      }).slowRun()
+      })
+      Globals.clickContext.starter = this
+      Globals.clickContext.slowRun()
     }.bind(this)))
   },
   
@@ -639,21 +648,30 @@ View.InvocationView = my.Class({
     this.representationDom.click(safeClick(function(e, ui) {
       var compiled = this.compile()
       
-      var showResult = true
       var opts = {
         finished: function(result) {
-          if(showResult) {
+          if(typeof(result) !== "undefined") {
             $.achtung({ message: myToString(result), timeout: 5 })
           }
+          delete Globals.clickContext
         },
         error: function(e) {
-          showResult = false
           $.achtung({ message: e, timeout: 5 })
+          delete Globals.clickContext
         }
       }
       
-      // new Context([compiled], [new Env()], opts).run()
-      new Context([compiled], [new Env()], opts).slowRun()
+      if(Globals.clickContext) {
+        if(Globals.clickContext.starter == this) {
+          Globals.clickContext.stop()
+          return
+        }
+        Globals.clickContext.stop()
+      }
+      // Globals.clickContext = new Context([compiled], [new Env()], opts).run()
+      Globals.clickContext = new Context([compiled], [new Env()], opts)
+      Globals.clickContext.starter = this
+      Globals.clickContext.slowRun()
       
       // debug the VM!
       // $("#debugger").html("").append(new Context([compiled], [new Env()]).debugDom())

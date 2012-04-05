@@ -115,6 +115,7 @@ var Context = my.Class({
           this.errorCallback(e)
         }
         this.unwind()
+        this.finished = true
       }
     }
     else if(instr instanceof VM.IPushEnv)
@@ -159,6 +160,7 @@ var Context = my.Class({
           this.errorCallback(e)
         }
         this.unwind()
+        this.finished = true
       }
       if(!instr.noSave) {
         this.result = result
@@ -174,11 +176,13 @@ var Context = my.Class({
   slowRun: function() {
     var instr = this._shift()
     if(typeof(instr) !== "undefined") {
+      this.runOne(instr)
       setTimeout(function() {
-        this.runOne(instr)
         this.slowRun()
       }.bind(this), 1)
-    } else {
+    } else if(!this.finished) {
+      this.finished = true
+      
       var result = this.result
       delete this.result
       if(this.finishedCallback) {
@@ -192,13 +196,17 @@ var Context = my.Class({
       var instr = this._shift()
       if(typeof(instr) !== "undefined") {
         this.runOne(instr)
-      } else {
+      } else if(!this.finished) {
+        this.finished = true
+        
         var result = this.result
         delete this.result
         if(this.finishedCallback) {
           this.finishedCallback(result)
         }
         return result
+      } else {
+        return
       }
     }
   },
@@ -278,6 +286,11 @@ var Context = my.Class({
     this.frames.unshift(saved)
     
     delete this.result
+  },
+  
+  stop: function() {
+    this.unwind()
+    this.run()
   },
   
   debugDom: function(done) {
