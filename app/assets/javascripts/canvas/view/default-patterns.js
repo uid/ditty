@@ -141,6 +141,11 @@ function addDefaultPatterns() {
     javascript_meaning: "vm.continuation(env.lookup('string'), env.lookup('start position'), env.lookup('end position'), function(vals) { return vals[0].substr(vals[1], vals[2]) })",
   }, more)
   add({
+    representations: [{ template: "line break character" }],
+    arguments: [],
+    javascript_meaning: "return \"\n\"",
+  }, more)
+  add({
     representations: [{ template: "position of [search string] in [string]" }],
     arguments: [{ name: "string" }, { name: "search string" }],
     javascript_meaning: "vm.continuation(env.lookup('string'), env.lookup('search string'), function(vals) { return vals[0].indexOf(vals[1]) })",
