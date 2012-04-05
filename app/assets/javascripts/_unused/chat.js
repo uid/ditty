@@ -15,7 +15,7 @@ Chat.ChatView = my.Class({
     $(this.toggleVisibility.bind(this))
     
     // entry
-    this.slotView = new SlotView(this, "Drag or type something here to chat")
+    this.slotView = new SlotView(this, "Drag or type commands here to chat")
     this.sendButton = $("<button>Send</button>")
     this.sendButton.click(this.sendClicked.bind(this))
     this.entryDom.append(this.slotView.dom)

@@ -165,7 +165,7 @@ View.SlotView = my.Class({
     options = options || {}
     
     this.parent = options.parent
-    this.fillerText = options.fillerText || "Drag or type something here."
+    this.fillerText = options.fillerText || "Drag or type commands here."
     if("fillerHtml" in options) this.fillerHtml = options.fillerHtml
     this.dropCallback = options.drop
     this.dragoutCallback = options.dragout
@@ -355,7 +355,7 @@ View.MultiSlotView = my.Class({
     options = options || {}
     
     if(options.parent) this.parent = options.parent
-    this.fillerText = options.fillerText || "Drag or type something here."
+    this.fillerText = options.fillerText || "Drag or type commands here."
     if(options.limit) this.limit = options.limit
     
     if("collection" in options) {
