@@ -90,6 +90,9 @@ div.bubble div.meaning textarea {
   font-size: 13px;
   line-height: 16px;
 }
+span.whitespace {
+  color: #999;
+}
 
 
 /* REFERENCE BUBBLES */
@@ -416,9 +419,6 @@ div.happy-text span.text {
   white-space: pre;
   /*background-color: #edfac8;*/
   font-family: monospace, "Arial Unicode MS";
-}
-div.happy-text span.whitespace {
-  color: #999;
 }
 div.happy-text span.cursor {
   display: inline-block;

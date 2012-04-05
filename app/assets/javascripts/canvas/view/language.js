@@ -537,7 +537,7 @@ View.BasicMeaningView = my.Class({
   
   render: function() {
     this.representationDom.empty()
-    this.representationDom.text(this.meaning.getValue())
+    this.representationDom.html(visibleWhitespace(htmlEncode(this.meaning.getValue()), { space: false }))
   },
 })
 View.draggable.decorate(View.BasicMeaningView)
