@@ -346,7 +346,7 @@ table.debugger td {
 #hud .solution {
   padding: 6px;
 }
-#hud .solution span.slot {
+#hud .solution span.slot.unfilled {
   display: inline-block;
   text-align: center;
   vertical-align: middle;
