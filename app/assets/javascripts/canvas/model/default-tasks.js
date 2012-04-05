@@ -16,6 +16,13 @@ Tasks.add({
   example_after: "\"Use the Force Luke\" said Obi-Wan.",
   section: TaskSections.at(0),
 })
+Tasks.add({
+  title: "grep",
+  description: "Output all lines containing \"pumpkin\", including the line break if there is one.",
+  example_before: "turn into a pumpkin at midnight\nescort your plump kin home\npumpkin harvest time is the best time\n",
+  example_after: "turn into a pumpkin at midnight\npumpkin harvest time is the best time\n",
+  section: TaskSections.at(0),
+})
 
 /*
 do as many of these as you can in an hour
