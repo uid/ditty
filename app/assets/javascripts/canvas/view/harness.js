@@ -75,6 +75,13 @@ View.TaskHarness = my.Class({
     
     var task = this.tasks.at(this.taskIndex)
     
+    this.solutionSlot.eject()
+    if(this.submission.has("solutions." + task.cid)) {
+      var solution = this.submission.get("solutions." + task.cid)
+      var view = View.viewForMeaning(solution)
+      this.solutionSlot.dropped(view)
+    }
+    
     this.prevButtonDom.attr("disabled", this.taskIndex == 0)
     this.nextButtonDom.attr("disabled", this.taskIndex == this.tasks.length - 1)
     
@@ -85,6 +92,7 @@ View.TaskHarness = my.Class({
     this.exampleInput.setText(task.get("example_before"))
     this.exampleOutput.setText(task.get("example_after"))
     this.input.setText(task.get("example_before"))
+    this.output.setText("")
   },
   
   prevTask: function() {
