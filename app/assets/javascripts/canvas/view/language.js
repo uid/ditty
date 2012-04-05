@@ -913,28 +913,19 @@ View.HappyTextbox = my.Class({
     return this.text[this.cursorPosition]
   },
   
-  _asHTML: function(str) {
-    return $("<div />").text(str).html()
-  },
-  
-  _fakeSpaces: function(str) {
-    return this._asHTML(str).replace(/ /g, "<span class='whitespace'>&#9251;</span>")
-                            .replace(/\n/g, "<span class='whitespace'>&#8629;</span>\n")
-  },
-  
   _resetText: function() {
     if(this.showCursor) {
       var cursor = $("<span class='cursor' />")
       cursor.blink({ delay: Math.random() * 20 + 500 })
       
       this.dom.empty()
-      this.dom.append($("<span class='text' />").html(this._fakeSpaces(this.text.slice(0, this.cursorPosition))))
+      this.dom.append($("<span class='text' />").html(visibleWhitespace(htmlEncode(this.text.slice(0, this.cursorPosition)))))
       this.dom.append(cursor)
-      this.dom.append($("<span class='text' />").html(this._fakeSpaces(this.text.slice(this.cursorPosition)) + "\n"))
+      this.dom.append($("<span class='text' />").html(visibleWhitespace(htmlEncode(this.text.slice(this.cursorPosition)) + "\n")))
       // the extra newline is necessary so that there's a blank line at the end if the actual text ends with \n
     } else {
       this.dom.empty()
-      this.dom.append($("<span class='text' />").html(this._fakeSpaces(this.text)))
+      this.dom.append($("<span class='text' />").html(visibleWhitespace(htmlEncode(this.text))))
     }
   },
 })

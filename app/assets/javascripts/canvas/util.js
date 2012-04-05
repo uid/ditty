@@ -170,3 +170,22 @@ function playAudio(uri) {
   audio.src = uri
   audio.play()
 }
+
+
+
+var htmlEncode = function(str) {
+  return $("<div />").text(str).html()
+}
+
+var visibleWhitespace = function(str, options) {
+  options || (options = {})
+  
+  if(!("space" in options) || options.space) {
+    str = str.replace(/ /g, "<span class='whitespace'>&#9251;</span>")
+  }
+  if(!("lineBreak" in options) || options.lineBreak) {
+    str = str.replace(/\n/g, "<span class='whitespace'>&#8629;</span>\n")
+  }
+  
+  return str
+}
