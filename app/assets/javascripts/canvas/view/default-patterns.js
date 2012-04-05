@@ -419,7 +419,7 @@ function addDefaultPatterns() {
     javascript_meaning: "return []",
   })
   add({
-    representations: [{ template: "number of items in [array]" }],
+    representations: [{ template: "number of items in [array]" }, { template: "length of [array]" }],
     arguments: [{ name: "array" }],
     javascript_meaning: "vm.continuation(env.lookup('array'), function(vals) { return vals[0].length })",
   })
