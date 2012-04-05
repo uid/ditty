@@ -785,7 +785,7 @@ View.InvocationView = my.Class({
         var paramsDom = $("<div>Variables: </div>").appendTo(this.meaningDom)
         for(var i in params) {
           var param = pattern.getArgument(params[i])
-          paramsDom.append(new View.ArgumentReferenceView(param).dom)
+          paramsDom.append(new View.BubbleBlower((function(param) { return function(parent) { return new View.ArgumentReferenceView(param, { parent: parent }) } })(param)).dom)
         }
         paramsDom.append("<hr />")
       }
