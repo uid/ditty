@@ -11,8 +11,8 @@ function addDefaultPatterns() {
   }
   var add = function(patternAttributes, section) {
     var pattern = new Pattern(patternAttributes)
-    Patterns.add(pattern);
-    (section || $("#palette")).append(new View.BubbleBlower(function(parent) { return new View.InvocationView(new Invocation({ pattern: pattern.cid }), { parent: parent }) }).dom)
+    Patterns.add(pattern)
+    ;(section || $("#palette")).append(new View.BubbleBlower(function(parent) { return new View.InvocationView(new Invocation({ pattern: pattern.cid }), { parent: parent }) }).dom)
     return pattern.cid
   }
   
