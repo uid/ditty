@@ -10,31 +10,52 @@ var Template = Backbone.Model.extend({
   },
   
   initialize: function() {
-    this._parse()
-    this.bind("change:template", this._parse, this)
+    this._changed()
+    this.bind("change:template", this._changed, this)
   },
   
-  _parse: function() {
-    this.components = []
-    this.parameters = []
+  validate: function(attrs) {
+    var parsed = this._parse(attrs.template || "")
+    if(parsed.error) {
+      return parsed.error
+    }
+  },
+  
+  _changed: function() {
+    var attrs = this._parse(this.attributes.template)
+    this.components = attrs.components
+    this.parameters = attrs.parameters
+    this.text = attrs.text
+  },
+  
+  _parse: function(text) {
+    var components = []
+    var parameters = []
     
-    var text = this.get("template")
     var result
     var i = 0
     var paramRegexp = /\[([^\]]+)\]/gi
     while((result = paramRegexp.exec(text)) != null) {
       var nonParamText = text.slice(i, paramRegexp.lastIndex - result[1].length - 2)
       if(nonParamText != "")
-        this.components.push({ text: nonParamText })
-      this.components.push({ parameter: result[1] })
-      this.parameters.push(result[1])
+        components.push({ text: nonParamText })
+      components.push({ parameter: result[1] })
+      if(parameters.indexOf(result[1]) != -1) {
+        return { error: "duplicate parameter " + result[1] }
+      } else {
+        parameters.push(result[1])
+      }
       i = paramRegexp.lastIndex
     }
     var nonParamText = text.slice(i)
     if(nonParamText != "")
-      this.components.push({ text: nonParamText })
+      components.push({ text: nonParamText })
     
-    this.text = $("<div />").html(text).text()
+    return {
+      components: components,
+      parameters: parameters,
+      text: $("<div />").html(text).text()
+    }
   },
 })
 var TemplateCollection = Backbone.Collection.extend({

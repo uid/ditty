@@ -444,3 +444,59 @@ div.happy-text span.cursor {
   vertical-align: middle;
   background: red;
 }
+
+
+/* TEMPLATE EDITOR */
+
+.template-editor-container .background {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: black;
+  opacity: 0.5;
+}
+.template-editor-container .template-editor {
+  overflow: auto;
+  position: fixed;
+  top: 20px;
+  bottom: 20px;
+  width: 400px;
+  margin: 0 auto;
+  background: white;
+  padding: 20px;
+  box-shadow: 0px 0px 40px #000;
+}
+.template-editor-container .template-editor h2 {
+  font-size: 18px;
+  margin: 0;
+  padding: 0;
+}
+.template-editor-container .template-editor h3 {
+  font-size: 18px;
+  margin: 20px 0 0;
+  padding: 0;
+}
+.template-editor-container .template-editor textarea {
+  width: 100%;
+  height: 3em;
+}
+.template-editor-container .template-editor table {
+  width: 100%;
+}
+.template-editor-container .template-editor table th,
+.template-editor-container .template-editor table th {
+  text-align: left;
+}
+.template-editor-container .template-editor .errors {
+  color: red;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+.template-editor-container .template-editor .buttons {
+  margin-top: 20px;
+}
+.template-editor-container .template-editor .buttons button {
+  margin-right: 20px;
+}

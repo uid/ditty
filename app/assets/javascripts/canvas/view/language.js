@@ -715,7 +715,9 @@ View.InvocationView = my.Class({
     }
     
     this.representationDom.append(" ")
-    this.representationDom.append($("<button class='reword'>Edit name&#8230;</button>"))
+    this.representationDom.append($("<button class='reword'>Edit name&#8230;</button>").click(function() {
+      new View.TemplateEditor(repr, pattern)
+    }))
   },
   
   renderEditableRepresentation: function() {
@@ -959,5 +961,149 @@ View.HappyTextbox = my.Class({
       this.dom.empty()
       this.dom.append($("<span class='text' />").html(visibleWhitespace(htmlEncode(this.text))))
     }
+  },
+})
+
+View.TemplateEditor = my.Class({
+  constructor: function(template, pattern) {
+    this.originalTemplate = template
+    this.template = new Template(template.attributes)
+    this.pattern = pattern
+    
+    this.newParams = new ArgumentReferenceCollection(this.pattern.get("arguments"))
+    
+    this.dom = $("<div class='template-editor-container'></div>").appendTo($("body"))
+    View.setObjFor(this.dom, this)
+    
+    this.backgroundView = $("<div class='background'></div>").appendTo(this.dom).click(function() { this.dom.remove() }.bind(this))
+    this.editorView = $("<div class='template-editor'></div>").appendTo(this.dom)
+    
+    $("<h2>Template</h2>").appendTo(this.editorView)
+    this.textEntry = $("<textarea></textarea>").text(this.template.text).appendTo(this.editorView)
+    this.textEntry.change(this._templateChanged.bind(this))
+    this.textEntry.keyup(this._templateChanged.bind(this))
+    
+    this.errorDom = $("<div class='errors'></div>").appendTo(this.editorView)
+    this.previewDom = $("<div class='preview'></div>").appendTo(this.editorView)
+    this._renderPreview()
+    
+    $("<h3>Parameters</h3>").appendTo(this.editorView)
+    this.paramsDom = $("<div class='params'></div>").appendTo(this.editorView)
+    this._renderParams()
+    
+    var buttons = $("<div class='buttons'></div>").appendTo(this.editorView)
+    this.cancelButton = $("<button>Cancel</button>").appendTo(buttons).click(function() { this.dom.remove() }.bind(this))
+    this.saveButton = $("<button>Save</button>").css("font-weight", "bold").appendTo(buttons).click(function() {
+      this._save()
+      this.dom.remove()
+    }.bind(this))
+    
+    this.template.on("error", function(template, error) {
+      this.errorDom.text("Error: " + error)
+      this.saveButton.attr("disabled", true)
+    }, this)
+    
+    this.textEntry.focus()
+  },
+  
+  _save: function() {
+    var removed = this.pattern.arguments.filter(function(arg) { return this.template.parameters.indexOf(arg.get("name")) == -1 }.bind(this))
+    this.pattern.arguments.remove(removed)
+    
+    for(var i in this.template.parameters) {
+      var name = this.template.parameters[i]
+      var novel = this.newParams.where({ name: name })[0]
+      var existing = this.pattern.arguments.where({ name: name })[0]
+      if(existing) {
+        existing.clear({ silent: true })
+        existing.set(novel.attributes)
+      } else {
+        this.pattern.arguments.add(novel.attributes)
+      }
+    }
+    
+    this.originalTemplate.set("template", this.template.get("template"))
+  },
+  
+  _templateChanged: _.throttle(function() {
+    if(this.template.set("template", this.textEntry.val())) {
+      this.errorDom.empty()
+      this.saveButton.attr("disabled", false)
+    }
+    this._updateParams()
+    this._renderPreview()
+    this._renderParams()
+  }, 300),
+  
+  _updateParams: function() {
+    for(var i in this.template.parameters) {
+      var name = this.template.parameters[i]
+      var param = this.newParams.where({ name: name })[0]
+      
+      // create the parameter if it's new
+      if(!param) {
+        param = new this.newParams.model({ name: name, type: "value" })
+        param.added = true
+        this.newParams.add(param)
+      }
+    }
+  },
+  
+  _renderPreview: function() {
+    this.previewDom.empty()
+    
+    var bubble = $("<div class='bubble'></div>").appendTo(this.previewDom)
+    var repr = $("<div class='representation'></div>").appendTo(bubble)
+    
+    for(var i in this.template.components) {
+      var c = this.template.components[i]
+      if("text" in c) {
+        repr.append(c.text)
+      } else if("parameter" in c) {
+        $("<span class='slot unfilled'></span>").text(c.parameter).appendTo(repr)
+      }
+    }
+  },
+  
+  _renderParams: function() {
+    this.paramsDom.empty()
+    
+    var table = $("<table></table>").appendTo(this.paramsDom)
+    table.append($("<tr><th>Name</th><th>Type</th></tr>"))
+    
+    for(var i in this.template.parameters) {
+      var name = this.template.parameters[i]
+      this._makeParamRow(name, table)
+    }
+  },
+  
+  _makeParamRow: function(name, table) {
+    var row = $("<tr></tr>").appendTo(table)
+    var param = this.newParams.where({ name: name })[0]
+    
+    // name
+    $("<td></td>").text(name).appendTo(row)
+    
+    // type
+    var type = param.get("type")
+    var select = this._typeSelect(type)
+    select.change(function() {
+      param.set("type", select.val() )
+    }.bind(this))
+    $("<td></td>").append(select).appendTo(row)
+    
+    // state
+    $("<td></td>").text(param.added ? "new" : "").appendTo(row)
+  },
+  
+  _typeSelect: function(type) {
+    var types = ["value", "instructions"]
+    var dom = $("<select></select>")
+    
+    for(var i in types) {
+      $("<option></option>").text(types[i]).attr("selected", type == types[i]).appendTo(dom)
+    }
+    
+    return dom
   },
 })
