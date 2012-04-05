@@ -749,7 +749,7 @@ View.InvocationView = my.Class({
       this.meaningDom.append(this.meaningMSV.dom)
     } else if("javascript_meaning" in pattern) {
       var meaning = pattern.javascript_meaning
-      $("<textarea></textarea>").appendTo(this.meaningDom).val(meaning).change(function(e) {
+      $("<textarea disabled></textarea>").appendTo(this.meaningDom).val(meaning).change(function(e) {
         this.invocation.getPattern().set("javascript_meaning", $(e.target).val())
       }.bind(this))
     }
