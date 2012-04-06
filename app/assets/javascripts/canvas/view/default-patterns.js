@@ -136,6 +136,11 @@ function addDefaultPatterns() {
   more = addHiddenSection()
   
   add({
+    representations: [{ template: "empty string" }],
+    arguments: [],
+    javascript_meaning: "return ''",
+  }, more)
+  add({
     representations: [
       { template: "characters of [string] between [start position] and [end position]" },
       { template: "slice of [string] from character [start position] to [end position]" },
