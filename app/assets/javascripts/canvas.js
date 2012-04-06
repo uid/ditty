@@ -25,9 +25,9 @@ $(function() {
   $("#canvas").append(new View.TrashView().dom)
     
   View.patternAutocomplete($("#search"), function(view) {
+    setTimeout(function() { $("#search").val("") }, 10)
     Globals.canvas.dropped(view)
     scrollIntoView(view.dom)
-    $("#search").val("")
   }, function() {
     $("#search").val("")
   })
