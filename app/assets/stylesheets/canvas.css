@@ -285,17 +285,17 @@ div.trash {
   position: fixed;
   bottom: 0;
   right: 0;
-}
-.no-drag-in-progress div.trash {
-  display: none;
-}
-.drag-in-progress div.trash {
   background: url(/assets/trash-empty.png) no-repeat;
   opacity: 0.3;
 }
+.no-drag-in-progress div.trash {
+}
+.drag-in-progress div.trash {
+  opacity: 0.8;
+}
 .drag-in-progress div.trash.hover {
   background: url(/assets/trash-full.png) no-repeat;
-  opacity: 0.8;
+  opacity: 1;
 }
 
 
