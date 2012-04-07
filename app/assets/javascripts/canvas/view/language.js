@@ -567,7 +567,7 @@ View.BasicMeaningView = my.Class({
         }
         Globals.clickContext.stop()
       }
-      Globals.clickContext = new Context([compiled], [new Env()], {
+      Globals.clickContext = new Context([compiled], [Globals.clickEnv], {
         finished: function(result) {
           if(typeof(result) !== "undefined") {
             $.achtung({ message: myToString(result), timeout: 5 })
@@ -677,8 +677,8 @@ View.InvocationView = my.Class({
         }
         Globals.clickContext.stop()
       }
-      // Globals.clickContext = new Context([compiled], [new Env()], opts).run()
-      Globals.clickContext = new Context([compiled], [new Env()], opts)
+      // Globals.clickContext = new Context([compiled], [Globals.clickEnv], opts).run()
+      Globals.clickContext = new Context([compiled], [Globals.clickEnv], opts)
       Globals.clickContext.starter = this
       Globals.clickContext.slowRun()
       

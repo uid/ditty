@@ -32,6 +32,8 @@ $(function() {
     $("#search").val("")
   })
   
+  Globals.clickEnv = new Env()
+  
   addDefaultPatterns()
   
   // $("body").append("<div id='debugger'></div>")
