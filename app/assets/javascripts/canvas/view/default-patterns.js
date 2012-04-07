@@ -115,6 +115,15 @@ function addDefaultPatterns() {
   // })
   
   
+  addSection("Debugging")
+  
+  add({
+    representations: [{ template: "display [object]" }],
+    arguments: [{ name: "object" }],
+    javascript_meaning: "vm.continuation(env.lookup('object'), function(vals) { $.achtung({ message: myToString(vals[0]), timeout: 5, className: 'debug' }) })",
+  }, more)
+  
+  
   addSection("Strings")
   
   add({
