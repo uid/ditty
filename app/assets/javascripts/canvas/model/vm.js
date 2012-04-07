@@ -25,6 +25,10 @@ VM.ICall = my.Class({
   toString: function() { return "Call(frame: [" + this.frame + "]; args: " + myToString(this.args) + ")" },
 })
 
+VM.IPause = my.Class({
+  toString: function() { return "Pause" },
+})
+
 VM.IJavascript = my.Class({
   constructor: function(source, noSave) {
     if(typeof(source) === "string") {
@@ -150,6 +154,10 @@ var Context = my.Class({
       delete this.result
       this.frames = [instr.frame.slice(0)].concat(this.frames)
     }
+    else if(instr instanceof VM.IPause)
+    {
+      this.paused = true
+    }
     else if(instr instanceof VM.IJavascript)
     {
       var result
@@ -177,9 +185,13 @@ var Context = my.Class({
     var instr = this._shift()
     if(typeof(instr) !== "undefined") {
       this.runOne(instr)
-      setTimeout(function() {
-        this.slowRun()
-      }.bind(this), 1)
+      if(this.paused) {
+        delete this.paused
+      } else {
+        setTimeout(function() {
+          this.slowRun()
+        }.bind(this), 1)
+      }
     } else if(!this.finished) {
       this.finished = true
       
@@ -196,6 +208,10 @@ var Context = my.Class({
       var instr = this._shift()
       if(typeof(instr) !== "undefined") {
         this.runOne(instr)
+        if(this.paused) {
+          delete this.paused
+          return
+        }
       } else if(!this.finished) {
         this.finished = true
         
