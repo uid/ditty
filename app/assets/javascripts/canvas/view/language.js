@@ -27,6 +27,9 @@ View.patternAutocomplete = function(input, dropped, dismiss) {
       if(true) {
         var view = new View.BasicMeaningView(new StringMeaning({ string: request.term }))
         var item = $("<div>string: </div>").append(view.dom)
+        if(request.term[0] == "\"") {
+          item.append(" (quotes are unnecessary)")
+        }
         matches.push({ value: item, result: view })
       }
       
