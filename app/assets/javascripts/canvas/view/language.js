@@ -971,6 +971,9 @@ View.HappyTextbox = my.Class({
       this.staticDom.click(function() {
         this.textarea = $("<textarea></textarea>").text(this.text)
                                                   .css({ width: this.staticDom.width(), height: this.staticDom.height() })
+                                                  .keypress(function() {
+                                                    this.setText(this.textarea.val())
+                                                  }.bind(this))
                                                   .focusout(function() {
                                                     this.setText(this.textarea.val())
                                                     this.textarea.remove()
