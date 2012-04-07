@@ -141,6 +141,11 @@ function addDefaultPatterns() {
     javascript_meaning: "return ''",
   }, more)
   add({
+    representations: [{ template: "line break character" }],
+    arguments: [],
+    javascript_meaning: "return \"\\n\"",
+  }, more)
+  add({
     representations: [
       { template: "characters of [string] between [start position] and [end position]" },
       { template: "slice of [string] from character [start position] to [end position]" },
@@ -148,11 +153,6 @@ function addDefaultPatterns() {
     ],
     arguments: [{ name: "string" }, { name: "start position" }, { name: "end position" }],
     javascript_meaning: "vm.continuation(env.lookup('string'), env.lookup('start position'), env.lookup('end position'), function(vals) { return vals[0].substr(vals[1], vals[2]) })",
-  }, more)
-  add({
-    representations: [{ template: "line break character" }],
-    arguments: [],
-    javascript_meaning: "return \"\\n\"",
   }, more)
   add({
     representations: [{ template: "position of [search string] in [string]" }],
@@ -178,11 +178,6 @@ function addDefaultPatterns() {
     representations: [{ template: "uppercase version of [string]" }],
     arguments: [{ name: "string" }],
     javascript_meaning: "vm.continuation(env.lookup('string'), function(vals) { return vals[0].toUpperCase() })",
-  }, more)
-  add({
-    representations: [{ template: "[string 1] == [string 2]" }, { template: "[string 1] equals [string 2]" }],
-    arguments: [{ name: "string 1" }, { name: "string 2" }],
-    javascript_meaning: "vm.continuation(env.lookup('string 1'), env.lookup('string 2'), function(vals) { return vals[0] == vals[1] })",
   }, more)
   add({
     representations: [{ template: "[object] is a string" }],
@@ -253,6 +248,16 @@ function addDefaultPatterns() {
   addSection("Comparisons")
   
   add({
+    representations: [{ template: "[left thing] == [right thing]" }, { template: "[left thing] equals [right thing]" }],
+    arguments: [{ name: "left thing" }, { name: "right thing" }],
+    javascript_meaning: "vm.continuation(env.lookup('left thing'), env.lookup('right thing'), function(vals) { return vals[0] == vals[1] })",
+  })
+  add({
+    representations: [{ template: "[left thing] &ne; [right thing]" }, { template: "[left thing] != [right thing]" }],
+    arguments: [{ name: "left thing" }, { name: "right thing" }],
+    javascript_meaning: "vm.continuation(env.lookup('left thing'), env.lookup('right thing'), function(vals) { return vals[0] != vals[1] })",
+  })
+  add({
     representations: [{ template: "[left number] &lt; [right number]" }],
     arguments: [{ name: "left number" }, { name: "right number" }],
     javascript_meaning: "vm.continuation(env.lookup('left number'), env.lookup('right number'), function(vals) { return vals[0] < vals[1] })",
@@ -261,16 +266,6 @@ function addDefaultPatterns() {
     representations: [{ template: "[left number] &gt; [right number]" }],
     arguments: [{ name: "left number" }, { name: "right number" }],
     javascript_meaning: "vm.continuation(env.lookup('left number'), env.lookup('right number'), function(vals) { return vals[0] > vals[1] })",
-  })
-  add({
-    representations: [{ template: "[left number] == [right number]" }, { template: "[left number] equals [right number]" }],
-    arguments: [{ name: "left number" }, { name: "right number" }],
-    javascript_meaning: "vm.continuation(env.lookup('left number'), env.lookup('right number'), function(vals) { return vals[0] == vals[1] })",
-  })
-  add({
-    representations: [{ template: "[left number] &ne; [right number]" }, { template: "[left number] != [right number]" }],
-    arguments: [{ name: "left number" }, { name: "right number" }],
-    javascript_meaning: "vm.continuation(env.lookup('left number'), env.lookup('right number'), function(vals) { return vals[0] != vals[1] })",
   })
   
   more = addHiddenSection()
