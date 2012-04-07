@@ -279,13 +279,13 @@ ul.multislot li.inbetweener.not-editing:hover .insert {
 /* TRASH CAN */
 
 div.trash {
-  width: 131px;
-  height: 132px;
+  width: 70px;
+  height: 71px;
   margin: 15px 5px 0 0;
   position: fixed;
   bottom: 0;
   right: 0;
-  background: url(/assets/trash-empty.png) no-repeat;
+  background: url(/assets/trash-empty-small.png) no-repeat;
   opacity: 0.3;
 }
 .no-drag-in-progress div.trash {
@@ -294,7 +294,7 @@ div.trash {
   opacity: 0.8;
 }
 .drag-in-progress div.trash.hover {
-  background: url(/assets/trash-full.png) no-repeat;
+  background: url(/assets/trash-full-small.png) no-repeat;
   opacity: 1;
 }
 
