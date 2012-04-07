@@ -193,6 +193,9 @@ var Invocation = Backbone.DeepModel.extend({
   getPattern: function() {
     if(!this._pattern) {
       var pattern = this.get("pattern")
+      if(!pattern) {
+        throw new Error("no pattern!")
+      }
       if(pattern instanceof Backbone.Model) {
         this._pattern = pattern
       } else {
