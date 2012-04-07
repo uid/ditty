@@ -335,6 +335,16 @@ function addDefaultPatterns() {
     arguments: [{ name: "condition" }, { name: "actions if true", type: "instructions" }, { name: "actions if false", type: "instructions" }],
     javascript_meaning: "vm.continuation(env.lookup('condition'), function(vals) { vm.delegate(vals[0] ? env.lookup('actions if true') : env.lookup('actions if false')) })",
   })
+  var loopPattern = add({
+    representations: [{ template: "loop {<br />[actions]<br />}" }],
+    arguments: [{ name: "actions", type: "instructions" }],
+    javascript_meaning: "vm.beginLoop(); var f = function() { vm.continuation(env.lookup('actions'), f) }; f()",
+  })
+  var breakPattern = add({
+    representations: [{ template: "Break." }],
+    arguments: [],
+    javascript_meaning: "vm.breakLoop()",
+  })
   add({
     representations: [{ template: "while([condition]) {<br />[actions]<br />}" }],
     arguments: [{ name: "condition" }, { name: "actions", type: "instructions" }],
@@ -369,19 +379,6 @@ function addDefaultPatterns() {
       }
     ],
   })
-  var breakPattern = add({
-    representations: [{ template: "Break." }],
-    arguments: [],
-    javascript_meaning: "vm.breakLoop()",
-  })
-  
-  more = addHiddenSection()
-  
-  var loopPattern = add({
-    representations: [{ template: "loop {<br />[actions]<br />}" }],
-    arguments: [{ name: "actions", type: "instructions" }],
-    javascript_meaning: "vm.beginLoop(); var f = function() { vm.continuation(env.lookup('actions'), f) }; f()",
-  }, more)
   
   
   addSection("Variables")
