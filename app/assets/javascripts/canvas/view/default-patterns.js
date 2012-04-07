@@ -193,6 +193,8 @@ function addDefaultPatterns() {
   
   addSection("Numbers")
   
+  $("#palette").append("<p>You add specific numbers by typing them.</p>")
+  
   add({
     representations: [{ template: "[left number] &plus; [right number]" }],
     arguments: [{ name: "left number" }, { name: "right number" }],
