@@ -194,9 +194,9 @@ function addDefaultPatterns() {
     javascript_meaning: "vm.continuation(env.lookup('string'), function(vals) { return vals[0].toUpperCase() })",
   }, more)
   add({
-    representations: [{ template: "[object] is a string" }],
-    arguments: [{ name: "object" }],
-    javascript_meaning: "vm.continuation(env.lookup('object'), function(vals) { return typeof(vals[0]) === 'string' })",
+    representations: [{ template: "[value] is a string" }],
+    arguments: [{ name: "value" }],
+    javascript_meaning: "vm.continuation(env.lookup('value'), function(vals) { return typeof(vals[0]) === 'string' })",
   }, more)
   
   
@@ -271,19 +271,19 @@ function addDefaultPatterns() {
     arguments: [{ name: "left thing" }, { name: "right thing" }],
     javascript_meaning: "vm.continuation(env.lookup('left thing'), env.lookup('right thing'), function(vals) { return vals[0] != vals[1] })",
   })
+  
+  more = addHiddenSection()
+  
   add({
     representations: [{ template: "[left number] &lt; [right number]" }],
     arguments: [{ name: "left number" }, { name: "right number" }],
     javascript_meaning: "vm.continuation(env.lookup('left number'), env.lookup('right number'), function(vals) { return vals[0] < vals[1] })",
-  })
+  }, more)
   add({
     representations: [{ template: "[left number] &gt; [right number]" }],
     arguments: [{ name: "left number" }, { name: "right number" }],
     javascript_meaning: "vm.continuation(env.lookup('left number'), env.lookup('right number'), function(vals) { return vals[0] > vals[1] })",
-  })
-  
-  more = addHiddenSection()
-  
+  }, more)
   add({
     representations: [{ template: "[left number] &le; [right number]" }, { template: "[left number] &lt;= [right number]" }],
     arguments: [{ name: "left number" }, { name: "right number" }],
@@ -299,7 +299,7 @@ function addDefaultPatterns() {
   addSection("Logic")
   
   var logicalNegationPattern = add({
-    representations: [{ template: "![boolean]" }],
+    representations: [{ template: "! [boolean]" }],
     arguments: [{ name: "boolean" }],
     javascript_meaning: "vm.continuation(env.lookup('boolean'), function(vals) { return !vals[0] })",
   })
@@ -325,16 +325,6 @@ function addDefaultPatterns() {
   
   addSection("Control Flow")
   
-  var loopPattern = add({
-    representations: [{ template: "loop {<br />[actions]<br />}" }],
-    arguments: [{ name: "actions", type: "instructions" }],
-    javascript_meaning: "vm.beginLoop(); var f = function() { vm.continuation(env.lookup('actions'), f) }; f()",
-  })
-  var breakPattern = add({
-    representations: [{ template: "Break." }],
-    arguments: [],
-    javascript_meaning: "vm.breakLoop()",
-  })
   var ifPattern = add({
     representations: [{ template: "if([condition]) {<br />[actions]<br />}" }],
     arguments: [{ name: "condition" }, { name: "actions", type: "instructions" }],
@@ -379,6 +369,19 @@ function addDefaultPatterns() {
       }
     ],
   })
+  var breakPattern = add({
+    representations: [{ template: "Break." }],
+    arguments: [],
+    javascript_meaning: "vm.breakLoop()",
+  })
+  
+  more = addHiddenSection()
+  
+  var loopPattern = add({
+    representations: [{ template: "loop {<br />[actions]<br />}" }],
+    arguments: [{ name: "actions", type: "instructions" }],
+    javascript_meaning: "vm.beginLoop(); var f = function() { vm.continuation(env.lookup('actions'), f) }; f()",
+  }, more)
   
   
   addSection("Variables")
@@ -403,14 +406,14 @@ function addDefaultPatterns() {
     javascript_meaning: "return {}",
   })
   add({
-    representations: [{ template: "Set the value of [key] in [object] to [value]." }],
-    arguments: [{ name: "object" }, { name: "key" }, { name: "value" }],
-    javascript_meaning: "vm.continuation(env.lookup('object'), env.lookup('key'), env.lookup('value'), function(vals) { return vals[0][vals[1]] = vals[2] })",
+    representations: [{ template: "Set the value of [key string] in [object] to [value]." }],
+    arguments: [{ name: "object" }, { name: "key string" }, { name: "value" }],
+    javascript_meaning: "vm.continuation(env.lookup('object'), env.lookup('key string'), env.lookup('value'), function(vals) { return vals[0][vals[1]] = vals[2] })",
   })
   add({
-    representations: [{ template: "value of [key] in [object]" }],
-    arguments: [{ name: "object" }, { name: "key" }],
-    javascript_meaning: "vm.continuation(env.lookup('object'), env.lookup('key'), function(vals) { return vals[0][vals[1]] })",
+    representations: [{ template: "value of [key string] in [object]" }],
+    arguments: [{ name: "object" }, { name: "key string" }],
+    javascript_meaning: "vm.continuation(env.lookup('object'), env.lookup('key string'), function(vals) { return vals[0][vals[1]] })",
   })
   
   more = addHiddenSection()
@@ -421,9 +424,9 @@ function addDefaultPatterns() {
     javascript_meaning: "vm.continuation(env.lookup('object'), function(vals) { return _.keys(vals[0]) })",
   }, more)
   add({
-    representations: [{ template: "remove value for [key] in [object]" }],
-    arguments: [{ name: "object" }, { name: "key" }],
-    javascript_meaning: "vm.continuation(env.lookup('object'), env.lookup('key'), function(vals) { delete vals[0][vals[1]] })",
+    representations: [{ template: "remove value for [key string] in [object]" }],
+    arguments: [{ name: "object" }, { name: "key string" }],
+    javascript_meaning: "vm.continuation(env.lookup('object'), env.lookup('key string'), function(vals) { delete vals[0][vals[1]] })",
   }, more)
   
   
@@ -440,14 +443,14 @@ function addDefaultPatterns() {
     javascript_meaning: "vm.continuation(env.lookup('array'), function(vals) { return vals[0].length })",
   })
   add({
-    representations: [{ template: "set value of [array] at index [index] to [value]" }],
-    arguments: [{ name: "array" }, { name: "index" }, { name: "value" }],
-    javascript_meaning: "vm.continuation(env.lookup('array'), env.lookup('index'), env.lookup('value'), function(vals) { return vals[0][vals[1]] = vals[2] })",
-  })
-  add({
     representations: [{ template: "value of [array] at index [index]" }],
     arguments: [{ name: "array" }, { name: "index" }],
     javascript_meaning: "vm.continuation(env.lookup('array'), env.lookup('index'), function(vals) { return vals[0][vals[1]] })",
+  })
+  add({
+    representations: [{ template: "set value of [array] at index [index] to [value]" }],
+    arguments: [{ name: "array" }, { name: "index" }, { name: "value" }],
+    javascript_meaning: "vm.continuation(env.lookup('array'), env.lookup('index'), env.lookup('value'), function(vals) { return vals[0][vals[1]] = vals[2] })",
   })
   add({
     representations: [{ template: "append [value] to [array]" }, { template: "push [value] onto [array]" }],
@@ -483,8 +486,8 @@ function addDefaultPatterns() {
     javascript_meaning: "vm.continuation(env.lookup('array'), env.lookup('object'), function(vals) { return vals[0].indexOf(vals[1]) })",
   }, more)
   add({
-    representations: [{ template: "[object] is an array" }],
-    arguments: [{ name: "object" }],
-    javascript_meaning: "vm.continuation(env.lookup('object'), function(vals) { return vals[0] instanceof Array })",
+    representations: [{ template: "[value] is an array" }],
+    arguments: [{ name: "value" }],
+    javascript_meaning: "vm.continuation(env.lookup('value'), function(vals) { return vals[0] instanceof Array })",
   }, more)
 }
