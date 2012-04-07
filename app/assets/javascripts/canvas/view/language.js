@@ -969,19 +969,31 @@ View.HappyTextbox = my.Class({
     
     if(this.editable) {
       this.staticDom.click(function() {
+        var hide = function() {
+          this.textarea.remove()
+          delete this.textarea
+          this.staticDom.show()
+          $("body").unbind("mousedown", duder)
+        }.bind(this)
+        var update = function() {
+          this.setText(this.textarea.val())
+        }.bind(this)
+        var duder = function(e) {
+          if(e.target != this.textarea.get(0)) {
+            update()
+            hide()
+          }
+        }.bind(this)
         this.textarea = $("<textarea></textarea>").text(this.text)
                                                   .css({ width: this.staticDom.width(), height: this.staticDom.height() })
-                                                  .keypress(function() {
-                                                    this.setText(this.textarea.val())
-                                                  }.bind(this))
+                                                  .keypress(update)
                                                   .focusout(function() {
-                                                    this.setText(this.textarea.val())
-                                                    this.textarea.remove()
-                                                    delete this.textarea
-                                                    this.staticDom.show()
+                                                    update()
+                                                    hide()
                                                   }.bind(this))
                                                   .prependTo(this.dom)
                                                   .focus()
+        $("body").bind("mousedown", duder)
         this.staticDom.hide()
       }.bind(this))
     }
