@@ -143,31 +143,79 @@ View.viewForMeaning = function(meaning) {
 }
 
 
-View.runSelf = function() {
-  var compiled = this.compile()
+// you probably want to override compile()
+View.Executable = my.Class({
+  executeOrStop: function() {
+    if(this.isExecuting()) {
+      this.stopExecution()
+    } else {
+      this.execute()
+    }
+  },
   
-  if(Globals.clickContext) {
-    if(Globals.clickContext.starter == this) {
+  isExecuting: function() {
+    return Globals.clickContext && Globals.clickContext.starter == this
+  },
+  
+  execute: function() {
+    var compiled = this.compile()
+    
+    // if something else is executing, stop it
+    if(Globals.clickContext) {
       Globals.clickContext.stop()
-      return
     }
-    Globals.clickContext.stop()
-  }
-  Globals.clickContext = new Context([compiled], [Globals.clickEnv], {
-    finished: function(result) {
-      if(typeof(result) !== "undefined") {
-        $.achtung({ message: myToString(result), timeout: 5 })
+    
+    // create our context
+    Globals.clickContext = new Context([compiled], [Globals.clickEnv], {
+      finished: function(result) {
+        this.executionFinished.apply(this, arguments)
+        delete Globals.clickContext
+      }.bind(this),
+      error: function(e) {
+        this.executionError.apply(this, arguments)
+        delete Globals.clickContext
+      }.bind(this)
+    })
+    Globals.clickContext.starter = this
+    
+    // callback
+    this.executionStarting()
+    
+    // begin!
+    Globals.clickContext.slowRun()
+  },
+  
+  stopExecution: function() {
+    if(Globals.clickContext) {
+      if(Globals.clickContext.starter == this) {
+        Globals.clickContext.stop()
       }
-      delete Globals.clickContext
-    },
-    error: function(e) {
-      $.achtung({ message: e, timeout: 5 })
-      delete Globals.clickContext
     }
-  })
-  Globals.clickContext.starter = this
-  Globals.clickContext.slowRun()
-}
+  },
+  
+  executionStarting: function() {
+  },
+  
+  executionFinished: function(result) {
+    if(typeof(result) !== "undefined") {
+      $.achtung({ message: myToString(result), timeout: 5 })
+    }
+    this.executionEnded()
+  },
+  
+  executionError: function(e) {
+    $.achtung({ message: e, timeout: 5 })
+    this.executionEnded()
+  },
+  
+  executionEnded: function() {
+  },
+  
+  compile: function() {
+    return []
+  },
+})
+
 
 
 View.applyCanvasDropping = function(klass) {
@@ -573,7 +621,7 @@ View.MultiSlotView = my.Class({
 })
 
 
-View.BasicMeaningView = my.Class({
+View.BasicMeaningView = my.Class(View.Executable, {
   constructor: function(meaning, options) {
     options || (options = {})
     
@@ -592,7 +640,7 @@ View.BasicMeaningView = my.Class({
     
     this.render()
     
-    this.representationDom.click(safeClick(View.runSelf.bind(this)))
+    this.representationDom.click(safeClick(this.executeOrStop.bind(this)))
   },
   
   render: function() {
@@ -612,7 +660,7 @@ View.draggable.decorate(View.BasicMeaningView)
 View.applyCanvasDropping(View.BasicMeaningView)
 
 
-View.ArgumentReferenceView = my.Class({
+View.ArgumentReferenceView = my.Class(View.Executable, {
   constructor: function(reference, options) {
     options || (options = {})
     
@@ -629,7 +677,7 @@ View.ArgumentReferenceView = my.Class({
     
     this.render()
     
-    this.representationDom.click(safeClick(View.runSelf.bind(this)))
+    this.representationDom.click(safeClick(this.executeOrStop.bind(this)))
   },
   
   render: function() {
@@ -648,7 +696,7 @@ View.ArgumentReferenceView = my.Class({
 View.draggable.decorate(View.ArgumentReferenceView)
 
 
-View.InvocationView = my.Class({
+View.InvocationView = my.Class(View.Executable, {
   constructor: function(invocation, options) {
     options = options || {}
     
@@ -675,37 +723,8 @@ View.InvocationView = my.Class({
       this.toggleSource()
       return false
     }.bind(this)))
-    this.representationDom.click(safeClick(function(e, ui) {
-      var compiled = this.compile()
-      
-      var opts = {
-        finished: function(result) {
-          if(typeof(result) !== "undefined") {
-            $.achtung({ message: myToString(result), timeout: 5 })
-          }
-          delete Globals.clickContext
-        },
-        error: function(e) {
-          $.achtung({ message: e, timeout: 5 })
-          delete Globals.clickContext
-        }
-      }
-      
-      if(Globals.clickContext) {
-        if(Globals.clickContext.starter == this) {
-          Globals.clickContext.stop()
-          return
-        }
-        Globals.clickContext.stop()
-      }
-      // Globals.clickContext = new Context([compiled], [Globals.clickEnv], opts).run()
-      Globals.clickContext = new Context([compiled], [Globals.clickEnv], opts)
-      Globals.clickContext.starter = this
-      Globals.clickContext.slowRun()
-      
-      // debug the VM!
-      // $("#debugger").html("").append(new Context([compiled], [new Env()]).debugDom())
-    }.bind(this)))
+    
+    this.representationDom.click(safeClick(this.executeOrStop.bind(this)))
   },
   
   representationsChanged: function() {
@@ -719,14 +738,6 @@ View.InvocationView = my.Class({
   
   parentChanged: function() {
     this.stopExecution()
-  },
-  
-  stopExecution: function() {
-    if(Globals.clickContext) {
-      if(Globals.clickContext.starter == this) {
-        Globals.clickContext.stop()
-      }
-    }
   },
   
   isEditing: function() {
