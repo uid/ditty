@@ -190,14 +190,9 @@ var Invocation = Backbone.DeepModel.extend({
   getPattern: function() {
     if(!this._pattern) {
       var pattern = this.get("pattern")
+      this._pattern = Patterns.get(pattern)
       if(!pattern) {
         throw new Error("no pattern!")
-      }
-      if(pattern instanceof Backbone.Model) {
-        this._pattern = pattern
-      } else {
-        this._pattern = Patterns.get(pattern) || Patterns.getByCid(pattern)
-        if(!this._pattern) this._pattern = Patterns.getByKey(pattern) // XXX HACK
       }
       
       // XXX do I need this? it would cause every invocation that contains an invocation of the given pattern to be saved
