@@ -707,6 +707,7 @@ View.InvocationView = my.Class(View.Executable, {
     this.dom = $("<div class='bubble'></div>")
     this.representationDom = $("<div class='representation'></div>").appendTo(this.dom)
     this.meaningDom = $("<div class='meaning'></div>").appendTo(this.dom)
+    this.stopDom = $("<div class='stop'></div>").text("STOP").hide().appendTo(this.dom)
     View.setObjFor(this.dom, this)
     
     this.invocation.on("change:representationIndex", this.representationsChanged, this)
@@ -725,6 +726,7 @@ View.InvocationView = my.Class(View.Executable, {
     }.bind(this)))
     
     this.representationDom.click(safeClick(this.executeOrStop.bind(this)))
+    this.stopDom.click(safeClick(this.executeOrStop.bind(this)))
   },
   
   representationsChanged: function() {
@@ -738,6 +740,14 @@ View.InvocationView = my.Class(View.Executable, {
   
   parentChanged: function() {
     this.stopExecution()
+  },
+  
+  executionStarting: function() {
+    this.stopDom.show()
+  },
+  
+  executionEnded: function() {
+    this.stopDom.hide()
   },
   
   isEditing: function() {
