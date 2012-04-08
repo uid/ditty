@@ -122,11 +122,11 @@ function addDefaultPatterns() {
     arguments: [{ name: "object" }],
     javascript_meaning: "vm.continuation(env.lookup('object'), function(vals) { $.achtung({ message: myToString(vals[0]), timeout: 5, className: 'debug' }) })",
   }, more)
-  add({
-    representations: [{ template: "Pause execution." }],
-    arguments: [],
-    javascript_meaning: "vm.delegate(new VM.IPause)",
-  }, more)
+  // add({
+  //   representations: [{ template: "Pause execution." }],
+  //   arguments: [],
+  //   javascript_meaning: "vm.delegate(new VM.IPause)",
+  // }, more)
   
   
   addSection("Strings")
