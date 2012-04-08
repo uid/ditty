@@ -70,7 +70,7 @@ View.patternAutocomplete = function(input, dropped, dismiss) {
             
             // if so, remember it
             if(found) {
-              keywordMatches.push({ minIndex: minIndex, invocation: new Invocation({ pattern: pattern, representationIndex: i }) })
+              keywordMatches.push({ minIndex: minIndex, invocation: new Invocation({ pattern: pattern.id, representationIndex: i }) })
             }
           }
         }
