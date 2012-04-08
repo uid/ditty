@@ -459,18 +459,28 @@ function addDefaultPatterns() {
     arguments: [{ name: "array" }, { name: "index" }, { name: "value" }],
     javascript_meaning: "vm.continuation(env.lookup('array'), env.lookup('index'), env.lookup('value'), function(vals) { return vals[0][vals[1]] = vals[2] })",
   })
-  add({
-    representations: [{ template: "append [value] to [array]" }, { template: "push [value] onto [array]" }],
-    arguments: [{ name: "array" }, { name: "value" }],
-    javascript_meaning: "vm.continuation(env.lookup('array'), env.lookup('value'), function(vals) { vals[0].push(vals[1]); return vals[1] })",
-  })
   
   more = addHiddenSection()
   
   add({
+    representations: [{ template: "append [value] to [array]" }, { template: "push [value] onto [array]" }],
+    arguments: [{ name: "array" }, { name: "value" }],
+    javascript_meaning: "vm.continuation(env.lookup('array'), env.lookup('value'), function(vals) { vals[0].push(vals[1]); return vals[1] })",
+  }, more)
+  add({
+    representations: [{ template: "prepend [value] to [array]" }, { template: "unshift [value] onto [array]" }],
+    arguments: [{ name: "array" }, { name: "value" }],
+    javascript_meaning: "vm.continuation(env.lookup('array'), env.lookup('value'), function(vals) { vals[0].unshift(vals[1]); return vals[1] })",
+  }, more)
+  add({
     representations: [{ template: "pop value from end of [array]" }],
     arguments: [{ name: "array" }],
     javascript_meaning: "vm.continuation(env.lookup('array'), function(vals) { return vals[0].pop() })",
+  }, more)
+  add({
+    representations: [{ template: "shift value from beginning of [array]" }],
+    arguments: [{ name: "array" }],
+    javascript_meaning: "vm.continuation(env.lookup('array'), function(vals) { return vals[0].shift() })",
   }, more)
   add({
     representations: [{ template: "values in [array] joined by [string]" }],
