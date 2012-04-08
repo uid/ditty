@@ -827,7 +827,10 @@ View.InvocationView = my.Class(View.Executable, {
         this.representationDom.append(c.text)
       } else if("parameter" in c) {
         var arg = pattern.getArgument(c.parameter)
-        this.representationDom.append(this._slotView(arg).dom)
+        // XXX: arg may not exist if we're re-rendering based on an argument list change event
+        if(arg) {
+          this.representationDom.append(this._slotView(arg).dom)
+        }
       }
     }
   },
