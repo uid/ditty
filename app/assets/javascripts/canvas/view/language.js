@@ -143,6 +143,33 @@ View.viewForMeaning = function(meaning) {
 }
 
 
+View.runSelf = function() {
+  var compiled = this.compile()
+  
+  if(Globals.clickContext) {
+    if(Globals.clickContext.starter == this) {
+      Globals.clickContext.stop()
+      return
+    }
+    Globals.clickContext.stop()
+  }
+  Globals.clickContext = new Context([compiled], [Globals.clickEnv], {
+    finished: function(result) {
+      if(typeof(result) !== "undefined") {
+        $.achtung({ message: myToString(result), timeout: 5 })
+      }
+      delete Globals.clickContext
+    },
+    error: function(e) {
+      $.achtung({ message: e, timeout: 5 })
+      delete Globals.clickContext
+    }
+  })
+  Globals.clickContext.starter = this
+  Globals.clickContext.slowRun()
+}
+
+
 View.applyCanvasDropping = function(klass) {
   klass.prototype.droppedOn = function(target) {
     this.dom.css({
@@ -565,31 +592,7 @@ View.BasicMeaningView = my.Class({
     
     this.render()
     
-    this.representationDom.click(safeClick(function(e, ui) {
-      var compiled = this.compile()
-      
-      if(Globals.clickContext) {
-        if(Globals.clickContext.starter == this) {
-          Globals.clickContext.stop()
-          return
-        }
-        Globals.clickContext.stop()
-      }
-      Globals.clickContext = new Context([compiled], [Globals.clickEnv], {
-        finished: function(result) {
-          if(typeof(result) !== "undefined") {
-            $.achtung({ message: myToString(result), timeout: 5 })
-          }
-          delete Globals.clickContext
-        },
-        error: function(e) {
-          $.achtung({ message: e, timeout: 5 })
-          delete Globals.clickContext
-        }
-      })
-      Globals.clickContext.starter = this
-      Globals.clickContext.slowRun()
-    }.bind(this)))
+    this.representationDom.click(safeClick(View.runSelf.bind(this)))
   },
   
   render: function() {
@@ -625,11 +628,21 @@ View.ArgumentReferenceView = my.Class({
     View.draggable.draggable(this, this.dom, { handle: ".representation" })
     
     this.render()
+    
+    this.representationDom.click(safeClick(View.runSelf.bind(this)))
   },
   
   render: function() {
     this.representationDom.empty()
     this.representationDom.text(this.reference.get("name"))
+  },
+  
+  compile: function() {
+    var compiled = [this.reference.compile()]
+    var before = new VM.IJavascript(function() { View.flash(this.representationDom, "green"); this.dom.addClass("active") }.bind(this), true /* noSave */)
+    var after = new VM.IJavascript(function() { this.dom.removeClass("active") }.bind(this), true /* noSave */)
+    before.runOnUnwind = after.runOnUnwind = true // TODO: begin.runOnUnwind shouldn't be true, here or anywhere else
+    return [before].concat(compiled.concat([after]))
   },
 })
 View.draggable.decorate(View.ArgumentReferenceView)
