@@ -70,7 +70,7 @@ View.Palette = my.Class({
 				}
 				this.categoryMoreDoms[category].append(view.dom)
 			}
-		} else {
+		} else if(category) {
 			console.log("won't add pattern with unrecognized category to palette", pattern, category)
 		}
 	},
