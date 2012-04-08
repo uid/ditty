@@ -39,7 +39,7 @@ View.patternAutocomplete = function(input, dropped, dismiss) {
         matches.push({ value: item, result: view })
       }
       
-      if(request.term.length > 0) {
+      if(request.term.trim().length > 0) {
         var view = new View.ArgumentReferenceView(new ArgumentReference({ name: request.term }))
         var item = $("<div>variable: </div>").append(view.dom)
         matches.push({ value: item, result: view })
