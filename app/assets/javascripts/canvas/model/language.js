@@ -185,9 +185,6 @@ var Invocation = Backbone.DeepModel.extend({
       }
       this._nestArgument(i, args[i])
     }
-    
-    // TODO: if pattern has only a client ID, detect when it gets a real ID and save that
-    // TODO: prevent upload if the pattern doesn't have a real ID
   },
   
   getPattern: function() {
