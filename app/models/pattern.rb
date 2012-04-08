@@ -71,17 +71,17 @@ class Pattern < ActiveRecord::Base
     end
     
     def must_have_meaning
-      if !javascript_meaning.blank? && !native_meaning.blank?
+      if !javascript_meaning.blank? && !native_meaning.nil?
         errors.add(:meaning, "can be native or Javascript, but not both")
         return
       end
       
-      if javascript_meaning.blank? && native_meaning.blank?
+      if javascript_meaning.blank? && native_meaning.nil?
         errors.add(:meaning, "cannot be blank")
         return
       end
       
-      if !native_meaning.blank?
+      if !native_meaning.nil?
         unless Array === native_meaning
           errors.add(:native_meaning, "must be an array")
           return
