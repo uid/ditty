@@ -5,7 +5,7 @@ class ChatController < ApplicationController
   
   def create
     chat = ChatMessage.create! chat_params.merge(user: current_user)
-    Pusher["chat"].trigger("event", event: Event.chat(chat))
+    # Pusher["chat"].trigger("event", event: Event.chat(chat))
     render json: {}
   end
   

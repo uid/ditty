@@ -12,7 +12,7 @@ class PatternsController < ApplicationController
     pattern = Pattern.new(params[:pattern])
     pattern.creator = current_user
     if pattern.save
-      Pusher["chat"].trigger("event", event: Event.pattern_created(pattern))
+      # Pusher["chat"].trigger("event", event: Event.pattern_created(pattern))
       render json: { pattern: pattern }
     else
       render json: { error: "Couldn't save pattern: #{pattern.errors.full_messages.join(", ")}" }, status: 400
@@ -28,7 +28,7 @@ class PatternsController < ApplicationController
     elsif !@pattern.update_attributes(params[:pattern])
       render json: { error: "Couldn't save pattern: #{@pattern.errors.full_messages.join(", ")}" }, status: 400
     else
-      Pusher["chat"].trigger("event", event: Event.pattern_updated(@pattern))
+      # Pusher["chat"].trigger("event", event: Event.pattern_updated(@pattern))
       render json: { pattern: @pattern }
     end
   end
