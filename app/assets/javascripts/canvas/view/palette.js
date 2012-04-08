@@ -11,13 +11,27 @@ View.Palette = my.Class({
 		
 		this.dom.append("<h3>New Command</h3>")
 		this.dom.append($("<button>Create New Command +</button>").click(function() {
-		  // var pattern = new Pattern({ representations: [{ template: randomPhrase() }], native_meaning: [] })
-		  // Patterns.add(pattern)
+			var name = randomPhrase()
+			
+			// put the placeholder in place
+			var view = new View.PromisedInvocation({ name: name })
+		  Globals.canvas.dropped(view)
+		  scrollIntoView(view.dom)
+		  
+		  // start creating the pattern
+		  var pattern = Patterns.create({ representations: [{ template: name }], native_meaning: [] }, {
+		  	wait: true,
+		  	success: function() {
+		  		var invocation = new Invocation({ pattern: pattern.id })
+		  		var realView = new View.InvocationView(invocation)
+		  		view.loadSuccess(realView)
+				  realView.toggleSource()
+		  	},
+		  	error: view.loadError.bind(view)
+		  })
+		  
 		  // var invocation = new Invocation({ pattern: pattern.cid }) // XXX: cid
 		  // var view = new View.InvocationView(invocation)
-		  // Globals.canvas.dropped(view)
-		  // view.toggleSource()
-		  // scrollIntoView(view.dom)
 		}))
 		
 		this.categoryDoms = {}
