@@ -22,12 +22,6 @@ View.TaskHarness = my.Class({
     hud.find(".text .input .input-placeholder").replaceWith(this.input.dom)
     hud.find(".text .output .output-placeholder").replaceWith(this.output.dom)
     
-    this.solutionSlot = new View.SlotView({
-      fillerHtml: "Drag your solution<br />to this task here",
-      drop: this.solutionDropped.bind(this),
-      dragout: this.solutionRemoved.bind(this)
-    })
-    
     this.descriptionDom = hud.find(".title .description .description")
     this.taskList = hud.find(".title .description select")
     
@@ -45,7 +39,28 @@ View.TaskHarness = my.Class({
       this.output.setText("")
     }.bind(this))
     
+    this.solutionSlot = new View.SlotView({
+      fillerHtml: "Drag your solution<br />to this task here",
+      drop: this.solutionDropped.bind(this),
+      dragout: this.solutionRemoved.bind(this)
+    })
     hud.find(".solution").append(this.solutionSlot.dom)
+    
+    var newSolutionButton = $("<button>Create New Solution Bubble +</button>").click(function() {
+      var adjectives = ["awesome", "best", "perfect", "awe-inspiring", "breathtaking", "magnificient", "wonderful", "amazing", "stunning", "impressive", "jaw-dropping", "mind-blowing", "excellent", "marvelous", "wondrous", "greatest", "finest", "supreme", "unrivaled", "unbeatable", "ultimate", "flawless", "quintessential", "exemplary", "superb", "immaculate"]
+      var taskName = this.tasks.at(this.taskIndex).get("title")
+      var solutionName = "\"" + taskName + "\" solution (the " + randomPick(adjectives) + " one)"
+      var solutionName = randomPick(adjectives) + " solution to \"" + taskName + "\""
+      
+      var pattern = new Pattern({ representations: [{ template: solutionName }], native_meaning: [] })
+      Patterns.add(pattern)
+      var invocation = new Invocation({ pattern: pattern.cid }) // XXX: cid
+      var view = new View.InvocationView(invocation)
+      
+      Globals.canvas.dropped(view)
+      view.toggleSource()
+      scrollIntoView(view.dom)
+    }.bind(this)).appendTo(hud.find(".solution"))
     
     this.taskIndex = 0
     this.render()
