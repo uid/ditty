@@ -435,6 +435,11 @@ function addDefaultPatterns() {
     arguments: [{ name: "object" }, { name: "key string" }],
     javascript_meaning: "vm.continuation(env.lookup('object'), env.lookup('key string'), function(vals) { delete vals[0][vals[1]] })",
   }, more)
+  add({
+    representations: [{ template: "[value] is an object" }],
+    arguments: [{ name: "value" }],
+    javascript_meaning: "vm.continuation(env.lookup('value'), function(vals) { return (typeof(vals[0]) === 'object') && !(vals[0] instanceof Array) })",
+  }, more)
   
   
   addSection("Arrays")
