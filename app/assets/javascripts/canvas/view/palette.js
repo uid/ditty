@@ -29,9 +29,6 @@ View.Palette = my.Class({
         },
         error: view.loadError.bind(view)
       })
-      
-      // var invocation = new Invocation({ pattern: pattern.cid }) // XXX: cid
-      // var view = new View.InvocationView(invocation)
     }))
     
     this.categoryDoms = {}
