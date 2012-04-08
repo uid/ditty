@@ -62,7 +62,7 @@ View.TaskHarness = my.Class({
         section = task.get("section")
         sectionDom = $("<optgroup></optgroup>").attr("label", section.get("name")).appendTo(this.taskList)
       }
-      var title = "(" + (index + 1) + " of " + this.tasks.length + ") " + task.get("title")
+      var title = "Task " + (index + 1) + " of " + this.tasks.length + ": " + task.get("title")
       sectionDom.append($("<option></option>").attr("value", index).attr("selected", index == this.taskIndex).text(title)) // XXX: cid
     }.bind(this))
   },
