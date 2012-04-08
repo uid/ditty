@@ -1073,6 +1073,7 @@ View.TemplateEditor = my.Class({
     this.editorView = $("<div class='template-editor'></div>").appendTo(this.dom)
     
     $("<h2>Template</h2>").appendTo(this.editorView)
+    $("<div style='margin: 8px 0'>Surround parameters with [square brackets].</div>").appendTo(this.editorView)
     this.textEntry = $("<textarea></textarea>").text(this.template.text).appendTo(this.editorView)
     this.textEntry.change(this._templateChanged.bind(this))
     this.textEntry.keyup(this._templateChanged.bind(this))
