@@ -1,6 +1,6 @@
 
 View.patternAutocomplete = function(input, dropped, dismiss) {
-  // input.focusout(dismiss)
+  input.focusout(dismiss)
   input.keydown(function(ev) { if(ev.keyCode == 27) { dismiss() } })
   
   input.autocomplete({
