@@ -7,16 +7,17 @@ VM.INamedReference = my.Class({
 })
 
 VM.IPushEnv = my.Class({
-  constructor: function(env) { this.env = env },
+  constructor: function(env) { this.env = env; this.instantaneous = true },
   toString: function() { return "Push Env" },
 })
 
 VM.IPopEnv = my.Class({
-  constructor: function() { this.runOnUnwind = true },
+  constructor: function() { this.runOnUnwind = true; this.instantaneous = true },
   toString: function() { return "Pop Env" },
 })
 
 VM.LoopMarker = my.Class({
+  constructor: function() { this.instantaneous = true },
   toString: function() { return "Loop Marker" },
 })
 
@@ -187,6 +188,8 @@ var Context = my.Class({
       this.runOne(instr)
       if(this.paused) {
         delete this.paused
+      } else if(instr.instantaneous) {
+        this.slowRun()
       } else {
         setTimeout(function() {
           this.slowRun()
