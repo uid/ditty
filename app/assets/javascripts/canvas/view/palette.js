@@ -38,8 +38,6 @@ View.Palette = my.Class({
     
     this.patterns.on("reset", this.patternsReset, this)
     this.patterns.on("add", this.patternAdded, this)
-    this.patterns.on("change", this.patternChanged, this)
-    this.patterns.on("remove", this.patternRemoved, this)
     
     this.patternsReset()
   },
@@ -84,13 +82,5 @@ View.Palette = my.Class({
     } else if(category) {
       console.log("won't add pattern with unrecognized category to palette", pattern, category)
     }
-  },
-  
-  patternChanged: function(pattern) {
-    console.log("pattern changed", pattern, pattern.get("category"))
-  },
-  
-  patternRemoved: function(pattern) {
-    console.log("pattern removed", pattern, pattern.get("category"))
   },
 })

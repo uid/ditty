@@ -174,14 +174,6 @@ var Pattern = Backbone.Model.extend({
 var PatternCollection = Backbone.Collection.extend({
   model: Pattern,
   url: "/patterns",
-  
-  getByKey: function(key) {
-    for(var i in this.models) {
-      if(this.models[i].get("key") == key) {
-        return this.models[i]
-      }
-    }
-  },
 })
 
 // pattern, arguments, representationIndex

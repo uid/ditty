@@ -783,15 +783,6 @@ View.InvocationView = my.Class(View.Executable, {
     return this.editing
   },
   
-  setInteractive: function(val) {
-    this.interactive = val
-    if(val) {
-      this.dom.draggable("enable")
-    } else {
-      this.dom.draggable("disable")
-    }
-  },
-  
   toggleSource: function() {
     this.editing = !this.editing
     
