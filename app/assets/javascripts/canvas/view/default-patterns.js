@@ -253,6 +253,11 @@ function addDefaultPatterns() {
     javascript_meaning: "vm.continuation(env.lookup('number'), function(vals) { return \"\" + vals[0] })",
   }, more)
   add({
+    representations: [{ template: "[number] is a number" }],
+    arguments: [{ name: "number" }],
+    javascript_meaning: "vm.continuation(env.lookup('number'), function(vals) { return typeof(vals[0]) === 'number' })",
+  }, more)
+  add({
     representations: [{ template: "[number] is a valid number" }],
     arguments: [{ name: "number" }],
     javascript_meaning: "vm.continuation(env.lookup('number'), function(vals) { return !isNaN(vals[0]) })",
