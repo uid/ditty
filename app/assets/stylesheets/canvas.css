@@ -269,6 +269,10 @@ ul.multislot li.inbetweener.not-editing:hover .insert {
 
 /* CANVAS */
 
+#canvas-container .search {
+  margin: 0;
+  padding: 8px;
+}
 #canvas {
   position: relative;
   min-width: 800px;

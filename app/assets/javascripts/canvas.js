@@ -31,6 +31,13 @@ $(function() {
   }, function() {
     $("#search").val("")
   })
+  View.patternAutocomplete($("#search-canvas"), function(view) {
+    setTimeout(function() { $("#search-canvas").val("") }, 10)
+    Globals.canvas.dropped(view)
+    scrollIntoView(view.dom)
+  }, function() {
+    $("#search-canvas").val("")
+  })
   
   Globals.clickEnv = new Env()
   
