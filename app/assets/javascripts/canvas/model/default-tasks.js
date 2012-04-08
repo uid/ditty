@@ -23,6 +23,27 @@ Tasks.add({
   example_after: "turn into a pumpkin at midnight\npumpkin harvest time is the best time\n",
   section: TaskSections.at(0),
 })
+Tasks.add({
+  title: "wc (lines)",
+  description: "Output the number of lines in the input.",
+  example_before: "Mountain Dew Code Red\nYou tantalize my taste buds\nYou are my Mana\n",
+  example_after: "3",
+  section: TaskSections.at(0),
+})
+Tasks.add({
+  title: "wc (words)",
+  description: "Output the number of words in the input.",
+  example_before: "Mountain Dew Code Red\nYou tantalize my taste buds\nYou are my Mana\n",
+  example_after: "13",
+  section: TaskSections.at(0),
+})
+Tasks.add({
+  title: "trim",
+  description: "Trim space characters from the beginning and end of each line.",
+  example_before: "   some programmers   \n     never sleep      ",
+  example_after: "some programmers\nnever sleep",
+  section: TaskSections.at(1),
+})
 
 /*
 do as many of these as you can in an hour
