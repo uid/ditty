@@ -1069,7 +1069,7 @@ View.TemplateEditor = my.Class({
     this.dom = $("<div class='template-editor-container'></div>").appendTo($("body"))
     View.setObjFor(this.dom, this)
     
-    this.backgroundView = $("<div class='background'></div>").appendTo(this.dom).click(function() { this.dom.remove() }.bind(this))
+    this.backgroundView = $("<div class='background'></div>").appendTo(this.dom)
     this.editorView = $("<div class='template-editor'></div>").appendTo(this.dom)
     
     $("<h2>Template</h2>").appendTo(this.editorView)
