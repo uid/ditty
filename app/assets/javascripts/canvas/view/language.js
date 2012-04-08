@@ -717,7 +717,7 @@ View.InvocationView = my.Class({
   },
   
   isEditing: function() {
-    return !this.meaningDom.is(":hidden")
+    return this.editing
   },
   
   setInteractive: function(val) {
@@ -730,12 +730,10 @@ View.InvocationView = my.Class({
   },
   
   toggleSource: function() {
-    if(this.isEditing()) {
-      this.renderRepresentation()
-    } else {
-      this.renderEditableRepresentation()
-    }
+    this.editing = !this.editing
+    
     this.renderMeaningIfNecessary()
+    this.renderRepresentation()
     
     this.dom.toggleClass("editing")
     this.representationDom.toggleClass("editing")
@@ -757,6 +755,14 @@ View.InvocationView = my.Class({
   },
   
   renderRepresentation: function() {
+    if(this.isEditing()) {
+      this.renderEditableRepresentation()
+    } else {
+      this.renderNonEditableRepresentation()
+    }
+  },
+  
+  renderNonEditableRepresentation: function() {
     this._clearRepresentationDom()
     
     var pattern = this.invocation.getPattern()
@@ -770,15 +776,15 @@ View.InvocationView = my.Class({
         this.representationDom.append(this._slotView(arg).dom)
       }
     }
-    
-    this.representationDom.append(" ")
-    this.representationDom.append($("<button class='reword'>Edit name&#8230;</button>").click(function() {
-      new View.TemplateEditor(repr, pattern)
-    }))
   },
   
   renderEditableRepresentation: function() {
-    this.renderRepresentation()
+    this.renderNonEditableRepresentation()
+    
+    this.representationDom.append(" ")
+    this.representationDom.append($("<button class='reword'>Edit name&#8230;</button>").click(function() {
+      new View.TemplateEditor(this.invocation.getCurrentTemplate(), this.invocation.getPattern())
+    }.bind(this)))
   },
   
   renderMeaningIfNecessary: function() {
