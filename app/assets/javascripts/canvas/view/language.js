@@ -737,9 +737,11 @@ View.InvocationView = my.Class(View.Executable, {
     this.stopDom = $("<div class='stop'></div>").text("STOP").hide().appendTo(this.dom)
     View.setObjFor(this.dom, this)
     
+    // re-render the representationDom when it changes
     this.invocation.on("change:representationIndex", this.representationsChanged, this)
     this.invocation.getPattern().on("change:representations", this.representationsChanged, this)
     
+    // stop executing when the pattern or invocation change
     this.invocation.getPattern().on("change", this.stopExecution.bind(this))
     this.invocation.on("change", this.stopExecution.bind(this))
     
