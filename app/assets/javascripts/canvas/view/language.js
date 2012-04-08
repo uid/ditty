@@ -1187,7 +1187,7 @@ View.TemplateEditor = my.Class({
     this._updateParams()
     this._renderPreview()
     this._renderParams()
-  }, 300),
+  }, 30),
   
   _updateParams: function() {
     for(var i in this.template.parameters) {
