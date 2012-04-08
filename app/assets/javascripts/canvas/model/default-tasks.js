@@ -10,7 +10,7 @@ TaskSections.add({ name: "Hard" })
 
 var Tasks = new Backbone.Collection
 Tasks.add({
-  title: "Remove all commas",
+  title: "commas",
   description: "Remove all commas.",
   example_before: "\"Use the Force, Luke,\" said Obi-Wan.",
   example_after: "\"Use the Force Luke\" said Obi-Wan.",
@@ -35,7 +35,14 @@ Tasks.add({
   description: "Output the number of words in the input.",
   example_before: "Mountain Dew Code Red\nYou tantalize my taste buds\nYou are my Mana\n",
   example_after: "13",
-  section: TaskSections.at(0),
+  section: TaskSections.at(1),
+})
+Tasks.add({
+  title: "parentheses",
+  description: "Output 'true' if the input has correctly-nested parentheses. If it doesn't, output 'false'.",
+  example_before: "is every parens (y'know (these things))\n(matched (with) (another (one?))",
+  example_after: "3",
+  section: TaskSections.at(1),
 })
 Tasks.add({
   title: "trim",
