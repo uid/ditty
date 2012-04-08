@@ -1103,7 +1103,7 @@ View.TemplateEditor = my.Class({
   
   _save: function() {
     var removed = this.pattern.arguments.filter(function(arg) { return this.template.parameters.indexOf(arg.get("name")) == -1 }.bind(this))
-    this.pattern.arguments.remove(removed)
+    this.pattern.arguments.remove(removed, { silent: true })
     
     for(var i in this.template.parameters) {
       var name = this.template.parameters[i]
@@ -1113,7 +1113,7 @@ View.TemplateEditor = my.Class({
         existing.clear({ silent: true })
         existing.set(novel.attributes)
       } else {
-        this.pattern.arguments.add(novel.attributes)
+        this.pattern.arguments.add(novel.attributes, { silent: true })
       }
     }
     
