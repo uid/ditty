@@ -25,7 +25,7 @@ function addDefaultPatterns() {
   $("#palette").append($("<button>Create New Command +</button>").click(function() {
     var pattern = new Pattern({ representations: [{ template: randomPhrase() }], native_meaning: [] })
     Patterns.add(pattern)
-    var invocation = new Invocation({ pattern: pattern.cid })
+    var invocation = new Invocation({ pattern: pattern.cid }) // XXX: cid
     var view = new View.InvocationView(invocation)
     Globals.canvas.dropped(view)
     view.toggleSource()
