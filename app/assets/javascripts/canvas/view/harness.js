@@ -58,7 +58,7 @@ View.TaskHarness = my.Class({
     var sectionDom
     this.taskList.empty()
     this.tasks.each(function(task, index) {
-      if(!section || task.get("section").name != section.name) { // XXX: cid
+      if(!section || task.get("section").get("name") != section.get("name")) {
         section = task.get("section")
         sectionDom = $("<optgroup></optgroup>").attr("label", section.get("name")).appendTo(this.taskList)
       }
