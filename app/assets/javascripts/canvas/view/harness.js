@@ -28,13 +28,9 @@ View.TaskHarness = my.Class({
       dragout: this.solutionRemoved.bind(this)
     })
     
-    this.prevButtonDom = hud.find(".title .prev button")
-    this.nextButtonDom = hud.find(".title .next button")
     this.descriptionDom = hud.find(".title .description .description")
     this.taskList = hud.find(".title .description select")
     
-    this.prevButtonDom.click(this.prevTask.bind(this))
-    this.nextButtonDom.click(this.nextTask.bind(this))
     this.taskList.change(function() {
       this.taskIndex = this.taskList.val()
       this.render()
@@ -83,9 +79,6 @@ View.TaskHarness = my.Class({
       this.solutionSlot.dropped(view)
     }
     
-    this.prevButtonDom.attr("disabled", this.taskIndex == 0)
-    this.nextButtonDom.attr("disabled", this.taskIndex == this.tasks.length - 1)
-    
     this.descriptionDom.empty()
     
     this.descriptionDom.append($("<div />").html(task.get("description")))
@@ -94,22 +87,6 @@ View.TaskHarness = my.Class({
     this.exampleOutput.setText(task.get("example_after"))
     this.input.setText(task.get("example_before"))
     this.output.setText("")
-  },
-  
-  prevTask: function() {
-    this.taskIndex--
-    if(this.taskIndex < 0) {
-      this.taskIndex = 0
-    }
-    this.render()
-  },
-  
-  nextTask: function() {
-    this.taskIndex++
-    if(this.taskIndex >= this.tasks.length) {
-      this.taskIndex = this.tasks.length - 1
-    }
-    this.render()
   },
   
   solutionDropped: function(view) {
