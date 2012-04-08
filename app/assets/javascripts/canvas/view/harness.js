@@ -49,7 +49,7 @@ View.TaskHarness = my.Class({
     var newSolutionButton = $("<button>Create New Solution Bubble +</button>").click(function() {
       var adjectives = ["awesome", "best", "perfect", "awe-inspiring", "breathtaking", "magnificient", "wonderful", "amazing", "stunning", "impressive", "jaw-dropping", "mind-blowing", "excellent", "marvelous", "wondrous", "greatest", "finest", "supreme", "unrivaled", "unbeatable", "ultimate", "flawless", "quintessential", "exemplary", "superb", "immaculate"]
       var taskName = this.tasks.at(this.taskIndex).get("title")
-      var solutionName = randomPick(adjectives) + " solution to \"" + taskName + "\""
+      var solutionName = "my " + randomPick(adjectives) + " solution to \"" + taskName + "\""
       
       // put the placeholder in place
       var view = new View.PromisedInvocation({ name: solutionName })
