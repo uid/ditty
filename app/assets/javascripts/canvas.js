@@ -41,17 +41,22 @@ $(function() {
   
   Globals.clickEnv = new Env()
   
-  addDefaultPatterns()
+  new View.Palette($("#palette"), Patterns, {
+    categories: [
+      "Text Processing",
+      "Debugging",
+      "Strings",
+      "Numbers",
+      "Comparison",
+      "Control Flow",
+      "Logic",
+      "Variables",
+      "Objects",
+      "Arrays"
+    ],
+  })
+  
+  // loadDefaultPatterns()
   
   // $("body").append("<div id='debugger'></div>")
-  
-  // Patterns.fetch({
-  //   success: function() {
-  //     Patterns.each(function(p) {
-  //       p.templates.each(function(t, i) {
-  //         $("#palette").append(new View.InvocationView(new Invocation({ pattern: p.id, representationIndex: i })).dom)
-  //       })
-  //     })
-  //   }
-  // })
 })

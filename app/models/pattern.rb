@@ -6,9 +6,13 @@ class Pattern < ActiveRecord::Base
   validate :must_have_meaning
   validates :creator, :presence => true, :unless => :no_creator_is_fine
   
+  serialize :representations, JSON
+  serialize :arguments, JSON
+  serialize :native_meaning, JSON
+  
   after_initialize :set_default_values
   
-  attr_accessible :representations, :arguments, :meaning, :show, :key
+  attr_accessible :representations, :arguments, :native_meaning, :javascript_meaning, :show, :category, :featured
   
   attr_accessor :no_creator_is_fine
   
@@ -23,107 +27,69 @@ class Pattern < ActiveRecord::Base
   def as_json options={}
     json = {
       id: id,
-      representations: representations_object,
-      arguments: arguments_object,
-      meaning: meaning_object
+      representations: representations,
+      arguments: arguments,
+      featured: featured?
     }
+    json[:native_meaning] = native_meaning unless native_meaning.blank?
+    json[:javascript_meaning] = javascript_meaning unless javascript_meaning.blank?
     json[:creator] = creator.as_json(options) unless creator.blank?
-    json[:key] = key unless key.blank?
+    json[:category] = category unless category.blank?
     json[:show] = false if false === show
     json
-  end
-  
-  def representations_object
-    ActiveSupport::JSON.decode(representations)
-  rescue MultiJson::DecodeError
-    nil
-  end
-  
-  def arguments_object
-    ActiveSupport::JSON.decode(arguments)
-  rescue MultiJson::DecodeError
-    nil
-  end
-  
-  def meaning_object
-    ActiveSupport::JSON.decode(meaning)
-  rescue MultiJson::DecodeError
-    nil
   end
   
   protected
     
     def set_default_values
-      self.representations ||= "[\n\n]"
-      self.arguments ||= "[\n\n]"
-      self.meaning ||= "{\n  \"native_meaning\" : [\n    \n  ]\n}"
+      self.representations ||= []
+      self.arguments ||= []
     end
     
     def must_have_representations
-      unless obj = valid_json?(representations)
-        errors.add(:representations, "must be valid JSON")
-        return
-      end
-      
-      errors.add(:representations, "must be an array") unless Array === obj
-      unless obj.all? { |o| Hash === o }
+      errors.add(:representations, "must be an array") unless Array === representations
+      unless representations.all? { |o| Hash === o }
         errors.add(:representations, "must contain only representation objects")
         return
       end
       
-      errors.add(:representations, "must contain only 'template' and 'style' fields") unless obj.all? { |o| o.keys - %w{ template style } == [] }
-      errors.add(:representations, "must only have string templates") unless obj.all? { |o| String === o["template"] }
-      errors.add(:representations, "must contain 'block' style or none") unless obj.all? { |o| [nil, "block"].include? o["style"] }
+      errors.add(:representations, "must contain only 'template' and 'style' fields") unless representations.all? { |o| o.keys - %w{ template style } == [] }
+      errors.add(:representations, "must only have string templates") unless representations.all? { |o| String === o["template"] }
+      errors.add(:representations, "must contain 'block' style or none") unless representations.all? { |o| [nil, "block"].include? o["style"] }
     end
     
     def must_have_arguments
-      unless obj = valid_json?(arguments)
-        errors.add(:arguments, "must be valid JSON")
-        return
-      end
-      
-      errors.add(:arguments, "must be an array") unless Array === obj
-      unless obj.all? { |o| Hash === o }
+      errors.add(:arguments, "must be an array") unless Array === arguments
+      unless arguments.all? { |o| Hash === o }
         errors.add(:arguments, "must contain only argument objects")
         return
       end
       
-      errors.add(:arguments, "must contain only 'name' and 'type' fields") unless obj.all? { |o| o.keys - %w{ name type } == [] }
-      errors.add(:arguments, "must have names") unless obj.all? { |o| String === o["name"] && !o["name"].blank? }
-      errors.add(:arguments, "must contain 'instructions' type or none") unless obj.all? { |o| [nil, "instructions"].include? o["type"] }
+      errors.add(:arguments, "must contain only 'name' and 'type' fields") unless arguments.all? { |o| o.keys - %w{ name type } == [] }
+      errors.add(:arguments, "must have names") unless arguments.all? { |o| String === o["name"] && !o["name"].blank? }
+      errors.add(:arguments, "must contain 'instructions' type or none") unless arguments.all? { |o| [nil, "instructions"].include? o["type"] }
     end
     
     def must_have_meaning
-      unless obj = valid_json?(meaning)
-        errors.add(:meaning, "must be valid JSON")
+      if !javascript_meaning.blank? && !native_meaning.blank?
+        errors.add(:meaning, "can be native or Javascript, but not both")
         return
       end
       
-      unless Hash === obj
-        errors.add(:meaning, "must be an object")
+      if javascript_meaning.blank? && native_meaning.blank?
+        errors.add(:meaning, "cannot be blank")
         return
       end
-      if obj.include? "native_meaning"
-        errors.add(:meaning, "must have an array as a native_meaning") unless Array === obj["native_meaning"]
-      elsif obj.include? "javascript_meaning"
-        errors.add(:meaning, "must have a string as a javascript_meaning") unless String === obj["javascript_meaning"]
-      else
-        errors.add(:meaning, "must contain either 'native_meaning' or 'javascript_meaning' key")
+      
+      if !native_meaning.blank?
+        unless Array === native_meaning
+          errors.add(:native_meaning, "must be an array")
+          return
+        end
+        
+        unless native_meaning.all? { |o| Hash === o }
+          errors.add(:native_meaning, "must be an array of objects")
+        end
       end
-    end
-    
-    # if data is a string, check that it can be parsed as JSON
-    # if data is an object, check that it can be encoded as JSON
-    # returns parsed object in either case
-    def valid_json? data
-      case data
-      when String
-        ActiveSupport::JSON.decode(data)
-      else
-        ActiveSupport::JSON.encode(data)
-        data
-      end
-    rescue MultiJson::DecodeError
-      nil
     end
 end

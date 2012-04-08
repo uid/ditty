@@ -90,12 +90,12 @@ var MeaningCollection = Backbone.Collection.extend({
 
 // representations, arguments, meaning
 var Pattern = Backbone.Model.extend({
+  paramsWrapper: "pattern",
+  
   defaults: function() {
     return {
       representations: [{ template: randomPhrase() }],
       arguments: [],
-      show: true,
-      complete: false,
     }
   },
   
