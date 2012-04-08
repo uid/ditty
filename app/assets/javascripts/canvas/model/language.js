@@ -106,7 +106,11 @@ var Pattern = Backbone.Model.extend({
     this._meaningHack()
     if(this.has("native_meaning")) {
       this.native_meaning = this.nestCollection("native_meaning", new MeaningCollection(this.get("native_meaning")))
-      // TODO: propagate changes to native_meaning too
+      
+      this.native_meaning.on("add remove change", function() {
+        this.trigger("change:native_meaning", this, this.native_meaning, { changes: { native_meaning: true } })
+        this.trigger("change", this, { changes: { native_meaning: true } })
+      }, this)
     } else if(this.has("javascript_meaning")) {
       this.javascript_meaning = this.get("javascript_meaning")
       this.on("change:javascript_meaning", function() { this.javascript_meaning = this.get("javascript_meaning") }, this)
