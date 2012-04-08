@@ -696,6 +696,33 @@ View.ArgumentReferenceView = my.Class(View.Executable, {
 View.draggable.decorate(View.ArgumentReferenceView)
 
 
+View.PromisedInvocation = my.Class({
+  constructor: function(options) {
+    options || (options = {})
+    
+    this.dom = $("<div class='bubble' />")
+    View.setObjFor(this.dom, this)
+    
+    this.caption = options.name ? "Creating \"" + options.name + "\"" : "Creating Command"
+    
+    this.representationDom = $("<div class='representation'></div>").appendTo(this.dom)
+    this.representationDom.append("<img src='/assets/spinner.gif' style='padding: 8px; vertical-align: middle' />")
+    this.representationDom.append($("<span style='position: relative; top: 2px; padding-left: 4px; padding-right: 8px'></span>").text(this.caption).append("&#8230;"))
+  },
+  
+  loadSuccess: function(realView) {
+    this.parent.dropped(realView)
+    this.parent.release(this)
+  },
+  
+  loadError: function() {
+    console.log("error", arguments)
+  },
+  
+  setParent: View.draggable.setParent,
+})
+
+
 View.InvocationView = my.Class(View.Executable, {
   constructor: function(invocation, options) {
     options = options || {}
