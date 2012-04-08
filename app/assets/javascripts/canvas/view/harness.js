@@ -49,17 +49,24 @@ View.TaskHarness = my.Class({
     var newSolutionButton = $("<button>Create New Solution Bubble +</button>").click(function() {
       var adjectives = ["awesome", "best", "perfect", "awe-inspiring", "breathtaking", "magnificient", "wonderful", "amazing", "stunning", "impressive", "jaw-dropping", "mind-blowing", "excellent", "marvelous", "wondrous", "greatest", "finest", "supreme", "unrivaled", "unbeatable", "ultimate", "flawless", "quintessential", "exemplary", "superb", "immaculate"]
       var taskName = this.tasks.at(this.taskIndex).get("title")
-      var solutionName = "\"" + taskName + "\" solution (the " + randomPick(adjectives) + " one)"
       var solutionName = randomPick(adjectives) + " solution to \"" + taskName + "\""
       
-      var pattern = new Pattern({ representations: [{ template: solutionName }], native_meaning: [] })
-      Patterns.add(pattern)
-      var invocation = new Invocation({ pattern: pattern.cid }) // XXX: cid
-      var view = new View.InvocationView(invocation)
-      
+      // put the placeholder in place
+      var view = new View.PromisedInvocation({ name: solutionName })
       Globals.canvas.dropped(view)
-      view.toggleSource()
       scrollIntoView(view.dom)
+      
+      // start creating the pattern
+      var pattern = Patterns.create({ representations: [{ template: solutionName }], native_meaning: [] }, {
+        wait: true,
+        success: function() {
+          var invocation = new Invocation({ pattern: pattern.id })
+          var realView = new View.InvocationView(invocation)
+          view.loadSuccess(realView)
+          realView.toggleSource()
+        },
+        error: view.loadError.bind(view)
+      })
     }.bind(this)).appendTo(hud.find(".solution"))
     
     this.taskIndex = 0
