@@ -78,11 +78,7 @@ View.patternAutocomplete = function(input, dropped, dismiss) {
         
         // turn the top results into matches
         matches.push.apply(matches, _.map(keywordMatches.slice(0, maxMatches - matches.length), function(m) {
-          var dom = $("<div style='position: relative'></div>")
           var view = new View.InvocationView(m.invocation)
-          var preventClicksDom = $("<div style='position: absolute; left: 0; top: 0; width: 100%; height: 100%'></div>").appendTo(dom)
-          dom.append(view.dom)
-          dom.append(preventClicksDom)
           
           // if(pattern.has("creator")) {
           //   var creator = pattern.get("creator")
@@ -95,9 +91,18 @@ View.patternAutocomplete = function(input, dropped, dismiss) {
           //   }
           // }
           
-          return { value: dom, result: view }
+          return { value: view.dom, result: view }
         }))
       }
+      
+      // wrap all matches in a no-click dom
+      _.each(matches, function(m) {
+        var dom = $("<div style='position: relative'></div>")
+        var preventClicksDom = $("<div style='position: absolute; left: 0; top: 0; width: 100%; height: 100%'></div>")
+        dom.append(m.value)
+        dom.append(preventClicksDom)
+        m.value = dom
+      })
       
       callback(matches)
     },
