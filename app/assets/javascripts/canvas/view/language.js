@@ -726,7 +726,7 @@ View.InvocationView = my.Class(View.Executable, {
     }.bind(this)))
     
     this.representationDom.click(safeClick(this.executeOrStop.bind(this)))
-    this.stopDom.click(safeClick(this.executeOrStop.bind(this)))
+    this.stopDom.click(safeClick(this.stopExecution.bind(this)))
   },
   
   representationsChanged: function() {
