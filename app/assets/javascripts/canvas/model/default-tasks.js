@@ -51,6 +51,41 @@ Tasks.add({
   example_after: "some programmers\nnever sleep",
   section: TaskSections.at(1),
 })
+Tasks.add({
+  title: "csv",
+  description: "Print the second value in the CSV-formatted input for each line.",
+  example_before: "a,b,c\ndo,re,mi\n,all alone,",
+  example_after: "b\nre\nall alone",
+  section: TaskSections.at(1),
+})
+Tasks.add({
+  title: "sum",
+  description: "Sum the numbers found on each line.",
+  example_before: "1 + 1 = ?\nI ate 3 apples.\nMy 7 kids have 2 friends!\n",
+  example_after: "2\n3\n9\n",
+  section: TaskSections.at(2),
+})
+Tasks.add({
+  title: "c comments",
+  description: "Remove all C-style comments from the input.",
+  example_before: "int main(int argc) { // my program\n  printf(\"%d\\n\", argc); // num args\n}\n",
+  example_after: "int main(int argc) { \n  printf(\"%d\\n\", argc); \n}\n",
+  section: TaskSections.at(2),
+})
+Tasks.add({
+  title: "c++ comments",
+  description: "Remove all C++-style comments from the input.",
+  example_before: "I sometimes use /* this style\nof comment in */ everyday\nconversation.",
+  example_after: "I sometimes use  everyday\nconversation.",
+  section: TaskSections.at(2),
+})
+Tasks.add({
+  title: "pretty print",
+  description: "Print the given JSON object with proper indentation.",
+  example_before: "{a:1,b:2}",
+  example_after: "{\n  a: 1\n  b: 2\n}",
+  section: TaskSections.at(2),
+})
 
 /*
 do as many of these as you can in an hour
