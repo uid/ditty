@@ -863,11 +863,10 @@ View.InvocationView = my.Class(View.Executable, {
     var pattern = this.invocation.getPattern()
     
     if("native_meaning" in pattern) {
-      var params = this.invocation.getCurrentTemplate().parameters
-      if(params.length > 0) {
+      if(pattern.arguments.length > 0) {
         var paramsDom = $("<div>Variables: </div>").appendTo(this.meaningDom)
-        for(var i in params) {
-          var param = pattern.getArgument(params[i])
+        for(var i in pattern.arguments.models) {
+          var param = pattern.arguments.models[i]
           paramsDom.append(new View.BubbleBlower((function(param) { return function(parent) { return new View.ArgumentReferenceView(param, { parent: parent }) } })(param)).dom)
         }
         paramsDom.append("<hr />")
@@ -1172,7 +1171,7 @@ View.TemplateEditor = my.Class({
   
   _save: function() {
     var removed = this.pattern.arguments.filter(function(arg) { return this.template.parameters.indexOf(arg.get("name")) == -1 }.bind(this))
-    this.pattern.arguments.remove(removed, { silent: true })
+    this.pattern.arguments.remove(removed)
     
     for(var i in this.template.parameters) {
       var name = this.template.parameters[i]
@@ -1182,7 +1181,7 @@ View.TemplateEditor = my.Class({
         existing.clear({ silent: true })
         existing.set(novel.attributes)
       } else {
-        this.pattern.arguments.add(novel.attributes, { silent: true })
+        this.pattern.arguments.add(novel.attributes)
       }
     }
     

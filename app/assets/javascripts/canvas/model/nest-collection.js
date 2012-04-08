@@ -11,6 +11,12 @@ Backbone.Model.prototype.nestCollection = function(attributeName, nestedCollecti
   for(var i = 0; i < nestedCollection.length; i++) {
     arr[i] = nestedCollection.at(i).attributes
   }
+  nestedCollection.bind("reset", function() {
+    var arr = this.get(attributeName)
+    for(var i = 0; i < nestedCollection.length; i++) {
+      arr[i] = nestedCollection.at(i).attributes
+    }
+  }.bind(this))
   nestedCollection.bind("add", function(initiative) {
     // if(!this.get(attributeName)) {
     //   this.attributes[attributeName] = []
@@ -18,7 +24,9 @@ Backbone.Model.prototype.nestCollection = function(attributeName, nestedCollecti
     this.get(attributeName).push(initiative.attributes)
   }.bind(this))
   nestedCollection.bind("remove", function(initiative) {
-    this.set({ attributeName: _.without(this.get(attributeName), initiative.attributes) })
+    var updateObj = {}
+    updateObj[attributeName] = _.without(this.get(attributeName), initiative.attributes)
+    this.set(updateObj)
   }.bind(this))
   return nestedCollection
 }

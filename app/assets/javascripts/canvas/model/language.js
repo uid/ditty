@@ -126,6 +126,20 @@ var Pattern = Backbone.Model.extend({
     }, this)
   },
   
+  set: function(attributes) {
+    var ret = Backbone.Model.prototype.set.apply(this, arguments)
+    if(attributes.representations && this.templates) {
+      this.templates.reset(attributes.representations)
+    }
+    if(attributes.arguments && this.arguments) {
+      this.arguments.reset(attributes.arguments)
+    }
+    if(attributes.native_meaning && this.native_meaning) {
+      this.native_meaning.reset(attributes.native_meaning)
+    }
+    return ret
+  },
+  
   // TODO!
   isMine: function() {
     return false
