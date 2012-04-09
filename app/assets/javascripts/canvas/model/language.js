@@ -126,6 +126,8 @@ var Pattern = Backbone.Model.extend({
       this.trigger("change:representations", this, this.templates, { changes: { representations: true } })
       this.trigger("change", this, { changes: { representations: true } })
     }, this)
+    
+    this.on("change:representations change:native_meaning change:javascript_meaning", _.debounce(this.startSave, 50), this)
   },
   
   set: function(attributes) {
@@ -180,6 +182,42 @@ var Pattern = Backbone.Model.extend({
     } else {
       throw new Error("this pattern has no meaning")
     }
+  },
+  
+  startSave: function() {
+    if(this.saving) {
+      this.saveNeeded = true
+      return
+    }
+    
+    this.saving = true
+    this.trigger("savebegin")
+    
+    var ended = function(event) {
+      if(this.saveNeeded) {
+        this.saveNeeded = false
+        doSave()
+      } else {
+        this.trigger(event)
+        this.trigger("saveend")
+        this.saving = false
+      }
+    }.bind(this)
+    
+    var doSave = function() {
+      console.log("automatically saving pattern...")
+      this.save(null, {
+        success: function() {
+          ended("saveend:success")
+        }.bind(this),
+        error: function() {
+          console.log("pattern save error", arguments)
+          ended("saveend:error")
+        }.bind(this)
+      })
+    }.bind(this)
+    
+    doSave()
   },
 })
 

@@ -743,6 +743,7 @@ View.InvocationView = my.Class(View.Executable, {
     
     this.dom = $("<div class='bubble'></div>")
     this.representationDom = $("<div class='representation'></div>").appendTo(this.dom)
+    this.savingDom = $("<span class='saving'>Saving</span>")
     this.meaningDom = $("<div class='meaning'></div>").appendTo(this.dom)
     this.stopDom = $("<div class='stop'></div>").text("STOP").hide().appendTo(this.dom)
     View.setObjFor(this.dom, this)
@@ -754,6 +755,10 @@ View.InvocationView = my.Class(View.Executable, {
     // stop executing when the pattern or invocation change
     this.invocation.getPattern().on("change", this.stopExecution.bind(this))
     this.invocation.on("change", this.stopExecution.bind(this))
+    
+    // saving
+    this.invocation.getPattern().on("savebegin", function() { this.savingDom.show() }, this)
+    this.invocation.getPattern().on("saveend", function() { this.savingDom.hide() }, this)
     
     View.draggable.draggable(this, this.dom, { handle: ".representation" })
     
@@ -824,6 +829,8 @@ View.InvocationView = my.Class(View.Executable, {
     } else {
       this.renderNonEditableRepresentation()
     }
+    
+    this.representationDom.append(this.savingDom)
   },
   
   renderNonEditableRepresentation: function() {

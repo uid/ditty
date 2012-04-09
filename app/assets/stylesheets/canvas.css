@@ -66,6 +66,12 @@ div.bubble div.representation.editing {
   background: #ccf;
   box-shadow: 1px 1px 3px #000;
 }
+div.bubble div.representation span.saving {
+  margin-left: 8px;
+  font-size: 14px;
+  color: #d70014;
+  display: none;
+}
 div.bubble div.representation button.reword {
 }
 /*
