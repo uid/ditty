@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120409132314) do
+ActiveRecord::Schema.define(:version => 20120409151640) do
 
   create_table "canvas", :force => true do |t|
     t.text     "views"
@@ -41,16 +41,16 @@ ActiveRecord::Schema.define(:version => 20120409132314) do
   create_table "patterns", :force => true do |t|
     t.text     "representations"
     t.text     "arguments"
-    t.datetime "created_at",                            :null => false
-    t.datetime "updated_at",                            :null => false
-    t.boolean  "show",               :default => true
+    t.datetime "created_at",                                           :null => false
+    t.datetime "updated_at",                                           :null => false
+    t.boolean  "show",                              :default => true
     t.integer  "creator_id"
-    t.boolean  "complete",           :default => false, :null => false
-    t.string   "native_meaning"
-    t.string   "javascript_meaning"
+    t.boolean  "complete",                          :default => false, :null => false
+    t.text     "native_meaning",     :limit => 255
+    t.text     "javascript_meaning", :limit => 255
     t.string   "category"
-    t.boolean  "featured",           :default => false, :null => false
-    t.boolean  "is_solution",        :default => false, :null => false
+    t.boolean  "featured",                          :default => false, :null => false
+    t.boolean  "is_solution",                       :default => false, :null => false
   end
 
   create_table "users", :force => true do |t|
