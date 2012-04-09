@@ -81,18 +81,19 @@ View.patternAutocomplete = function(input, dropped, dismiss) {
           var view = new View.FakeInvocationView(m.invocation)
           var realView = function() { return new View.InvocationView(m.invocation) }
           
-          // if(pattern.has("creator")) {
-          //   var creator = pattern.get("creator")
-          //   if(creator.ditty) {
-          //     dom.prepend($("<p class='author'>built-in</p>"))
-          //   } else if(pattern.isMine()) {
-          //     dom.prepend($("<p class='author'>created by <span style='color: blue; text-decoration: underline'>me</span></p>"))
-          //   } else {
-          //     dom.prepend($("<p class='author'>created by " + (creator.readable_name || "anonymous") + "</p>"))
-          //   }
-          // }
+          var dom = $("<div />").append(view.dom)
           
-          return { value: view.dom, result: view, realResult: realView }
+          var pattern = m.invocation.getPattern()
+          var creator = pattern.get("creator")
+          if(pattern.isBuiltIn()) {
+            // dom.prepend($("<p class='author'>built-in</p>"))
+          } else if(pattern.isMine()) {
+            dom.prepend($("<p class='author'>created by <span style='color: blue; text-decoration: underline'>me</span></p>"))
+          } else {
+            dom.prepend($("<p class='author'>created by " + (creator.readable_name || "anonymous") + "</p>"))
+          }
+          
+          return { value: dom, result: view, realResult: realView }
         }))
       }
       
