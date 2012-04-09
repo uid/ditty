@@ -719,7 +719,14 @@ View.PromisedInvocation = my.Class({
   },
   
   loadError: function() {
-    console.log("error", arguments)
+    this.representationDom.html($("<span style='position: relative; top: 2px; padding-left: 4px; padding-right: 8px'></span>").text("Pattern creation failed!"))
+    this.representationDom.css({ background: "#d70014", color: "white" })
+    setTimeout(this.destroy.bind(this), 5000)
+  },
+  
+  destroy: function() {
+    this.setParent(null)
+    this.dom.remove()
   },
   
   setParent: View.draggable.setParent,
