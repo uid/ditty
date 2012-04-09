@@ -903,9 +903,11 @@ View.InvocationView = my.Class(View.Executable, {
     this.renderNonEditableRepresentation()
     
     this.representationDom.append(" ")
-    this.representationDom.append($("<button class='reword'>Edit name&#8230;</button>").click(function() {
-      new View.TemplateEditor(this.invocation.getCurrentTemplate(), this.invocation.getPattern())
-    }.bind(this)))
+    this.representationDom.append($("<button class='reword'>Edit name&#8230;</button>").click(this.editTemplate.bind(this)))
+  },
+  
+  editTemplate: function() {
+    new View.TemplateEditor(this.invocation.getCurrentTemplate(), this.invocation.getPattern())
   },
   
   renderMeaningIfNecessary: function() {
