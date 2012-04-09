@@ -6,6 +6,10 @@ var Globals = {}
 
 
 $(function() {
+  // $(window).bind("beforeunload", function() {
+  //   return "You're about to leave this page."
+  // })
+  
   $("#loading").hide()
   $("#container").show()
   
