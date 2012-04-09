@@ -13,8 +13,6 @@ $(function() {
   $("#loading").hide()
   $("#container").show()
   
-  $("#sidebar").tabs()
-  
   $("body").addClass("no-drag-in-progress")
   $("body").bind("dragstart", function(e, ui) {
     $("body").removeClass("no-drag-in-progress");
@@ -60,6 +58,16 @@ $(function() {
       "Objects",
       "Arrays"
     ],
+  })
+  
+  var activityViewer = new View.ActivityViewer($("#activity"))
+  
+  $("#sidebar").tabs({
+    select: function(e, ui) {
+      if(ui.index == 1) {
+        activityViewer.opened()
+      }
+    },
   })
   
   // loadDefaultPatterns()
