@@ -78,7 +78,8 @@ View.patternAutocomplete = function(input, dropped, dismiss) {
         
         // turn the top results into matches
         matches.push.apply(matches, _.map(keywordMatches.slice(0, maxMatches - matches.length), function(m) {
-          var view = new View.InvocationView(m.invocation)
+          var view = new View.FakeInvocationView(m.invocation)
+          var realView = function() { return new View.InvocationView(m.invocation) }
           
           // if(pattern.has("creator")) {
           //   var creator = pattern.get("creator")
@@ -91,7 +92,7 @@ View.patternAutocomplete = function(input, dropped, dismiss) {
           //   }
           // }
           
-          return { value: view.dom, result: view }
+          return { value: view.dom, result: view, realResult: realView }
         }))
       }
       
@@ -108,6 +109,9 @@ View.patternAutocomplete = function(input, dropped, dismiss) {
     },
     select: function(event, ui) {
       var v = ui.item["result"]
+      if("realResult" in ui.item) {
+        v = ui.item["realResult"]()
+      }
       v.dom.detach()
       dropped(v)
     },
@@ -730,6 +734,35 @@ View.PromisedInvocation = my.Class({
   },
   
   setParent: View.draggable.setParent,
+})
+
+
+View.FakeInvocationView = my.Class({
+  constructor: function(invocation, options) {
+    options = options || {}
+    
+    this.invocation = invocation
+    this.parent = options.parent
+    
+    this.dom = $("<div class='bubble'></div>")
+    this.representationDom = $("<div class='representation'></div>").appendTo(this.dom)
+    View.setObjFor(this.dom, this)
+    
+    this.renderRepresentation()
+  },
+  
+  renderRepresentation: function() {
+    var template = this.invocation.getCurrentTemplate()
+    
+    for(var i in template.components) {
+      var c = template.components[i]
+      if("text" in c) {
+        this.representationDom.append(c.text)
+      } else if("parameter" in c) {
+        $("<span class='slot unfilled'></span>").text(c.parameter).appendTo(this.representationDom)
+      }
+    }
+  },
 })
 
 
