@@ -12,6 +12,22 @@ class User < ActiveRecord::Base
     username.blank? ? "Anonymous" : username
   end
   
+  def self.ditty
+    User.find_by_ditty(true)
+  end
+  
+  def self.create_ditty!
+    raise "ditty user already exists" if User.find_by_ditty(true)
+    user = User.new do |u|
+      u.skip_confirmation!
+      u.email = "tom@alltom.com"
+      u.ditty = true
+      u.username = "Ditty"
+    end
+    user.save!(validate: false)
+    user
+  end
+  
   def self.create_anonymous_user!
     user = User.new do |u|
       u.anonymous = true
