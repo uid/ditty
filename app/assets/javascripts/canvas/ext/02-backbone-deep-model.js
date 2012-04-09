@@ -99,6 +99,13 @@
         get: function(attr) {
             return getNested(this.attributes, attr);
         },
+        
+        // tom: XXX HACK XXX
+        // (wanted to implement as options.trulySilent, but ran out of time)
+        silentSet: function(key, value, options) {
+            options || (options = {});
+            setNested(this.attributes, key, value, options);
+        },
 
         // Override set
         // Supports nested attributes via the syntax 'obj.attr' e.g. 'author.user.name'

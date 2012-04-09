@@ -26,6 +26,8 @@ Backbone.Model.prototype.nestCollection = function(attributeName, nestedCollecti
     // this.set(updateObj)
     if(attributeName.indexOf(".") == -1) {
       this.attributes[attributeName] = _.without(this.get(attributeName), initiative.attributes)
+    } else if(this.silentSet) {
+      this.silentSet(attributeName, _.without(this.get(attributeName), initiative.attributes))
     } else {
       throw new Error("looks like you're gonna have to write this code")
     }
