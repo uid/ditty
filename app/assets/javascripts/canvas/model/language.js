@@ -207,8 +207,10 @@ var Pattern = Backbone.Model.extend({
         doSave()
       } else {
         this.trigger(event)
+        if(event == "saveend:error") {
+          alert("Pattern could not be saved!")
+        }
         this.trigger("saveend")
-        alert("Pattern could not be saved!")
         this.saving = false
       }
     }.bind(this)
