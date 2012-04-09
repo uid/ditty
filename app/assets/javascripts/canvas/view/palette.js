@@ -78,7 +78,7 @@ View.Palette = my.Class({
         if(!(category in this.categoryMoreDoms)) {
           var dom = $("<div></div>").hide()
           var expander = $("<a href='#' class='more'>More&#8230;</a>").click(function() { dom.animate({ height: "toggle", opacity: "toggle" }); return false})
-          this.categoryDoms[category].after(expander).after(dom)
+          this.categoryDoms[category].after(dom).after(expander)
           this.categoryMoreDoms[category] = dom
         }
         this.categoryMoreDoms[category].append(view.dom)
