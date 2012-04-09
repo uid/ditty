@@ -9,7 +9,7 @@ View.patternAutocomplete = function(input, dropped, dismiss) {
     minLength: 0,
     source: function(request, callback) {
       var matches = []
-      var maxMatches = 10
+      var maxMatches = 30
       
       if(/^-?[0-9.]+$/i.exec(request.term) && !isNaN(parseFloat(request.term))) {
         var view = new View.BasicMeaningView(new NumberMeaning({ number: parseFloat(request.term) }))
