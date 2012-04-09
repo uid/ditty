@@ -32,7 +32,7 @@ class Pattern < ActiveRecord::Base
       featured: featured?,
       is_solution: is_solution?
     }
-    json[:native_meaning] = native_meaning unless native_meaning.blank?
+    json[:native_meaning] = native_meaning unless native_meaning.nil?
     json[:javascript_meaning] = javascript_meaning unless javascript_meaning.blank?
     json[:creator] = creator.as_json(options) unless creator.blank?
     json[:category] = category unless category.blank?
