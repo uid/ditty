@@ -920,7 +920,7 @@ View.InvocationView = my.Class(View.Executable, {
         var paramsDom = $("<div>Variables: </div>").appendTo(this.meaningDom)
         for(var i in pattern.arguments.models) {
           var param = pattern.arguments.models[i]
-          paramsDom.append(new View.BubbleBlower((function(param) { return function(parent) { return new View.ArgumentReferenceView(param, { parent: parent }) } })(param)).dom)
+          paramsDom.append(new View.BubbleBlower((function(param) { return function(parent) { return new View.ArgumentReferenceView(new ArgumentReference({ name: param.get("name") }), { parent: parent }) } })(param)).dom)
         }
         paramsDom.append("<hr />")
       }

@@ -104,7 +104,7 @@ var Pattern = Backbone.Model.extend({
   
   initialize: function() {
     this.templates = this.nestCollection("representations", new TemplateCollection(this.get("representations")))
-    this.arguments = this.nestCollection("arguments", new ArgumentReferenceCollection(this.get("arguments")))
+    this.arguments = this.nestCollection("arguments", new ArgumentCollection(this.get("arguments")))
     
     this._meaningHack()
     if(this.has("native_meaning")) {
@@ -329,6 +329,13 @@ var ArgumentReference = Backbone.Model.extend({
   },
 })
 var ArgumentReferenceCollection = Backbone.Collection.extend({ model: ArgumentReference })
+
+var Argument = Backbone.Model.extend({
+  defaults: {
+    name: "",
+  },
+})
+var ArgumentCollection = Backbone.Collection.extend({ model: Argument })
 
 var NumberMeaning = Backbone.Model.extend({
   defaults: {
