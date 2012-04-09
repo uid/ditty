@@ -37,10 +37,10 @@ class PatternsController < ApplicationController
   private
     
     def pattern_params
-      if current_user.ditty?
+      # if current_user.ditty?
         params[:pattern].slice(:representations, :arguments, :native_meaning, :javascript_meaning, :complete, :is_solution, :category, :featured)
-      else
-        params[:pattern].slice(:representations, :arguments, :native_meaning, :javascript_meaning, :complete, :is_solution)
-      end
+      # else
+      #   params[:pattern].slice(:representations, :arguments, :native_meaning, :javascript_meaning, :complete, :is_solution)
+      # end
     end
 end
