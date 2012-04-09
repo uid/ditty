@@ -12,7 +12,7 @@ class Pattern < ActiveRecord::Base
   
   after_initialize :set_default_values
   
-  attr_accessible :representations, :arguments, :native_meaning, :javascript_meaning, :show, :category, :featured
+  attr_accessible :representations, :arguments, :native_meaning, :javascript_meaning, :show, :category, :featured, :is_solution
   
   attr_accessor :no_creator_is_fine
   
@@ -29,7 +29,8 @@ class Pattern < ActiveRecord::Base
       id: id,
       representations: representations,
       arguments: arguments,
-      featured: featured?
+      featured: featured?,
+      is_solution: is_solution?
     }
     json[:native_meaning] = native_meaning unless native_meaning.blank?
     json[:javascript_meaning] = javascript_meaning unless javascript_meaning.blank?
