@@ -775,7 +775,7 @@ View.InvocationView = my.Class(View.Executable, {
   
   representationsChanged: function() {
     this.renderRepresentation()
-    this.renderMeaning()
+    this.renderMeaning() // because of the variable list
   },
   
   meaningChanged: function() {
