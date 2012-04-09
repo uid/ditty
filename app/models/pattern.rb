@@ -35,7 +35,9 @@ class Pattern < ActiveRecord::Base
       representations: representations,
       arguments: arguments,
       featured: featured?,
-      is_solution: is_solution?
+      is_solution: is_solution?,
+      referenced_patterns: referenced_pattern_ids,
+      referencing_patterns: referencing_pattern_ids
     }
     json[:native_meaning] = native_meaning unless native_meaning.nil?
     json[:javascript_meaning] = javascript_meaning unless javascript_meaning.blank?
