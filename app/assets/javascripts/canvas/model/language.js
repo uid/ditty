@@ -142,6 +142,16 @@ var Pattern = Backbone.Model.extend({
     return ret
   },
   
+  toJSON: function() {
+    var json = Backbone.Model.prototype.toJSON.apply(this, arguments)
+    delete json.representations
+    json.representations = this.templates
+    json.arguments = this.arguments
+    if(this.native_meaning) json.native_meaning = this.native_meaning
+    if(this.javascript_meaning) json.javascript_meaning = this.javascript_meaning
+    return json
+  },
+  
   // TODO!
   isMine: function() {
     return false
@@ -197,6 +207,12 @@ var Invocation = Backbone.DeepModel.extend({
       }
       this._nestArgument(i, args[i])
     }
+  },
+  
+  toJSON: function(options) {
+    var json = Backbone.DeepModel.prototype.toJSON.apply(this, arguments)
+    json.arguments = this.arguments
+    return { invocation: json }
   },
   
   getPattern: function() {
