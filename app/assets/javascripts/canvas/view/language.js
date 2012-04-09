@@ -88,7 +88,7 @@ View.patternAutocomplete = function(input, dropped, dismiss) {
           if(pattern.isBuiltIn()) {
             // dom.prepend($("<p class='author'>built-in</p>"))
           } else if(pattern.isMine()) {
-            dom.prepend($("<p class='author'>created by <span style='color: blue; text-decoration: underline'>me</span></p>"))
+            dom.prepend($("<p class='author'>created by <span class='me'>me</span></p>"))
           } else {
             dom.prepend($("<p class='author'>created by " + (creator.readable_name || "anonymous") + "</p>"))
           }
@@ -919,6 +919,14 @@ View.InvocationView = my.Class(View.Executable, {
     this.meaningDom.empty()
     
     var pattern = this.invocation.getPattern()
+    
+    var creator = pattern.get("creator")
+    if(pattern.isBuiltIn()) {
+    } else if(pattern.isMine()) {
+      this.meaningDom.prepend($("<p class='author'>created by <span class='me'>me</span></p>"))
+    } else {
+      this.meaningDom.prepend($("<p class='author'>created by " + (creator.readable_name || "anonymous") + "</p>"))
+    }
     
     if("native_meaning" in pattern) {
       if(pattern.arguments.length > 0) {

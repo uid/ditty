@@ -147,6 +147,20 @@ div.bubble.reference div.representation {
 }
 
 
+/* AUTHORSHIP */
+
+p.author {
+  margin: 0;
+  padding: 0;
+  font-weight: bold;
+  font-size: small;
+  font-variant: small-caps;
+}
+p.author span.me {
+  text-decoration: underline;
+}
+
+
 /* SLOTS */
 
 span.slot {
@@ -259,13 +273,6 @@ ul.multislot li.inbetweener.not-editing:hover .insert {
 .ui-menu .ui-menu-item a.ui-state-hover .expression,
 .ui-menu .ui-menu-item a.ui-state-active .expression {
   color: black; /* stay black */
-}
-.ui-autocomplete p.author {
-  margin: 0;
-  padding: 0;
-  font-weight: bold;
-  font-size: small;
-  font-variant: small-caps;
 }
 
 
