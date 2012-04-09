@@ -324,6 +324,11 @@ var ArgumentReference = Backbone.Model.extend({
     name: "",
   },
   
+  toJSON: function() {
+    var json = Backbone.Model.prototype.toJSON.apply(this, arguments)
+    return { "reference" : json }
+  },
+  
   compile: function() {
     return new VM.INamedReference(this.get("name"))
   },
