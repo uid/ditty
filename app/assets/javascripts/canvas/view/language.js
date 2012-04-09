@@ -830,6 +830,15 @@ View.InvocationView = my.Class(View.Executable, {
       this.renderNonEditableRepresentation()
     }
     
+    if(this.invocation.getPattern().isSomeoneElses()) {
+      var dot = $("<img src='/assets/blue-dot.png' />")
+      dot.css({
+        position: "absolute",
+        top: -2,
+        right: -2
+      })
+      this.representationDom.append(dot)
+    }
     this.representationDom.append(this.savingDom)
   },
   

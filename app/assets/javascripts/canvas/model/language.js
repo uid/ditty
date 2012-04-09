@@ -154,9 +154,16 @@ var Pattern = Backbone.Model.extend({
     return json
   },
   
-  // TODO!
+  isBuiltIn: function() {
+    return this.get("creator").ditty
+  },
+  
   isMine: function() {
-    return false
+    return this.get("creator").id == Globals.currentUser.id
+  },
+  
+  isSomeoneElses: function() {
+    return !this.isBuiltIn() && !this.isMine()
   },
   
   _meaningHack: function() {

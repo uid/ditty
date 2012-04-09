@@ -14,11 +14,11 @@
 <%= yield %>
 
 <script>
-var currentUser = <%= current_user.to_json.html_safe %>
+Globals.currentUser = <%= current_user.to_json.html_safe %>
 <% if current_user.canvas %>
-var initialCanvas = <%= current_user.canvas.to_json.html_safe %>
+Globals.initialCanvas = <%= current_user.canvas.to_json.html_safe %>
 <% else %>
-var initialCanvas = {}
+Globals.initialCanvas = {}
 <% end %>
 </script>
 
