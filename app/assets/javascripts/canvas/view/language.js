@@ -865,7 +865,10 @@ View.InvocationView = my.Class(View.Executable, {
     }
     
     if(this.invocation.getPattern().isSomeoneElses()) {
+      var pattern = this.invocation.getPattern()
+      var creator = pattern.get("creator")
       var dot = $("<img src='/assets/blue-dot.png' />")
+      dot.attr("title", "created by " + creator.readable_name)
       dot.css({
         position: "absolute",
         top: -2,
@@ -873,6 +876,7 @@ View.InvocationView = my.Class(View.Executable, {
       })
       this.representationDom.append(dot)
     }
+    
     this.representationDom.append(this.savingDom)
   },
   
