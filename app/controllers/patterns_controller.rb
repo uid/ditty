@@ -9,7 +9,7 @@ class PatternsController < ApplicationController
   end
   
   def create
-    pattern = Pattern.new(params[:pattern])
+    pattern = Pattern.new(pattern_params)
     pattern.creator = current_user
     if pattern.save
       # Pusher["chat"].trigger("event", event: Event.pattern_created(pattern))
@@ -25,11 +25,21 @@ class PatternsController < ApplicationController
       render json: { error: "Couldn't save pattern: the pattern doesn't exist" }, status: 400
     elsif @pattern.creator != current_user
       render json: { error: "Couldn't save pattern: that's someone else's pattern" }, status: 400
-    elsif !@pattern.update_attributes(params[:pattern])
+    elsif !@pattern.update_attributes(pattern_params)
       render json: { error: "Couldn't save pattern: #{@pattern.errors.full_messages.join(", ")}" }, status: 400
     else
       # Pusher["chat"].trigger("event", event: Event.pattern_updated(@pattern))
       render json: { pattern: @pattern }
     end
   end
+  
+  private
+    
+    def pattern_params
+      if current_user.ditty?
+        params[:pattern].slice(:representations, :arguments, :native_meaning, :javascript_meaning, :complete)
+      else
+        params[:pattern].slice(:representations, :arguments, :native_meaning, :javascript_meaning, :complete, :category, :featured)
+      end
+    end
 end
