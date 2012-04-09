@@ -287,6 +287,7 @@ ul.multislot li.inbetweener.not-editing:hover .insert {
   background: #fcfef5;
   box-shadow: 0px 0px 10px #aaa;
   overflow: auto;
+  z-index: 100;
 }
 #palette-subcontainer {
   margin: 1em 1em 600px 1em;

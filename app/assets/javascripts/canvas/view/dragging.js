@@ -15,7 +15,7 @@ View.draggable = {
       opacity: 0.5,
       revert: true,
       revertDuration: 0,
-      zIndex: 1,
+      zIndex: 101,
       distance: 10, // # of pixels you must move the cursor
       helper: "clone",
       appendTo: "body",
