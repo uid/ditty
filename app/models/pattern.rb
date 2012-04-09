@@ -1,5 +1,9 @@
 class Pattern < ActiveRecord::Base
   belongs_to :creator, :class_name => "User"
+  has_many :outgoing_pattern_references, class_name: "PatternReference", foreign_key: :source_id, dependent: :destroy
+  has_many :incoming_pattern_references, class_name: "PatternReference", foreign_key: :sink_id, dependent: :destroy
+  has_many :referenced_patterns, through: :outgoing_pattern_references, source: "sink"
+  has_many :referencing_patterns, through: :incoming_pattern_references, source: "source"
   
   validate :must_have_representations
   validate :must_have_arguments
@@ -11,6 +15,7 @@ class Pattern < ActiveRecord::Base
   serialize :native_meaning, JSON
   
   after_initialize :set_default_values
+  after_save :update_references
   
   attr_accessible :representations, :arguments, :native_meaning, :javascript_meaning, :show, :category, :featured, :is_solution
   
@@ -40,11 +45,43 @@ class Pattern < ActiveRecord::Base
     json
   end
   
+  def type
+    return :javascript unless javascript_meaning.blank?
+    return :native unless native_meaning.nil?
+  end
+  
   protected
+    
+    def find_referenced_patterns
+      return [] if type == :javascript
+      find_invocations(native_meaning)
+    end
+    
+    def find_invocations meaning
+      case meaning
+      when Array
+        meaning.map { |m| find_invocations(m) }.flatten
+      when Hash
+        if meaning.has_key? "invocation"
+          [meaning["invocation"]["pattern"]] + find_invocations(meaning["invocation"]).flatten
+        else
+          meaning.map { |k, v| find_invocations(v) }.flatten
+        end
+      else
+        []
+      end
+    end
     
     def set_default_values
       self.representations ||= []
       self.arguments ||= []
+    end
+    
+    def update_references
+      transaction do
+        PatternReference.destroy_all(source_id: self)
+        find_referenced_patterns.each { |rp| PatternReference.create source: self, sink_id: rp }
+      end
     end
     
     def must_have_representations

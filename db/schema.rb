@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120409151640) do
+ActiveRecord::Schema.define(:version => 20120409192935) do
 
   create_table "canvas", :force => true do |t|
     t.text     "views"
@@ -37,6 +37,16 @@ ActiveRecord::Schema.define(:version => 20120409151640) do
   end
 
   add_index "feedbacks", ["user_id"], :name => "index_feedbacks_on_user_id"
+
+  create_table "pattern_references", :force => true do |t|
+    t.integer  "source_id"
+    t.integer  "sink_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "pattern_references", ["sink_id"], :name => "index_pattern_references_on_sink_id"
+  add_index "pattern_references", ["source_id"], :name => "index_pattern_references_on_source_id"
 
   create_table "patterns", :force => true do |t|
     t.text     "representations"
