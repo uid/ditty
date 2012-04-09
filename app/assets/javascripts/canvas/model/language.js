@@ -78,7 +78,8 @@ var MeaningCollection = Backbone.Collection.extend({
       } else if("string" in model) {
         model = new StringMeaning({ string: model["string"] })
       } else {
-        throw new Error("don't recognize this kind of model", model)
+        console.log("don't recognize this kind of model", model)
+        throw new Error("don't recognize this kind of model")
       }
     }
     return Backbone.Collection.prototype._prepareModel.call(this, model, options)
