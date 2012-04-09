@@ -68,7 +68,7 @@ class Pattern < ActiveRecord::Base
       
       errors.add(:arguments, "must contain only 'name' and 'type' fields") unless arguments.all? { |o| o.keys - %w{ name type } == [] }
       errors.add(:arguments, "must have names") unless arguments.all? { |o| String === o["name"] && !o["name"].blank? }
-      errors.add(:arguments, "must contain 'instructions' type or none") unless arguments.all? { |o| [nil, "instructions"].include? o["type"] }
+      errors.add(:arguments, "must contain 'instructions' type or none") unless arguments.all? { |o| [nil, "instructions", "value"].include? o["type"] }
     end
     
     def must_have_meaning
