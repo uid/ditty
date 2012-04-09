@@ -19,6 +19,7 @@ View.Palette = my.Class({
       scrollIntoView(view.dom)
       
       // start creating the pattern
+      console.log("creating new pattern...")
       var pattern = Patterns.create({ representations: [{ template: name }], native_meaning: [] }, {
         wait: true,
         success: function() {
@@ -27,7 +28,10 @@ View.Palette = my.Class({
           view.loadSuccess(realView)
           realView.toggleSource()
         },
-        error: view.loadError.bind(view)
+        error: function() {
+          console.log("pattern create failed", arguments)
+          view.loadError()
+        },
       })
     }))
     

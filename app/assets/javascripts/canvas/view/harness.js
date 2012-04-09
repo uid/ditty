@@ -57,7 +57,8 @@ View.TaskHarness = my.Class({
       scrollIntoView(view.dom)
       
       // start creating the pattern
-      var pattern = Patterns.create({ representations: [{ template: solutionName }], native_meaning: [] }, {
+      console.log("creating new solution pattern...")
+      var pattern = Patterns.create({ representations: [{ template: solutionName }], native_meaning: [], is_solution: true }, {
         wait: true,
         success: function() {
           var invocation = new Invocation({ pattern: pattern.id })
@@ -65,7 +66,10 @@ View.TaskHarness = my.Class({
           view.loadSuccess(realView)
           realView.toggleSource()
         },
-        error: view.loadError.bind(view)
+        error: function() {
+          console.log("pattern create failed", arguments)
+          view.loadError()
+        },
       })
     }.bind(this)).appendTo(hud.find(".solution"))
     
