@@ -779,7 +779,7 @@ View.InvocationView = my.Class(View.Executable, {
   },
   
   meaningChanged: function() {
-    this.renderMeaning()
+    this.renderMeaningIfNecessary()
   },
   
   parentChanged: function() {
@@ -871,7 +871,7 @@ View.InvocationView = my.Class(View.Executable, {
   },
   
   renderMeaningIfNecessary: function() {
-    if(!this.renderedMeaning) {
+    if(this.editing && !this.renderedMeaning) {
       this.renderMeaning()
       this.renderedMeaning = true
     }
