@@ -21,9 +21,14 @@ Backbone.Model.prototype.nestCollection = function(attributeName, nestedCollecti
     this.get(attributeName).push(initiative.attributes)
   }.bind(this))
   nestedCollection.bind("remove", function(initiative) {
-    var updateObj = {}
-    updateObj[attributeName] = _.without(this.get(attributeName), initiative.attributes)
-    this.set(updateObj)
+    // var updateObj = {}
+    // updateObj[attributeName] = _.without(this.get(attributeName), initiative.attributes)
+    // this.set(updateObj)
+    if(attributeName.indexOf(".") == -1) {
+      this.attributes[attributeName] = _.without(this.get(attributeName), initiative.attributes)
+    } else {
+      throw new Error("looks like you're gonna have to write this code")
+    }
   }.bind(this))
   return nestedCollection
 }
