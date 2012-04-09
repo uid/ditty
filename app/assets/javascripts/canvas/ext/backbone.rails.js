@@ -3,6 +3,7 @@
 // except I wrote this part
 _.extend(Backbone.Model.prototype, {
   parse: function(params) {
+    if(!params) return {} // prevent setting values from a null response
     if(this.paramsWrapper in params) {
       return params[this.paramsWrapper]
     }
