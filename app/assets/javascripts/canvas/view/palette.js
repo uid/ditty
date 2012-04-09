@@ -27,6 +27,7 @@ View.Palette = my.Class({
           var realView = new View.InvocationView(invocation)
           view.loadSuccess(realView)
           realView.toggleSource()
+          // realView.editTemplate()
         },
         error: function() {
           console.log("pattern create failed", arguments)
