@@ -27,10 +27,10 @@ Backbone.sync = (function(original){
         
         // Wrap model attributes if paramsWrapper key is defined
         if (this.paramsWrapper) {
-          railsParams[this.paramsWrapper] = _.clone(this.attributes);
+          railsParams[this.paramsWrapper] = this.toJSON();
         }
         else {
-          railsParams = _.clone(this.attributes);
+          railsParams = this.toJSON()
         }
       }
 
