@@ -473,6 +473,9 @@ View.MultiSlotView = my.Class({
         this.views.splice(options.index, 1)
         this.rebuildDom()
       }, this)
+      this.collection.on("reset", function() {
+        throw new Error("I don't know what to do")
+      }, this)
     } else {
       this.views = []
     }

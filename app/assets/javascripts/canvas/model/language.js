@@ -209,6 +209,15 @@ var Invocation = Backbone.DeepModel.extend({
     }
   },
   
+  set: function(attributes) {
+    var ret = Backbone.DeepModel.prototype.set.apply(this, arguments)
+    if(attributes.arguments && this.arguments) {
+      console.log("invocation set arguments", attributes.arguments, this.arguments)
+      // this.arguments.reset(attributes.arguments)
+    }
+    return ret
+  },
+  
   toJSON: function(options) {
     var json = Backbone.DeepModel.prototype.toJSON.apply(this, arguments)
     json.arguments = this.arguments
