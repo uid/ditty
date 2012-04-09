@@ -29,8 +29,8 @@ class PatternsController < ApplicationController
       render json: { error: "Couldn't save pattern: #{@pattern.errors.full_messages.join(", ")}" }, status: 400
     else
       # Pusher["chat"].trigger("event", event: Event.pattern_updated(@pattern))
-      # render json: { pattern: @pattern }
-      render json: nil
+      render json: { pattern: @pattern.as_json.slice(:referenced_patterns, :referencing_patterns) }
+      # render json: nil
     end
   end
   
