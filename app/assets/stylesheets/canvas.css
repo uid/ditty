@@ -276,7 +276,7 @@ ul.multislot li.inbetweener.not-editing:hover .insert {
 }
 
 
-/* PALETTE */
+/* SIDEBAR */
 
 #sidebar {
   position: fixed;
@@ -289,17 +289,6 @@ ul.multislot li.inbetweener.not-editing:hover .insert {
   overflow: auto;
   z-index: 100;
   background: #fcfef5;
-}
-#palette-tab {
-  /*margin: 1em 1em 600px 1em;*/
-}
-#palette .more {
-  display: inline-block;
-  margin-top: 6px;
-  margin-left: 12px;
-}
-#activity-tab {
-  /*margin: 1em 1em 600px 1em;*/
 }
 
 .ui-tabs { position: relative; padding: 0; }
@@ -343,6 +332,31 @@ ul.multislot li.inbetweener.not-editing:hover .insert {
   margin: 1em 0 600px 0;
   padding: 1em 1em;
   border-top: 1px solid black;
+}
+
+
+/* PALETTE */
+
+#palette .more {
+  display: inline-block;
+  margin-top: 6px;
+  margin-left: 12px;
+}
+
+
+/* RECENT ACTIVITY */
+
+#activity div.event {
+  margin-bottom: 16px;
+}
+#activity div.event span.user {
+  color: #4183c4;
+}
+#activity div.event span.user.you {
+  color: #e29e4b;
+}
+#activity div.event span.action {
+  font-weight: bold;
 }
 
 /* CANVAS */
