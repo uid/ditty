@@ -233,7 +233,7 @@ View.applyCanvasDropping = function(klass) {
   }
   
   klass.prototype.droppedNowhere = function(offset, mouse) {
-    if(mouse.left > $("#palette-container").outerWidth() && mouse.top > $("#hud-container").offset().top + $("#hud-container").outerHeight()) {
+    if(mouse.left > $("#sidebar").outerWidth() && mouse.top > $("#hud-container").offset().top + $("#hud-container").outerHeight()) {
       if(this.parent) this.parent.dragout(this, Globals.canvas)
       this.dom.css({
         position: "absolute",

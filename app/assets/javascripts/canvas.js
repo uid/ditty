@@ -13,6 +13,8 @@ $(function() {
   $("#loading").hide()
   $("#container").show()
   
+  $("#sidebar").tabs()
+  
   $("body").addClass("no-drag-in-progress")
   $("body").bind("dragstart", function(e, ui) {
     $("body").removeClass("no-drag-in-progress");

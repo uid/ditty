@@ -278,7 +278,7 @@ ul.multislot li.inbetweener.not-editing:hover .insert {
 
 /* PALETTE */
 
-#palette-container {
+#sidebar {
   position: fixed;
   left: 0;
   top: 0;
@@ -288,16 +288,62 @@ ul.multislot li.inbetweener.not-editing:hover .insert {
   box-shadow: 0px 0px 10px #aaa;
   overflow: auto;
   z-index: 100;
+  background: #fcfef5;
 }
-#palette-subcontainer {
-  margin: 1em 1em 600px 1em;
+#palette-tab {
+  /*margin: 1em 1em 600px 1em;*/
 }
 #palette .more {
   display: inline-block;
   margin-top: 6px;
   margin-left: 12px;
 }
+#activity-tab {
+  /*margin: 1em 1em 600px 1em;*/
+}
 
+.ui-tabs { position: relative; padding: 0; }
+.ui-tabs .ui-tabs-nav { margin: 0; padding: 0; }
+.ui-tabs .ui-tabs-nav li { list-style: none; float: left; position: relative; top: 1px; margin: 0 .2em 1px 0; border-bottom: 0 !important; padding: 0; white-space: nowrap; }
+.ui-tabs .ui-tabs-nav li a { float: left; padding: .5em 1em; text-decoration: none; }
+.ui-tabs .ui-tabs-nav li.ui-tabs-selected { margin-bottom: 0; padding-bottom: 1px; }
+.ui-tabs .ui-tabs-nav li.ui-tabs-selected a, .ui-tabs .ui-tabs-nav li.ui-state-disabled a, .ui-tabs .ui-tabs-nav li.ui-state-processing a { cursor: text; }
+.ui-tabs .ui-tabs-nav li a, .ui-tabs.ui-tabs-collapsible .ui-tabs-nav li.ui-tabs-selected a { cursor: pointer; }
+/*.ui-tabs .ui-tabs-panel { display: block; border-width: 0; padding: 1em 1.4em; background: none; clear: both; }*/
+.ui-tabs .ui-tabs-panel { clear: both; }
+.ui-tabs .ui-tabs-hide { display: none !important; }
+
+.ui-tabs .ui-tabs-nav {
+  position: relative;
+  background: white;
+  padding-top: 1em;
+  padding-left: 1em;
+  width: 100%;
+}
+.ui-tabs .ui-tabs-nav hr {
+  visibility: hidden;
+  clear: both;
+}
+.ui-tabs .ui-tabs-nav li {
+  border: 1px solid #999;
+  background: white;
+}
+.ui-tabs .ui-tabs-nav li.ui-tabs-selected {
+  border: 1px solid #000;
+  background: #fcfef5;
+}
+.ui-tabs .ui-tabs-nav li a {
+  color: #999;
+}
+.ui-tabs .ui-tabs-nav li.ui-tabs-selected a {
+  color: black;
+}
+.ui-tabs .ui-tabs-panel {
+  background: #fcfef5;
+  margin: 1em 0 600px 0;
+  padding: 1em 1em;
+  border-top: 1px solid black;
+}
 
 /* CANVAS */
 
