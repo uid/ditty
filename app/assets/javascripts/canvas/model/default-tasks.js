@@ -1,23 +1,25 @@
 
 // For all of the tasks below, you will be given a description of a type of text
-// transformation and asked to create a command that performs it! You will be presented
-// with several example input and output sets to test with.
+// transformation and asked to create a command that performs it! You will be given
+// one example input and output pair to test with.
 
 var TaskSections = new Backbone.Collection
-TaskSections.add({ name: "Easy" })
+TaskSections.add({ name: "Easier" })
 TaskSections.add({ name: "Medium" })
 TaskSections.add({ name: "Hard" })
 
 var Tasks = new Backbone.Collection
 Tasks.add({
   title: "commas",
-  description: "Remove all commas.",
+  // command_name: "[text] with commas removed",
+  description: "input without commas",
   example_before: "\"Use the Force, Luke,\" said Obi-Wan.",
   example_after: "\"Use the Force Luke\" said Obi-Wan.",
   section: TaskSections.at(0),
 })
 Tasks.add({
   title: "grep",
+  // command_name: "lines of [text] containing 'pumpkin'",
   description: "Output all lines containing \"pumpkin\", including the line break if there is one.",
   example_before: "turn into a pumpkin at midnight\nescort your plump kin home\npumpkin harvest time is the best time\n",
   example_after: "turn into a pumpkin at midnight\npumpkin harvest time is the best time\n",
@@ -25,6 +27,7 @@ Tasks.add({
 })
 Tasks.add({
   title: "wc (lines)",
+  // command_name: "number of lines in [text]",
   description: "Output the number of lines in the input.",
   example_before: "Mountain Dew Code Red\nYou tantalize my taste buds\nYou are my Mana\n",
   example_after: "3",
@@ -32,6 +35,7 @@ Tasks.add({
 })
 Tasks.add({
   title: "wc (words)",
+  // command_name: "number of words in [text]",
   description: "Output the number of words in the input.",
   example_before: "Mountain Dew Code Red\nYou tantalize my taste buds\nYou are my Mana\n",
   example_after: "13",
@@ -39,6 +43,7 @@ Tasks.add({
 })
 Tasks.add({
   title: "parentheses",
+  // command_name: "[text] has correctly-nested parentheses",
   description: "Output 'true' if the input has correctly-nested parentheses. If it doesn't, output 'false'.",
   example_before: "is every parens (y'know (these things))\n(matched (with) (another (one?))",
   example_after: "3",
@@ -46,6 +51,7 @@ Tasks.add({
 })
 Tasks.add({
   title: "trim",
+  // command_name: "[text] with each line trimmed",
   description: "Trim space characters from the beginning and end of each line.",
   example_before: "   some programmers   \n     never sleep      ",
   example_after: "some programmers\nnever sleep",
@@ -53,6 +59,7 @@ Tasks.add({
 })
 Tasks.add({
   title: "csv",
+  // command_name: "second field of [input csv]",
   description: "Print the second value in the CSV-formatted input for each line.",
   example_before: "a,b,c\ndo,re,mi\n,all alone,",
   example_after: "b\nre\nall alone",
@@ -60,6 +67,7 @@ Tasks.add({
 })
 Tasks.add({
   title: "sum",
+  // command_name: "numbers of each line of [input] summed",
   description: "Sum the numbers found on each line.",
   example_before: "1 + 1 = ?\nI ate 3 apples.\nMy 7 kids have 2 friends!\n",
   example_after: "2\n3\n9\n",
@@ -67,6 +75,7 @@ Tasks.add({
 })
 Tasks.add({
   title: "c comments",
+  // command_name: "[string] with C-style comments removed",
   description: "Remove all C-style comments from the input.",
   example_before: "int main(int argc) { // my program\n  printf(\"%d\\n\", argc); // num args\n}\n",
   example_after: "int main(int argc) { \n  printf(\"%d\\n\", argc); \n}\n",
@@ -74,6 +83,7 @@ Tasks.add({
 })
 Tasks.add({
   title: "c++ comments",
+  // command_name: "[string] with C++-style comments removed",
   description: "Remove all C++-style comments from the input.",
   example_before: "I sometimes use /* this style\nof comment in */ everyday\nconversation.",
   example_after: "I sometimes use  everyday\nconversation.",
@@ -81,6 +91,7 @@ Tasks.add({
 })
 Tasks.add({
   title: "pretty print",
+  // command_name: "[json] pretty-printed",
   description: "Print the given JSON object with proper indentation.",
   example_before: "{a:1,b:2}",
   example_after: "{\n  a: 1\n  b: 2\n}",
