@@ -786,6 +786,9 @@ View.InvocationView = my.Class(View.Executable, {
     this.invocation.on("change:representationIndex", this.representationsChanged, this)
     this.invocation.getPattern().on("change:representations", this.representationsChanged, this)
     
+    // re-render meaning when references change (wasteful, but I'm short on time)
+    this.invocation.getPattern().on("change:referencing_patterns", this.meaningChanged, this)
+    
     // stop executing when the pattern or invocation change
     this.invocation.getPattern().on("change", this.stopExecution.bind(this))
     this.invocation.on("change", this.stopExecution.bind(this))
