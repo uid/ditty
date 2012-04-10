@@ -928,8 +928,10 @@ View.InvocationView = my.Class(View.Executable, {
     this.representationDom.append(" ")
     this.representationDom.append($("<button>Edit name&#8230;</button>").click(this.editTemplate.bind(this)))
     
-    this.representationDom.append(" ")
-    this.representationDom.append($("<button>Fork</button>").click(this.forkPattern.bind(this)))
+    if(this.invocation.getPattern().native_meaning) {
+      this.representationDom.append(" ")
+      this.representationDom.append($("<button>Fork</button>").click(this.forkPattern.bind(this)))
+    }
   },
   
   editTemplate: function() {
