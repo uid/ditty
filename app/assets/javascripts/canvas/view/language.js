@@ -50,7 +50,10 @@ View.patternAutocomplete = function(input, dropped, dismiss) {
         var keywordMatches = []
         for(var pid in Patterns.models) {
           if(isNaN(parseFloat(pid))) continue // skip non-numeric keys (they're backward-compatibility dupes)
+          
           var pattern = Patterns.models[pid]
+          
+          if(!Globals.social && (!pattern.isMine() && !pattern.isBuiltIn())) continue
         
           for(var i in pattern.templates.models) {
             var template = pattern.templates.models[i]
@@ -88,7 +91,7 @@ View.patternAutocomplete = function(input, dropped, dismiss) {
           if(pattern.isBuiltIn()) {
             // dom.prepend($("<p class='author'>built-in</p>"))
           } else if(pattern.isMine()) {
-            dom.prepend($("<p class='author'>created by <span class='me'>me</span></p>"))
+            dom.prepend($("<p class='author'>created by <span class='me'>you</span></p>"))
           } else {
             dom.prepend($("<p class='author'>created by " + (creator.readable_name || "anonymous") + "</p>"))
           }
@@ -976,7 +979,7 @@ View.InvocationView = my.Class(View.Executable, {
     var creator = pattern.get("creator")
     if(pattern.isBuiltIn()) {
     } else if(pattern.isMine()) {
-      this.meaningDom.prepend($("<p class='author'>created by <span class='me'>me</span></p>"))
+      this.meaningDom.prepend($("<p class='author'>created by <span class='me'>you</span></p>"))
     } else {
       this.meaningDom.prepend($("<p class='author'>created by " + (creator.readable_name || "anonymous") + "</p>"))
     }
@@ -1005,10 +1008,18 @@ View.InvocationView = my.Class(View.Executable, {
     }
     
     var getPattern = function(id) { return Patterns.get(id) }
+    
     var references = _.map(this.invocation.getPattern().get("referencing_patterns"), getPattern)
     var othersReferences = _.map(_.filter(references, function(r) { return !Patterns.get(r).isMine() }), getPattern)
+    
+    if(!Globals.social) {
+      references = _.filter(references, function(p) { return p.isMine() || p.isBuiltIn() })
+      othersReferences = []
+    }
+    
     var numReferences = references ? references.length : 0
     var numOthersReferences = othersReferences.length
+    
     if(numReferences > 0) {
       var stats = $(_.template("<p class='stats'>used in <a href='#'><%= count %> commands</a></p>", { count: numReferences }))
       stats.children("a").click(function() { View.popupPatterns(references); return false })

@@ -13,13 +13,16 @@
 
 <%= yield %>
 
-<script>
+<script type="text/javascript">
+
 Globals.currentUser = <%= current_user.to_json.html_safe %>
+
 <% if current_user.canvas %>
 Globals.initialCanvas = <%= current_user.canvas.to_json.html_safe %>
 <% else %>
 Globals.initialCanvas = {}
 <% end %>
+
 </script>
 
 <% if Rails.env == "production" %>
