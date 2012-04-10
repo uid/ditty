@@ -54,6 +54,7 @@ View.patternAutocomplete = function(input, dropped, dismiss) {
           var pattern = Patterns.models[pid]
           
           if(!Globals.social && (!pattern.isMine() && !pattern.isBuiltIn())) continue
+          if(pattern.get("is_solution") && !pattern.isMine()) continue
         
           for(var i in pattern.templates.models) {
             var template = pattern.templates.models[i]
