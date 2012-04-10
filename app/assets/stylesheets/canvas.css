@@ -351,10 +351,17 @@ ul.multislot li.inbetweener.not-editing:hover .insert {
   color: #4183c4;
 }
 #activity div.event span.user.you {
-  color: #e29e4b;
+  /*color: #e29e4b;*/
+  color: black;
 }
 #activity div.event span.action {
   font-weight: bold;
+}
+#activity div.event span.action.created {
+  color: #5ac842;
+}
+#activity div.event span.action.modified {
+  color: #8841c4;
 }
 
 /* CANVAS */
