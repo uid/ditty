@@ -1013,11 +1013,13 @@ View.InvocationView = my.Class(View.Executable, {
       }.bind(this))
     }
     
+    var pattern = this.invocation.getPattern()
+    
     var getPattern = function(id) { return Patterns.get(id) }
     
-    var references = _.map(this.invocation.getPattern().get("referencing_patterns"), getPattern)
+    var references = _.map(pattern.get("referencing_patterns"), getPattern)
     var othersReferences = _.map(_.filter(references, function(r) { return !Patterns.get(r).isMine() }), getPattern)
-    var forks = Patterns.where({ original_id: this.invocation.getPattern().id })
+    var forks = Patterns.where({ original_id: pattern.id })
     
     if(!Globals.social) {
       references = _.filter(references, function(p) { return p.isMine() || p.isBuiltIn() })
@@ -1027,10 +1029,21 @@ View.InvocationView = my.Class(View.Executable, {
     var numReferences = references ? references.length : 0
     var numOthersReferences = othersReferences.length
     
-    if(numReferences > 0 || forks.length > 0) {
+    if(numReferences > 0 || forks.length > 0 || pattern.has("original_id")) {
       var stats = $("<p class='stats'></p>").appendTo(this.meaningDom)
       
+      if(pattern.has("original_id")) {
+        var orig = Patterns.get(pattern.get("original_id"))
+        if(orig) {
+          stats.append("forked from <a href='#' class='orig'>another command</a>")
+          stats.find(".orig").click(function() { View.popupPatterns([orig]) })
+        }
+      }
+        
       if(numReferences > 0) {
+        if(stats.html().length > 0) {
+          stats.append(". ")
+        }
         stats.append(_.template("used in <a href='#'><%= count %> commands</a>", { count: numReferences }))
         stats.children("a").click(function() { View.popupPatterns(references); return false })
         this.meaningDom.append(stats)
@@ -1042,11 +1055,9 @@ View.InvocationView = my.Class(View.Executable, {
       }
       
       if(forks.length > 0) {
-        if(numReferences > 0) {
+        if(stats.html().length > 0) {
           stats.append(". ")
         }
-        
-        var pattern = this.invocation.getPattern()
         
         if(pattern.isMine()) {
           var othersForks = _.filter(forks, function(p) { return !p.isMine() })
@@ -1067,7 +1078,6 @@ View.InvocationView = my.Class(View.Executable, {
           stats.find(".forks-all").click(function() { View.popupPatterns(forks); return false })
           stats.find(".forks-others").click(function() { View.popupPatterns(myForks); return false })
         }
-        
       }
     }
   },
