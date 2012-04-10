@@ -621,7 +621,8 @@ div.happy-text span.cursor {
   position: fixed;
   top: 20px;
   /*bottom: 20px;*/
-  width: 400px;
+  min-width: 400px;
+  max-width: 90%;
   margin: 0 auto;
   background: white;
   padding: 20px;
