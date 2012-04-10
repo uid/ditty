@@ -122,10 +122,12 @@ View.droppable = {
   },
   
   over: function(ev, ui) {
-    View.objFor(ui.draggable).droppableEnter(this)
+    var obj = View.objFor(ui.draggable)
+    if(obj) obj.droppableEnter(this)
   },
   
   out: function(ev, ui) {
-    View.objFor(ui.draggable).droppableLeave(this)
+    var obj = View.objFor(ui.draggable)
+    if(obj) obj.droppableLeave(this)
   },
 }
