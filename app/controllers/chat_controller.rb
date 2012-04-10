@@ -1,6 +1,6 @@
 class ChatController < ApplicationController
   def index
-    render json: { events: EventRepository.recent }
+    render json: { events: EventRepository.recent(30) }
   end
   
   def create
