@@ -36,5 +36,15 @@ var mpq = {
 </script>
 <% end %>
 
+<% if Rails.env == "production" %>
+<script type="text/javascript">
+$(function() {
+  $(window).bind("beforeunload", function() {
+    return "You're about to leave this page."
+  })
+})
+</script>
+<% end %>
+
 </body>
 </html>
