@@ -42,6 +42,8 @@ $(function() {
   }, function() {
     $("#search").val("")
   })
+  $("#search").click(function() { $("#search").trigger("keydown.autocomplete") })
+  
   View.patternAutocomplete($("#search-canvas"), function(view) {
     setTimeout(function() { $("#search-canvas").val("") }, 10)
     Globals.canvas.dropped(view)
@@ -49,6 +51,7 @@ $(function() {
   }, function() {
     $("#search-canvas").val("")
   })
+  $("#search-canvas").click(function() { $("#search-canvas").trigger("keydown.autocomplete") })
   
   Globals.clickEnv = new Env()
   
