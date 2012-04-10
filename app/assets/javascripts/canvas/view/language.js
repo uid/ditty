@@ -903,11 +903,44 @@ View.InvocationView = my.Class(View.Executable, {
     this.renderNonEditableRepresentation()
     
     this.representationDom.append(" ")
-    this.representationDom.append($("<button class='reword'>Edit name&#8230;</button>").click(this.editTemplate.bind(this)))
+    this.representationDom.append($("<button>Edit name&#8230;</button>").click(this.editTemplate.bind(this)))
+    
+    this.representationDom.append(" ")
+    this.representationDom.append($("<button>Fork Command&#8230;</button>").click(this.forkPattern.bind(this)))
   },
   
   editTemplate: function() {
     new View.TemplateEditor(this.invocation.getCurrentTemplate(), this.invocation.getPattern())
+  },
+  
+  forkPattern: function() {
+    var origPattern = this.invocation.getPattern()
+    var origJSON = JSON.parse(JSON.stringify(origPattern))
+    
+    // put the placeholder in place
+    var view = new View.PromisedInvocation({ name: this.invocation.getCurrentTemplate().text })
+    Globals.canvas.dropped(view)
+    scrollIntoView(view.dom)
+    
+    // start creating the pattern
+    console.log("forking pattern...")
+    var pattern = Patterns.create({
+      representations: origJSON.representations,
+      arguments: origJSON.arguments,
+      native_meaning: origJSON.native_meaning,
+    }, {
+      wait: true,
+      success: function() {
+        var invocation = new Invocation({ pattern: pattern.id })
+        var realView = new View.InvocationView(invocation)
+        view.loadSuccess(realView)
+        realView.toggleSource()
+      },
+      error: function() {
+        console.log("pattern fork failed", arguments)
+        view.loadError()
+      },
+    })
   },
   
   renderMeaningIfNecessary: function() {
