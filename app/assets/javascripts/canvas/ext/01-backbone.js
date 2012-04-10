@@ -363,7 +363,7 @@
       // If we're "wait"-ing to set changed attributes, validate early.
       if (options.wait) {
         if (!this._validate(attrs, options)) return false;
-        current = _.clone(this.attributes);
+        current = _.clone(attrs); // tom: 'attrs' used to be 'this.attributes' but that didn't make any sense to me
       }
 
       // Regular saves `set` attributes before persisting to the server.
@@ -394,7 +394,7 @@
       options.error = Backbone.wrapError(options.error, model, options);
       var method = this.isNew() ? 'create' : 'update';
       var xhr = (this.sync || Backbone.sync).call(this, method, this, options);
-      if (options.wait) this.set(current, silentOptions);
+      if (options.wait && current) this.set(current, silentOptions);
       return xhr;
     },
 
