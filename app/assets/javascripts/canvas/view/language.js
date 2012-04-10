@@ -1017,6 +1017,7 @@ View.InvocationView = my.Class(View.Executable, {
     
     var references = _.map(this.invocation.getPattern().get("referencing_patterns"), getPattern)
     var othersReferences = _.map(_.filter(references, function(r) { return !Patterns.get(r).isMine() }), getPattern)
+    var forks = Patterns.where({ original_id: this.invocation.getPattern().id })
     
     if(!Globals.social) {
       references = _.filter(references, function(p) { return p.isMine() || p.isBuiltIn() })
@@ -1026,14 +1027,47 @@ View.InvocationView = my.Class(View.Executable, {
     var numReferences = references ? references.length : 0
     var numOthersReferences = othersReferences.length
     
-    if(numReferences > 0) {
-      var stats = $(_.template("<p class='stats'>used in <a href='#'><%= count %> commands</a></p>", { count: numReferences }))
-      stats.children("a").click(function() { View.popupPatterns(references); return false })
-      this.meaningDom.append(stats)
-      if(numOthersReferences > 0) {
-        var moreStats = $(_.template("<a href='#'><%= count %> from other people</a>)", { count: numOthersReferences }))
-        moreStats.click(function() { View.popupPatterns(othersReferences); return false })
-        stats.append(" (").append(moreStats).append(")")
+    if(numReferences > 0 || forks.length > 0) {
+      var stats = $("<p class='stats'></p>").appendTo(this.meaningDom)
+      
+      if(numReferences > 0) {
+        stats.append(_.template("used in <a href='#'><%= count %> commands</a>", { count: numReferences }))
+        stats.children("a").click(function() { View.popupPatterns(references); return false })
+        this.meaningDom.append(stats)
+        if(numOthersReferences > 0) {
+          var moreStats = $(_.template("<a href='#'><%= count %> from other people</a>)", { count: numOthersReferences }))
+          moreStats.click(function() { View.popupPatterns(othersReferences); return false })
+          stats.append(" (").append(moreStats).append(")")
+        }
+      }
+      
+      if(forks.length > 0) {
+        if(numReferences > 0) {
+          stats.append(". ")
+        }
+        
+        var pattern = this.invocation.getPattern()
+        
+        if(pattern.isMine()) {
+          var othersForks = _.filter(forks, function(p) { return !p.isMine() })
+          if(othersForks.length > 0) {
+            stats.append(_.template("<a href='#' class='forks-all'><%= count %> derived commands</a> (<a href='#' class='forks-others'><%= othersCount %> from others</a>)", { count: forks.length, othersCount: othersForks.length }))
+          } else {
+            stats.append(_.template("<a href='#' class='forks-all'><%= count %> derived commands</a>", { count: forks.length }))
+          }
+          stats.find(".forks-all").click(function() { View.popupPatterns(forks); return false })
+          stats.find(".forks-others").click(function() { View.popupPatterns(othersForks); return false })
+        } else {
+          var myForks = _.filter(forks, function(p) { return p.isMine() })
+          if(myForks.length > 0) {
+            stats.append(_.template("<a href='#' class='forks-all'><%= count %> derived commands</a> (<a href='#' class='forks-others'><%= othersCount %> are yours</a>)", { count: forks.length, othersCount: myForks.length }))
+          } else {
+            stats.append(_.template("<a href='#' class='forks-all'><%= count %> derived commands</a>", { count: forks.length }))
+          }
+          stats.find(".forks-all").click(function() { View.popupPatterns(forks); return false })
+          stats.find(".forks-others").click(function() { View.popupPatterns(myForks); return false })
+        }
+        
       }
     }
   },
