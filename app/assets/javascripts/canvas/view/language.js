@@ -991,14 +991,19 @@ View.InvocationView = my.Class(View.Executable, {
     }
     
     var references = this.invocation.getPattern().get("referencing_patterns")
-    var othersReferences = _.filter(references, function(r) { return !Patterns.get(r).isMine() })
+    var othersReferences = _.filter(references, function(r) { return Patterns.get(r).isMine() })
     var numReferences = references ? references.length : 0
     var numOthersReferences = othersReferences.length
     if(numReferences > 0) {
-      var stats = $(_.template("<p class='stats'>used in <%= count %> other commands</p>", { count: numReferences }))
+      var stats = $(_.template("<p class='stats'>used in <a href='#'><%= count %> commands</a></p>", { count: numReferences }))
+      stats.children("a").click(function() { alert('boop'); return false })
       this.meaningDom.append(stats)
       if(numOthersReferences > 0) {
-        stats.append(_.template(" (<%= count %> times by others)", { count: numOthersReferences }))
+        var moreStats = $(_.template("<a href='#'><%= count %> from other people</a>)", { count: numOthersReferences }))
+        moreStats.click(function() { alert('beep'); return false })
+        stats.append(" (")
+        stats.append(moreStats)
+        stats.append(")")
       }
     }
   },
