@@ -71,37 +71,31 @@ View.ActivityViewer = my.Class({
     } else {
       dom.append($("<span class='user'></span>").text(ev.user.readable_name))
     }
-    dom.append(" <span class='action'>created</span> ")
+    dom.append(" <span class='action created'>created</span> ")
     dom.append("this " + ev.ago + " ago:")
     dom.append("<br />")
     dom.append(pv.dom)
-    
-    // var view = new View.BubbleBlower(function(parent) { return new View.InvocationView(new Invocation({ pattern: pattern.id }), { parent: parent }) })
-    // try {
-    //   var pattern = jsonUnserialize(ev.pattern)
-    //   if(!this.batching) {
-    //     patterns[pattern.id] = pattern
-    //   }
-    //   var pv = new PatternView(pattern)
-    //   dom.append(pv.dom)
-    // } catch(e) {
-    //   dom.append("[error]")
-    // }
   },
   
   _updatedPatternDom: function(ev, dom) {
-    dom.append(ev.ago + " ago, ")
-    dom.append($("<span class='chat-user'></span>").text(ev.user.readable_name))
-    dom.append(" changed ")
-    // try {
-    //   var pattern = jsonUnserialize(ev.pattern)
-    //   if(!this.batching) {
-    //     patterns[pattern.id] = pattern
-    //   }
-    //   var pv = new PatternView(pattern)
-    //   dom.append(pv.dom)
-    // } catch(e) {
-    //   dom.append("[error]")
-    // }
+    var pattern = Patterns.get(ev.pattern.id)
+    if(!pattern) {
+      console.log("activity log mentioned unknown pattern", ev.pattern)
+      return
+    }
+    
+    var pv = new View.BubbleBlower(function(parent) { return new View.InvocationView(new Invocation({ pattern: pattern.id }), { parent: parent }) })
+    
+    var dom = $("<div class='event'></div>").appendTo(this.dom)
+    
+    if(ev.user.id == Globals.currentUser.id) {
+      dom.append($("<span class='user you'></span>").text("You"))
+    } else {
+      dom.append($("<span class='user'></span>").text(ev.user.readable_name))
+    }
+    dom.append(" <span class='action modified'>modified</span> ")
+    dom.append("this " + ev.ago + " ago:")
+    dom.append("<br />")
+    dom.append(pv.dom)
   },
 })
