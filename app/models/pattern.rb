@@ -1,5 +1,6 @@
 class Pattern < ActiveRecord::Base
   belongs_to :creator, :class_name => "User"
+  belongs_to :original, :class_name => "Pattern"
   has_many :outgoing_pattern_references, class_name: "PatternReference", foreign_key: :source_id, dependent: :destroy
   has_many :incoming_pattern_references, class_name: "PatternReference", foreign_key: :sink_id, dependent: :destroy
   has_many :referenced_patterns, through: :outgoing_pattern_references, source: "sink"
@@ -17,7 +18,7 @@ class Pattern < ActiveRecord::Base
   after_initialize :set_default_values
   after_save :update_references
   
-  attr_accessible :representations, :arguments, :native_meaning, :javascript_meaning, :show, :category, :featured, :is_solution
+  attr_accessible :representations, :arguments, :native_meaning, :javascript_meaning, :show, :category, :featured, :is_solution, :original_id
   
   attr_accessor :no_creator_is_fine
   
@@ -44,6 +45,7 @@ class Pattern < ActiveRecord::Base
     json[:creator] = creator.as_json(options) unless creator.blank?
     json[:category] = category unless category.blank?
     json[:show] = false if false === show
+    json[:original_id] = original_id unless original_id.nil?
     json
   end
   

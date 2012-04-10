@@ -928,6 +928,7 @@ View.InvocationView = my.Class(View.Executable, {
       representations: origJSON.representations,
       arguments: origJSON.arguments,
       native_meaning: origJSON.native_meaning,
+      original_id: origPattern.id
     }, {
       wait: true,
       success: function() {

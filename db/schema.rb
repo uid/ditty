@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120409192935) do
+ActiveRecord::Schema.define(:version => 20120410004140) do
 
   create_table "canvas", :force => true do |t|
     t.text     "views"
@@ -61,6 +61,7 @@ ActiveRecord::Schema.define(:version => 20120409192935) do
     t.string   "category"
     t.boolean  "featured",                          :default => false, :null => false
     t.boolean  "is_solution",                       :default => false, :null => false
+    t.integer  "original_id"
   end
 
   create_table "users", :force => true do |t|
