@@ -9,7 +9,7 @@ class EventRepository
   def self.recent_patterns limit=10
     events = []
     events += Pattern.recently_created.limit(limit).map { |pat| Event.new type: :pattern_created, time: pat.created_at, user: pat.creator, pattern: pat }
-    events += (Pattern.recently_updated.limit(limit) - events.map(&:pattern)).map { |pat| Event.new type: :pattern_updated, time: pat.updated_at, user: pat.creator, pattern: pat }
+    events += Pattern.recently_updated.limit(limit).map { |pat| Event.new type: :pattern_updated, time: pat.updated_at, user: pat.creator, pattern: pat }
     merged_events events, limit
   end
   
