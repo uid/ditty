@@ -855,7 +855,10 @@ View.InvocationView = my.Class(View.Executable, {
   toggleSource: function() {
     this.editing = !this.editing
     
-    this.renderMeaningIfNecessary()
+    if(this.editing) {
+      this.renderMeaning()
+    }
+    
     this.renderRepresentation()
     
     this.dom.toggleClass("editing")
