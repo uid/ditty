@@ -36,10 +36,7 @@ View.Palette = my.Class({
       })
     }))
     
-    this.categoryDoms = {}
-    this.categoryMoreDoms = {}
-    this.patternViews = {}
-    this.renderCategories()
+    this.itemsDom = $("<div />").appendTo(this.dom)
     
     this.patterns.on("reset", this.patternsReset, this)
     this.patterns.on("add", this.patternAdded, this)
@@ -47,21 +44,27 @@ View.Palette = my.Class({
     this.patternsReset()
   },
   
-  renderCategories: function() {
-    for(var i in this.categories) {
-      var name = this.categories[i]
-      $("<h3></h3>").text(name).appendTo(this.dom)
-      if(name == "Numbers") {
-        $("<p></p>").text("To get specific numbers, type them.").appendTo(this.dom)
-      }
-      this.categoryDoms[name] = $("<div />").appendTo(this.dom)
+  patternsReset: function() {
+    this.categoryDoms = {}
+    this.categoryMoreDoms = {}
+    this.patternViews = {}
+    
+    this.itemsDom.empty()
+    this.renderCategories()
+    
+    for(var i in this.patterns.models) {
+      this.patternAdded(this.patterns.models[i])
     }
   },
   
-  patternsReset: function() {
-    // safe to assume this happens only once, on load
-    for(var i in this.patterns.models) {
-      this.patternAdded(this.patterns.models[i])
+  renderCategories: function() {
+    for(var i in this.categories) {
+      var name = this.categories[i]
+      $("<h3></h3>").text(name).appendTo(this.itemsDom)
+      if(name == "Numbers") {
+        $("<p></p>").text("To get specific numbers, type them.").appendTo(this.itemsDom)
+      }
+      this.categoryDoms[name] = $("<div />").appendTo(this.itemsDom)
     }
   },
   
