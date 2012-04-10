@@ -222,6 +222,20 @@ View.Executable = my.Class({
 })
 
 
+View.popupPatterns = function(patterns) {
+  var dom = $("<div class='popup' />").appendTo($("body"))
+  dom.draggable()
+  dom.append($("<p style='margin-top: 0' />").append($("<a href='#'>Close</a>").click(function() { dom.remove(); return false })))
+  _.each(patterns, function(pattern) {
+    var invocation = new Invocation({ pattern: pattern.id })
+    var view = new View.InvocationView(invocation)
+    var generator = (function(invocation) { return function(parent) {
+      return new View.InvocationView(invocation, { parent: parent })
+    } })(invocation)
+    dom.append(new View.BubbleBlower(generator).dom)
+  })
+}
+
 
 View.applyCanvasDropping = function(klass) {
   klass.prototype.droppedOn = function(target) {
@@ -990,20 +1004,19 @@ View.InvocationView = my.Class(View.Executable, {
       }.bind(this))
     }
     
-    var references = this.invocation.getPattern().get("referencing_patterns")
-    var othersReferences = _.filter(references, function(r) { return Patterns.get(r).isMine() })
+    var getPattern = function(id) { return Patterns.get(id) }
+    var references = _.map(this.invocation.getPattern().get("referencing_patterns"), getPattern)
+    var othersReferences = _.map(_.filter(references, function(r) { return !Patterns.get(r).isMine() }), getPattern)
     var numReferences = references ? references.length : 0
     var numOthersReferences = othersReferences.length
     if(numReferences > 0) {
       var stats = $(_.template("<p class='stats'>used in <a href='#'><%= count %> commands</a></p>", { count: numReferences }))
-      stats.children("a").click(function() { alert('boop'); return false })
+      stats.children("a").click(function() { View.popupPatterns(references); return false })
       this.meaningDom.append(stats)
       if(numOthersReferences > 0) {
         var moreStats = $(_.template("<a href='#'><%= count %> from other people</a>)", { count: numOthersReferences }))
-        moreStats.click(function() { alert('beep'); return false })
-        stats.append(" (")
-        stats.append(moreStats)
-        stats.append(")")
+        moreStats.click(function() { View.popupPatterns(othersReferences); return false })
+        stats.append(" (").append(moreStats).append(")")
       }
     }
   },

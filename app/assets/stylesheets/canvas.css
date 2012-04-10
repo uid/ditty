@@ -614,6 +614,23 @@ div.happy-text span.cursor {
 }
 
 
+/* POPUPS */
+
+.popup {
+  display: inline-block;
+  overflow: auto;
+  position: fixed;
+  top: 20px;
+  /*bottom: 20px;*/
+  width: 400px;
+  margin: 0 auto;
+  background: white;
+  padding: 20px;
+  box-shadow: 0px 0px 40px #000;
+  z-index: 201;
+}
+
+
 /* ACHTUNG */
 
 .achtung.debug {
