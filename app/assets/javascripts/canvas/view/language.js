@@ -987,12 +987,17 @@ View.InvocationView = my.Class(View.Executable, {
       }.bind(this))
     }
     
-    // var numCopies = Math.floor(Math.random() * 5) + 1 // XXX lol, obvs
-    // if(numCopies > 1) {
-    //   var stats = $("<p class='stats'>editing all <span></span> copies. <a href='#'>edit only this copy</a></h3>").appendTo(this.meaningDom)
-    //   stats.children("span").text(numCopies)
-    //   stats.children("a").click(safeClick(function() { alert("sorry! can't do that yet."); return false }))
-    // }
+    var references = this.invocation.getPattern().get("referencing_patterns")
+    var othersReferences = _.filter(references, function(r) { return !Patterns.get(r).isMine() })
+    var numReferences = references ? references.length : 0
+    var numOthersReferences = othersReferences.length
+    if(numReferences > 0) {
+      var stats = $(_.template("<p class='stats'>used in <%= count %> other commands</p>", { count: numReferences }))
+      this.meaningDom.append(stats)
+      if(numOthersReferences > 0) {
+        stats.append(_.template(" (<%= count %> times by others)", { count: numOthersReferences }))
+      }
+    }
   },
   
   _slotView: function(param) {
