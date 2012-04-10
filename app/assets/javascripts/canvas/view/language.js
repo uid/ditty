@@ -961,7 +961,8 @@ View.InvocationView = my.Class(View.Executable, {
         var realView = new View.InvocationView(invocation)
         view.loadSuccess(realView)
         realView.toggleSource()
-      },
+        this.renderMeaning()
+      }.bind(this),
       error: function() {
         console.log("pattern fork failed", arguments)
         view.loadError()
