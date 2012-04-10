@@ -72,8 +72,6 @@ div.bubble div.representation span.saving {
   color: #d70014;
   display: none;
 }
-div.bubble div.representation button.reword {
-}
 /*
 unfortunately these don't play nice with nesting
 div.bubble div.representation:hover {
