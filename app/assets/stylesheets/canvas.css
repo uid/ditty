@@ -240,7 +240,7 @@ ul.multislot li.inbetweener.not-editing:hover .insert {
   border: 1px solid #AAA;
   background: white;
   color: #222;
-  z-index: 1 !important;
+  z-index: 2000 !important;
 }
 .ui-menu {
   list-style: none;
