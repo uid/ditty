@@ -12,7 +12,7 @@ var Tasks = new Backbone.Collection
 Tasks.add({
   title: "commas",
   // command_name: "[text] with commas removed",
-  description: "input without commas",
+  description: "Remove all commas.",
   example_before: "\"Use the Force, Luke,\" said Obi-Wan.",
   example_after: "\"Use the Force Luke\" said Obi-Wan.",
   section: TaskSections.at(0),
