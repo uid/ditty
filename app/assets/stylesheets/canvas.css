@@ -4,14 +4,10 @@
 
 
 /*
- * TODO LIST (why is this here? haha!)
- * hallucinate a containing command around commands on the canvas
- * display multislots with nothing in them differently than single slots
+ * things I think about while writing stylesheets
+ * 
  * drag the loop from one while into the loop of another while
- * color according to nesting level
- * allow creation of commands by right-click... 'solidifies' the line as a sentence
- * recommend abstraction according to nesting level
- * dragging onto a closed block should open it?
+ * dragging onto a closed block should open it? (conflicts with dragging onto an item in a slot pops it out)
  */
 
 
