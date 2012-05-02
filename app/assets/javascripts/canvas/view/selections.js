@@ -76,6 +76,8 @@ var SelectionManager = my.Class({
   },
   
   mouseup: function() {
+    if(!this.selecting) return
+    
     this.selecting = false
     this.rectangle.hide()
     
