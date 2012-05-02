@@ -10,31 +10,7 @@ View.Palette = my.Class({
     this.categories = options.categories || []
     
     this.dom.append("<h3>New Command</h3>")
-    this.dom.append($("<button>Create New Command +</button>").click(function() {
-      var name = randomPhrase()
-      
-      // put the placeholder in place
-      var view = new View.PromisedInvocation({ name: name })
-      Globals.canvas.dropped(view)
-      scrollIntoView(view.dom)
-      
-      // start creating the pattern
-      console.log("creating new pattern...")
-      var pattern = Patterns.create({ representations: [{ template: name }], native_meaning: [] }, {
-        wait: true,
-        success: function() {
-          var invocation = new Invocation({ pattern: pattern.id })
-          var realView = new View.InvocationView(invocation)
-          view.loadSuccess(realView)
-          realView.toggleSource()
-          // realView.editTemplate()
-        },
-        error: function() {
-          console.log("pattern create failed", arguments)
-          view.loadError()
-        },
-      })
-    }))
+    this.dom.append($("<button>Create New Command +</button>").click(_.bind(this.createCommand, this)))
     
     this.itemsDom = $("<div />").appendTo(this.dom)
     
@@ -42,6 +18,32 @@ View.Palette = my.Class({
     this.patterns.on("add", this.patternAdded, this)
     
     this.patternsReset()
+  },
+  
+  createCommand: function() {
+    var name = randomPhrase()
+    
+    // put the placeholder in place
+    var view = new View.PromisedInvocation({ name: name })
+    Globals.canvas.dropped(view)
+    scrollIntoView(view.dom)
+    
+    // start creating the pattern
+    console.log("creating new pattern...")
+    var pattern = Patterns.create({ representations: [{ template: name }], native_meaning: [] }, {
+      wait: true,
+      success: function() {
+        var invocation = new Invocation({ pattern: pattern.id })
+        var realView = new View.InvocationView(invocation)
+        view.loadSuccess(realView)
+        realView.toggleSource()
+        // realView.editTemplate()
+      },
+      error: function() {
+        console.log("pattern create failed", arguments)
+        view.loadError()
+      },
+    })
   },
   
   patternsReset: function() {
