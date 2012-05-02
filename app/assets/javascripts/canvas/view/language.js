@@ -819,9 +819,9 @@ View.InvocationView = my.Class(View.Executable, {
     
     this.renderRepresentation()
     
-    this.representationDom.bind('contextmenu', safeClick(function(e) {
+    this.representationDom.mouseup(safeClick(function(e) {
+      if(e.button != 2) return
       this.toggleSource()
-      return false
     }.bind(this)))
     
     this.representationDom.click(safeClick(this.executeOrStop.bind(this)))
