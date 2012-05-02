@@ -5,7 +5,7 @@ var Patterns = new PatternCollection
 var Globals = {}
 
 $(function() {
-  setSocial(false)
+  setSocial(true)
   
   $("#loading").hide()
   $("#container").show()
