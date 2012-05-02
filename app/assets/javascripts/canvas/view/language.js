@@ -724,10 +724,29 @@ View.MultiSlotView = my.Class({
       return views
     }
     
-    alert("would have folded lines " + range[0] + " through " + range[1])
+    var foldView = new View.PromisedInvocation({ name: "New Fold" })
+    Globals.canvas.dropped(foldView)
+    scrollIntoView(foldView.dom)
+    
+    // start creating the pattern
+    var pattern = Patterns.create({ representations: [{ template: "New Fold" }], native_meaning: _.map(views, function(v) { return v.model }) }, {
+      wait: true,
+      success: function() {
+        foldView.loadSuccess()
+        
+        var invocation = new Invocation({ pattern: pattern.id })
+        var realView = new View.InvocationView(invocation)
+        this.insertChild(realView, range[0])
+        // realView.toggleSource()
+        // realView.editTemplate()
+      }.bind(this),
+      error: function() {
+        console.log("pattern create failed", arguments)
+        foldView.loadError()
+      },
+    })
     
     this.removeChildren(this.views.slice(range[0], range[1] + 1), range[0])
-    this.insertChild(new View.BasicMeaningView(new StringMeaning({ string: "la la la" })), range[0])
   },
 })
 
