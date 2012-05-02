@@ -141,15 +141,21 @@ var BubbleSelectionHandler = my.Class({
       
       // if multiple are selected with the same parent, select the highest set
       var groups = _.filter(ht.entries(), function(e) { return e[1].length > 1 })
+      var group
       if(groups.length > 0) {
         // pick the highest group
-        this.selected = _.sortBy(groups, parentDepth)[0][1]
+        group = _.sortBy(groups, parentDepth)[0]
       } else {
-        // otherwise, take the deepest
-        this.selected = _.sortBy(ht.entries(), parentDepth)[0][1]
+        // otherwise, take the deepest out of all of them
+        group = _.sortBy(ht.entries(), parentDepth)[0]
       }
       
-      // TODO: ensure contiguous
+      if(group[0] instanceof View.MultiSlotView) {
+        // ensure it's a contiguous selection
+        this.selected = group[0].continuousSelection(group[1])
+      } else {
+        this.selected = group[1]
+      }
     } else if(this.selections.length > 0) {
       // choose the deepest item
       this.selected = [_.sortBy(this.selections, function(o) { return -o.dom.parents().length })[0]]

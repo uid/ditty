@@ -672,6 +672,16 @@ View.MultiSlotView = my.Class({
       this.rebuildDom()
     }
   },
+  
+  // return an array of the children in @items without gaps
+  // (including children between children in the set)
+  continuousSelection: function(items) {
+    if(items.length == 0) return items
+    var start = _.indexOf(this.views, items[0])
+    var end = _.indexOf(this.views, items[items.length - 1])
+    if(start == -1 || end == -1) return items
+    return this.views.slice(start, end + 1)
+  },
 })
 
 
