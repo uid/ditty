@@ -14,6 +14,15 @@ var SelectionRectangle = my.Class({
         && dom.offset().top + dom.outerHeight() > n.y1
   },
   
+  intersectsDomFromOutside: function(dom) {
+    var n = this.normalized()
+    return this.intersectsDom(dom) &&
+          (dom.offset().left > n.x1 ||
+           dom.offset().left + dom.outerWidth() < n.x2 ||
+           dom.offset().top > n.y1 ||
+           dom.offset().top + dom.outerHeight() < n.y2)
+  },
+  
   normalized: function() {
     var x1 = (this.x1 < this.x2) ? this.x1 : this.x2
     var y1 = (this.y1 < this.y2) ? this.y1 : this.y2
