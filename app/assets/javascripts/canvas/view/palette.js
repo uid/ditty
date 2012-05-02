@@ -73,7 +73,7 @@ View.Palette = my.Class({
     var featured = pattern.get("featured")
     
     if(category && category in this.categoryDoms) {
-      var view = new View.BubbleBlower(function(parent) { return new View.InvocationView(new Invocation({ pattern: pattern.id }), { parent: parent }) })
+      var view = new View.BubbleBlower(function(parent) { return new View.InvocationView(new Invocation({ pattern: pattern.id }), { parent: parent }) }, { parent: this })
       this.patternViews[pattern.id] = view
       
       if(featured) {
