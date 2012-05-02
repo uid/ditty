@@ -822,7 +822,7 @@ View.PromisedInvocation = my.Class({
   },
   
   loadSuccess: function(realView) {
-    this.parent.dropped(realView)
+    if(realView) this.parent.dropped(realView)
     this.parent.release(this)
   },
   
