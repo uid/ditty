@@ -673,14 +673,47 @@ View.MultiSlotView = my.Class({
     }
   },
   
+  // @views is a (possibly sparse) array of views;
+  // returns the range as a 2-element array represented by @views,
+  // or -1 if not all views are present
+  _viewsRange: function(views) {
+    if(views.length == 0) return undefined
+    
+    var indices = _.map(views, function(v) { return _.indexOf(this.views, v) }.bind(this))
+    if(_.any(indices, function(i) { return i == -1 })) {
+      return undefined
+    }
+    
+    var sorted = indices.sort()
+    return [sorted[0], sorted[sorted.length - 1]]
+  },
+  
   // return an array of the children in @items without gaps
   // (including children between children in the set)
-  continuousSelection: function(items) {
-    if(items.length == 0) return items
-    var start = _.indexOf(this.views, items[0])
-    var end = _.indexOf(this.views, items[items.length - 1])
-    if(start == -1 || end == -1) return items
-    return this.views.slice(start, end + 1)
+  continuousSelection: function(views) {
+    if(views.length == 0) return []
+    
+    var range = this._viewsRange(views)
+    
+    if(!range) {
+      console.log("warning: selection of views aren't all within this multislot")
+      return views
+    }
+    
+    return this.views.slice(range[0], range[1] + 1)
+  },
+  
+  beginFold: function(views) {
+    if(views.length == 0) return []
+    
+    var range = this._viewsRange(views)
+    
+    if(!range) {
+      alert("Sorry, something went wrong and it's Tom's fault.")
+      return views
+    }
+    
+    alert("would have folded lines " + range[0] + " through " + range[1])
   },
 })
 

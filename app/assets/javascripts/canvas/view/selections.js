@@ -161,11 +161,15 @@ var BubbleSelectionHandler = my.Class({
       } else {
         this.selected = group[1]
       }
+      
+      this.selectedParent = group[0]
     } else if(this.selections.length > 0) {
       // choose the deepest item
       this.selected = [_.sortBy(this.selections, function(o) { return -o.dom.parents().length })[0]]
+      this.selectedParent = this.selected[0].directContainer()
     } else {
       this.selected = []
+      delete this.selectedParent
     }
     
     var newlySelected = _.without(this.selected, oldSelected)
@@ -190,6 +194,10 @@ var BubbleSelectionHandler = my.Class({
   },
   
   selectionEnded: function(e) {
+    if(this.selectedParent && (this.selectedParent instanceof View.MultiSlotView)) {
+      this.selectedParent.beginFold(this.selected)
+    }
+    
     if(this.overs) {
       this.overs.each(function(obj, over) { over.remove() })
       delete this.overs
