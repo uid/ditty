@@ -673,6 +673,17 @@ View.MultiSlotView = my.Class({
     }
   },
   
+  removeChildren: function(children, index) {
+    _.each(children, function(v) { v.dom.detach() })
+    
+    this.views.splice(index, children.length)
+    
+    if(this.collection) {
+      this.models.splice(index, children.length)
+      this.collection.remove(children)
+    }
+  },
+  
   // @views is a (possibly sparse) array of views;
   // returns the range as a 2-element array represented by @views,
   // or -1 if not all views are present
@@ -714,6 +725,9 @@ View.MultiSlotView = my.Class({
     }
     
     alert("would have folded lines " + range[0] + " through " + range[1])
+    
+    this.removeChildren(this.views.slice(range[0], range[1] + 1), range[0])
+    this.insertChild(new View.BasicMeaningView(new StringMeaning({ string: "la la la" })), range[0])
   },
 })
 
