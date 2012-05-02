@@ -103,8 +103,8 @@ var SelectionManager = my.Class({
 
 var BubbleSelectionHandler = my.Class({
   selectionBegan: function(e) {
-    this.selectionChanged(e)
     this.begun = false // user hasn't moved mouse enough yet
+    this.selectionChanged(e)
   },
   
   selectionChanged: function(e) {
