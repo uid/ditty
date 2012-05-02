@@ -32,6 +32,7 @@ View.draggable = {
   
   // fired when a drag begins
   start: function(ev, ui) {
+    if(ev.ctrlKey) return false
     dragging = true
     noclick = true
   },
