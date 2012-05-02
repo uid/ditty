@@ -105,7 +105,7 @@ var BubbleSelectionHandler = my.Class({
   },
   
   selectionChanged: function(e) {
-    _.each(this.selected, function(obj) { obj.dom.css({ border: "" }) })
+    var oldSelected = this.selected
     
     this.selectionsFromOutside = []
     this.selections = []
@@ -163,14 +163,32 @@ var BubbleSelectionHandler = my.Class({
       this.selected = []
     }
     
-    _.each(this.selected, function(obj) { obj.dom.css({ border: "1px solid black" }) })
+    var newlySelected = _.without(this.selected, oldSelected)
+    var deselected = _.without(oldSelected, this.selected)
+    this.overs || (this.overs = new Hashtable)
+    
+    _.each(deselected, _.bind(function(o) {
+      this.overs.get(o).remove()
+      this.overs.remove(o)
+    }, this))
+    
+    _.each(newlySelected, _.bind(function(o) {
+      var dom = $("<div class='selection-cover'></div>").appendTo($("body"))
+      dom.css({
+        top: o.dom.offset().top,
+        left: o.dom.offset().left,
+        width: o.dom.outerWidth(),
+        height: o.dom.outerHeight(),
+      })
+      this.overs.put(o, dom)
+    }, this))
   },
   
   selectionEnded: function(e) {
-    $(".bubble").each(function(i, dom) {
-      dom = $(dom)
-      obj = View.objFor(dom)
-      dom.css({ border: "" })
-    }.bind(this))
+    if(this.overs) {
+      this.overs.each(function(obj, over) { over.remove() })
+      delete this.overs
+    }
+    delete this.selected
   },
 })

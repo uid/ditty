@@ -33,6 +33,11 @@ body {
   position: absolute;
   z-index: 5000;
 }
+.selection-cover {
+  background: rgba(128, 128, 255, 0.3);
+  position: absolute;
+  z-index: 4999;
+}
 
 
 /* BUBBLES */
