@@ -1004,7 +1004,8 @@ View.InvocationView = my.Class(View.Executable, {
       this.meaningMSV = new View.MultiSlotView({
         collection: pattern.native_meaning,
         modelToView: function(m) { return View.viewForMeaning(m) },
-        viewToModel: function(v) { return v.model }
+        viewToModel: function(v) { return v.model },
+        parent: this
       })
       this.meaningDom.append(this.meaningMSV.dom)
     } else if("javascript_meaning" in pattern) {
@@ -1095,7 +1096,8 @@ View.InvocationView = my.Class(View.Executable, {
       fillerText: name,
       collection: this.invocation.argumentValue(param.get("name")),
       modelToView: function(m) { return View.viewForMeaning(m) },
-      viewToModel: function(v) { return v.model }
+      viewToModel: function(v) { return v.model },
+      parent: this
     }
     
     if(param.get("type") != "instructions") {
@@ -1165,6 +1167,7 @@ View.BubbleBlower = my.Class({
     options || (options = {})
     
     this.generator = generator
+    if(options.parent) this.parent = options.parent
     
     this.dom = $("<div style='display: inline-block'></div>")
     View.setObjFor(this.dom, this)
