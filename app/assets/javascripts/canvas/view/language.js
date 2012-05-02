@@ -226,6 +226,34 @@ View.Executable = my.Class({
 })
 
 
+View.CodeBlock = my.Class({
+  containingCodeBlock: function() {
+    return this.parentOfTypes([View.InvocationView])
+  },
+  
+  directContainer: function() {
+    return this.parentOfTypes([View.CodeCanvas, View.Palette, View.MultiSlotView])
+  },
+  
+  parentOfTypes: function(types) {
+    var parent = this.parent
+    while(true) {
+      if(!parent) {
+        return undefined
+      }
+      
+      for(var i in types) {
+        if(parent instanceof types[i]) {
+          return parent
+        }
+      }
+      
+      parent = parent.parent
+    }
+  },
+})
+
+
 View.popupPatterns = function(patterns) {
   var dom = $("<div class='popup' />").appendTo($("body"))
   dom.draggable()
@@ -647,7 +675,7 @@ View.MultiSlotView = my.Class({
 })
 
 
-View.BasicMeaningView = my.Class(View.Executable, {
+View.BasicMeaningView = my.Class(View.Executable, View.CodeBlock, {
   constructor: function(meaning, options) {
     options || (options = {})
     
@@ -686,7 +714,7 @@ View.draggable.decorate(View.BasicMeaningView)
 View.applyCanvasDropping(View.BasicMeaningView)
 
 
-View.ArgumentReferenceView = my.Class(View.Executable, {
+View.ArgumentReferenceView = my.Class(View.Executable, View.CodeBlock, {
   constructor: function(reference, options) {
     options || (options = {})
     
@@ -785,7 +813,7 @@ View.FakeInvocationView = my.Class({
 })
 
 
-View.InvocationView = my.Class(View.Executable, {
+View.InvocationView = my.Class(View.Executable, View.CodeBlock, {
   constructor: function(invocation, options) {
     options = options || {}
     
