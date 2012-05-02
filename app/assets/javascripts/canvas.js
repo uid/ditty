@@ -10,6 +10,8 @@ $(function() {
   $("#loading").hide()
   $("#container").show()
   
+  new SelectionManager({ handler: new BubbleSelectionHandler })
+  
   $("body").addClass("no-drag-in-progress")
   $("body").bind("dragstart", function(e, ui) {
     $("body").removeClass("no-drag-in-progress");

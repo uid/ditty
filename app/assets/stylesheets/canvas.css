@@ -25,6 +25,16 @@ body {
 }
 
 
+/* SELECTION */
+
+#selection {
+  background: rgba(0, 0, 0, 0.07);
+  display: none;
+  position: absolute;
+  z-index: 5000;
+}
+
+
 /* BUBBLES */
 
 div.bubble {
