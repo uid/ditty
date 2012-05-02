@@ -1172,11 +1172,16 @@ View.BubbleBlower = my.Class({
     this.dom = $("<div style='display: inline-block'></div>")
     View.setObjFor(this.dom, this)
     
-    this.respawn()
+    this.respawn(false)
   },
   
-  respawn: function() {
-    this.dom.append(this.generator(this).dom)
+  respawn: function(animate) {
+    var obj = this.generator(this)
+    this.dom.append(obj.dom)
+    if(animate) {
+      obj.dom.css({ opacity: 0 })
+      obj.dom.animate({ opacity: 1 }, { duration: 500 })
+    }
   },
   
   dragout: function(child, target) {
@@ -1184,7 +1189,7 @@ View.BubbleBlower = my.Class({
 
   release: function(child) {
     child.dom.detach()
-    this.respawn()
+    this.respawn(true)
   },
 })
 
