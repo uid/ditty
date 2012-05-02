@@ -205,5 +205,6 @@ var BubbleSelectionHandler = my.Class({
       delete this.overs
     }
     delete this.selected
+    delete this.selectedParent
   },
 })
