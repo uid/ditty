@@ -102,9 +102,14 @@ var SelectionManager = my.Class({
 var BubbleSelectionHandler = my.Class({
   selectionBegan: function(e) {
     this.selectionChanged(e)
+    this.begun = false // user hasn't moved mouse enough yet
   },
   
   selectionChanged: function(e) {
+    if(!this.begun && DittyMath.distance(e.rect.x1, e.rect.y1, e.rect.x2, e.rect.y2) < 5) return
+    
+    this.begun = true
+    
     var oldSelected = this.selected
     
     this.selectionsFromOutside = []
