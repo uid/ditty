@@ -114,6 +114,14 @@ View.CodeBlock = my.Class({
     this.collapseDom = $("<div class='collapse'></div>").text("COLLAPSE/RENAME").hide().appendTo(this.dom)
     this.dom.hoverIntent(function() { this.collapseDom.show() }.bind(this), function() { this.collapseDom.hide() }.bind(this))
     this.collapseDom.mousedown(function(e) { e.stopPropagation(); Globals.selectionManager.startSelecting(e) })
+    this.collapseDom.click(function(e) {
+      if(Globals.selectionHandler.begun) return
+      
+      var parent = this.directContainer()
+      if(parent && (parent instanceof View.MultiSlotView)) {
+        parent.beginFold([this])
+      }
+    }.bind(this))
   },
 })
 
