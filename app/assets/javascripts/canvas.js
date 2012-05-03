@@ -12,7 +12,8 @@ $(function() {
   
   $("body").disableSelection()
   
-  new SelectionManager({ handler: new BubbleSelectionHandler })
+  Globals.selectionHandler = new BubbleSelectionHandler
+  Globals.selectionManager = new SelectionManager({ handler: Globals.selectionHandler })
   
   $("body").addClass("no-drag-in-progress")
   $("body").bind("dragstart", function(e, ui) {

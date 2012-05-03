@@ -768,6 +768,11 @@ View.InvocationView = my.Class(View.Executable, View.CodeBlock, {
     this.stopDom = $("<div class='stop'></div>").text("STOP").hide().appendTo(this.dom)
     View.setObjFor(this.dom, this)
     
+    // collapse handle
+    this.collapseDom = $("<div class='collapse'></div>").text("COLLAPSE/RENAME").hide().appendTo(this.dom)
+    this.dom.hoverIntent(function() { this.collapseDom.show() }.bind(this), function() { this.collapseDom.hide() }.bind(this))
+    this.collapseDom.mousedown(function(e) { e.stopPropagation(); Globals.selectionManager.startSelecting(e) })
+    
     // re-render the representationDom when it changes
     this.invocation.on("change:representationIndex", this.representationsChanged, this)
     this.invocation.getPattern().on("change:representations", this.representationsChanged, this)

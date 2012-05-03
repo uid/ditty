@@ -62,17 +62,7 @@ var SelectionManager = my.Class({
   mousedown: function(e) {
     if(e.button != 2 && !e.ctrlKey) return
     
-    this.selecting = true
-  
-    this.rect.x1 = this.rect.x2 = e.pageX
-    this.rect.y1 = this.rect.y2 = e.pageY
-    
-    this.rectangle.css(this.rect.css())
-    this.rectangle.show()
-    
-    this.clearSelection = _.once(function() { View.clearSelection() })
-    
-    if(this.handler) this.handler.selectionBegan({ rect: this.rect })
+    startSelecting(e)
   },
   
   mouseup: function() {
@@ -95,6 +85,20 @@ var SelectionManager = my.Class({
     this.clearSelection()
     
     if(this.handler) this.handler.selectionChanged({ rect: this.rect })
+  },
+  
+  startSelecting: function(e) {
+    this.selecting = true
+  
+    this.rect.x1 = this.rect.x2 = e.pageX
+    this.rect.y1 = this.rect.y2 = e.pageY
+    
+    this.rectangle.css(this.rect.css())
+    this.rectangle.show()
+    
+    this.clearSelection = _.once(function() { View.clearSelection() })
+    
+    if(this.handler) this.handler.selectionBegan({ rect: this.rect })
   },
 })
 
