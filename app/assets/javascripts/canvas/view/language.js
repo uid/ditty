@@ -587,8 +587,15 @@ View.MultiSlotView = my.Class({
     Globals.canvas.dropped(foldView)
     scrollIntoView(foldView.dom)
     
+    this.removeChildren(this.views.slice(range[0], range[1] + 1), range[0])
+    
     // start creating the pattern
-    var pattern = Patterns.create({ representations: [{ template: "New Fold" }], native_meaning: _.map(views, function(v) { return v.model }) }, {
+    var patternAttrs = {
+      representations: [{ template: "New Fold" }],
+      native_meaning: _.map(views, function(v) { return v.model }),
+      fold: true
+    }
+    var pattern = Patterns.create(patternAttrs, {
       wait: true,
       success: function() {
         foldView.loadSuccess()
@@ -604,8 +611,6 @@ View.MultiSlotView = my.Class({
         foldView.loadError()
       },
     })
-    
-    this.removeChildren(this.views.slice(range[0], range[1] + 1), range[0])
   },
 })
 
