@@ -582,7 +582,10 @@ View.MultiSlotView = my.Class({
       return views
     }
     
-    var foldView = new View.PromisedInvocation({ name: "New Fold" })
+    var name = prompt("Name?")
+    if(!name) return
+    
+    var foldView = new View.PromisedInvocation({ name: name })
     Globals.canvas.dropped(foldView)
     scrollIntoView(foldView.dom)
     
@@ -590,7 +593,7 @@ View.MultiSlotView = my.Class({
     
     // start creating the pattern
     var patternAttrs = {
-      representations: [{ template: "New Fold" }],
+      representations: [{ template: name }],
       native_meaning: _.map(views, function(v) { return v.model }),
       fold: true
     }
