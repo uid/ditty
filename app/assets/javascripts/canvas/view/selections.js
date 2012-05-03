@@ -71,7 +71,7 @@ var SelectionManager = my.Class({
     this.selecting = false
     this.rectangle.hide()
     
-    if(this.handler) this.handler.selectionEnded({ rect: this.rect })
+    if(this.handler) this.handler.selectionEnded({ rect: this.rect }, this.options)
   },
   
   mousemove: function(e) {
@@ -84,11 +84,12 @@ var SelectionManager = my.Class({
     
     this.clearSelection()
     
-    if(this.handler) this.handler.selectionChanged({ rect: this.rect })
+    if(this.handler) this.handler.selectionChanged({ rect: this.rect }, this.options)
   },
   
-  startSelecting: function(e) {
+  startSelecting: function(e, options) {
     this.selecting = true
+    this.options = options || {}
   
     this.rect.x1 = this.rect.x2 = e.pageX
     this.rect.y1 = this.rect.y2 = e.pageY
@@ -98,7 +99,7 @@ var SelectionManager = my.Class({
     
     this.clearSelection = _.once(function() { View.clearSelection() })
     
-    if(this.handler) this.handler.selectionBegan({ rect: this.rect })
+    if(this.handler) this.handler.selectionBegan({ rect: this.rect }, this.options)
   },
 })
 
@@ -106,12 +107,12 @@ var SelectionManager = my.Class({
 /* ditty-specific selection handler */
 
 var BubbleSelectionHandler = my.Class({
-  selectionBegan: function(e) {
+  selectionBegan: function(e, options) {
     this.begun = false // user hasn't moved mouse enough yet
     this.selectionChanged(e)
   },
   
-  selectionChanged: function(e) {
+  selectionChanged: function(e, options) {
     if(!this.begun && DittyMath.distance(e.rect.x1, e.rect.y1, e.rect.x2, e.rect.y2) < 5) return
     
     this.begun = true
@@ -125,6 +126,9 @@ var BubbleSelectionHandler = my.Class({
       dom = $(dom)
       var obj = View.objFor(dom)
       if(obj) {
+        if(options.requireParent && obj.directContainer && obj.directContainer() != options.requireParent) {
+          return // continue
+        }
         if(e.rect.intersectsDom(dom)) {
           this.selections.push(obj)
         }
@@ -133,6 +137,11 @@ var BubbleSelectionHandler = my.Class({
         }
       }
     }.bind(this))
+    
+    if(options.include) {
+      this.selectionsFromOutside = _.union(this.selectionsFromOutside, [options.include])
+      this.selections = _.without(this.selections, options.include)
+    }
     
     if(this.selectionsFromOutside.length > 0) {
       // create hashtable mapping to selected objects from their parents
@@ -199,7 +208,7 @@ var BubbleSelectionHandler = my.Class({
     }, this))
   },
   
-  selectionEnded: function(e) {
+  selectionEnded: function(e, options) {
     if(this.selectedParent && (this.selectedParent instanceof View.MultiSlotView)) {
       this.selectedParent.beginFold(this.selected)
     }

@@ -113,13 +113,18 @@ View.CodeBlock = my.Class({
   addCollapseButton: function() {
     this.collapseDom = $("<div class='collapse'></div>").text("COLLAPSE/RENAME").hide().appendTo(this.dom)
     this.dom.hoverIntent(function() { this.collapseDom.show() }.bind(this), function() { this.collapseDom.hide() }.bind(this))
-    this.collapseDom.mousedown(function(e) { e.stopPropagation(); Globals.selectionManager.startSelecting(e) })
+    this.collapseDom.mousedown(_.bind(function(e) {
+      e.stopPropagation()
+      Globals.selectionManager.startSelecting(e, { include: this, requireParent: this.directContainer() })
+    }, this))
     this.collapseDom.click(function(e) {
       if(Globals.selectionHandler.begun) return
       
       var parent = this.directContainer()
       if(parent && (parent instanceof View.MultiSlotView)) {
+        var popup = parent.views.length > 1
         parent.beginFold([this])
+        if(popup) alert("You can drag to collapse multiple things at once.")
       }
     }.bind(this))
   },
