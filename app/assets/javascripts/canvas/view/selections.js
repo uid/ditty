@@ -62,7 +62,7 @@ var SelectionManager = my.Class({
   mousedown: function(e) {
     if(e.button != 2 && !e.ctrlKey) return
     
-    startSelecting(e)
+    this.startSelecting(e)
   },
   
   mouseup: function() {
