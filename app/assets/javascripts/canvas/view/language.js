@@ -109,6 +109,12 @@ View.CodeBlock = my.Class({
       parent = parent.parent
     }
   },
+  
+  addCollapseButton: function() {
+    this.collapseDom = $("<div class='collapse'></div>").text("COLLAPSE/RENAME").hide().appendTo(this.dom)
+    this.dom.hoverIntent(function() { this.collapseDom.show() }.bind(this), function() { this.collapseDom.hide() }.bind(this))
+    this.collapseDom.mousedown(function(e) { e.stopPropagation(); Globals.selectionManager.startSelecting(e) })
+  },
 })
 
 
@@ -634,6 +640,8 @@ View.BasicMeaningView = my.Class(View.Executable, View.CodeBlock, {
     
     View.draggable.draggable(this, this.dom, { handle: ".representation" })
     
+    this.addCollapseButton()
+    
     this.render()
     
     this.representationDom.click(safeClick(this.executeOrStop.bind(this)))
@@ -670,6 +678,8 @@ View.ArgumentReferenceView = my.Class(View.Executable, View.CodeBlock, {
     this.reference.on("change", this.render, this)
     
     View.draggable.draggable(this, this.dom, { handle: ".representation" })
+    
+    this.addCollapseButton()
     
     this.render()
     
@@ -771,9 +781,7 @@ View.InvocationView = my.Class(View.Executable, View.CodeBlock, {
     View.setObjFor(this.dom, this)
     
     // collapse handle
-    this.collapseDom = $("<div class='collapse'></div>").text("COLLAPSE/RENAME").hide().appendTo(this.dom)
-    this.dom.hoverIntent(function() { this.collapseDom.show() }.bind(this), function() { this.collapseDom.hide() }.bind(this))
-    this.collapseDom.mousedown(function(e) { e.stopPropagation(); Globals.selectionManager.startSelecting(e) })
+    this.addCollapseButton()
     
     // re-render the representationDom when it changes
     this.invocation.on("change:representationIndex", this.representationsChanged, this)

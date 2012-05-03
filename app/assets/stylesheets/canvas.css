@@ -127,6 +127,7 @@ div.bubble div.collapse {
   position: absolute;
   top: -18px;
   padding: 4px;
+  font-family: "Helvetica Neue", sans-serif;
   font-size: 14px;
   line-height: 14px;
   -webkit-border-radius: 5px;
