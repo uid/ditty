@@ -134,8 +134,8 @@ div.bubble div.collapse {
   cursor: pointer;
   z-index: 300;
 }
-div.bubble.active div.collapse:hover {
-  background: #f54354;
+div.bubble div.collapse:hover {
+  background: #4354f5;
 }
 
 
