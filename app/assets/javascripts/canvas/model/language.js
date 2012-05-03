@@ -317,7 +317,8 @@ var Invocation = Backbone.DeepModel.extend({
       args[name] = mc.compile()
       return args
     }, {})
-    return new VM.ICall(this.getPattern().compile(), args)
+    var pattern = this.getPattern()
+    return new VM.ICall(pattern.compile(), args, pattern.get("fold"))
   },
 })
 

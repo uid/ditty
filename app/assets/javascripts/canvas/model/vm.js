@@ -22,8 +22,8 @@ VM.LoopMarker = my.Class({
 })
 
 VM.ICall = my.Class({
-  constructor: function(frame, args) { this.frame = frame; this.args = args },
-  toString: function() { return "Call(frame: [" + this.frame + "]; args: " + myToString(this.args) + ")" },
+  constructor: function(frame, args, skipEnv) { this.frame = frame; this.args = args; this.skipEnv = skipEnv ? true : false },
+  toString: function() { return "Call(frame: [" + this.frame + "]; args: " + myToString(this.args) + ", skipEnv: " + this.skipEnv + ")" },
 })
 
 VM.IPause = my.Class({
@@ -133,22 +133,27 @@ var Context = my.Class({
     }
     else if(instr instanceof VM.ICall)
     {
-      var parentEnv = this.envs[0]
-      var env = new Env(_.inject(instr.args, function(env, frames, name) {
-        if(!(frames instanceof Array)) {
-          alert("encapsulated something other than an array", frames)
-          alert("encapsulated something other than an array")
-        }
-        // add the value if there's anything to add
-        if(frames.length > 0) {
-          env[name] = new VM.IClosure(frames, parentEnv) // TODO: also save the frame so that break and return can work
-        }
-        return env
-      }, {}))
-      var frame = instr.frame.slice(0)
-      frame.push(new VM.IPopEnv)
-      this.frames.unshift(frame)
-      this.envs.unshift(env)
+      if(instr.skipEnv) {
+        var frame = instr.frame.slice(0)
+        this.frames.unshift(frame)
+        alert("skipenv!")
+      } else {
+        var parentEnv = this.envs[0]
+        var env = new Env(_.inject(instr.args, function(env, frames, name) {
+          if(!(frames instanceof Array)) {
+            alert("encapsulated something other than an array", frames)
+          }
+          // add the value if there's anything to add
+          if(frames.length > 0) {
+            env[name] = new VM.IClosure(frames, parentEnv) // TODO: also save the frame so that break and return can work
+          }
+          return env
+        }, {}))
+        var frame = instr.frame.slice(0)
+        frame.push(new VM.IPopEnv)
+        this.frames.unshift(frame)
+        this.envs.unshift(env)
+      }
     }
     else if(instr instanceof VM.IClosure)
     {
