@@ -573,7 +573,6 @@ View.MultiSlotView = my.Class({
   },
   
   beginFold: function(views) {
-
     if(views.length == 0) return
     
     var range = this._viewsRange(views)
