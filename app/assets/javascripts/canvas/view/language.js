@@ -653,7 +653,7 @@ View.BasicMeaningView = my.Class(View.Executable, View.CodeBlock, {
     
     View.draggable.draggable(this, this.dom, { handle: ".representation" })
     
-    this.addCollapseButton()
+    // this.addCollapseButton()
     
     this.render()
     
@@ -692,7 +692,7 @@ View.ArgumentReferenceView = my.Class(View.Executable, View.CodeBlock, {
     
     View.draggable.draggable(this, this.dom, { handle: ".representation" })
     
-    this.addCollapseButton()
+    // this.addCollapseButton()
     
     this.render()
     
@@ -794,7 +794,7 @@ View.InvocationView = my.Class(View.Executable, View.CodeBlock, {
     View.setObjFor(this.dom, this)
     
     // collapse handle
-    this.addCollapseButton()
+    // this.addCollapseButton()
     
     // re-render the representationDom when it changes
     this.invocation.on("change:representationIndex", this.representationsChanged, this)
